@@ -75,13 +75,10 @@ Per sviluppare un'interfaccia grafica (per un sito web, un'applicazione, un gioc
 Il *wireframe* serve perché è difficile progettare un'interfaccia *intuitiva* e *funzionale*. Una volta progettata l'interfaccia *scrivere il codice è semplice*, perché abbiamo un'idea chiara di quello che vogliamo, e dobbiamo solo disegnarlo.
 
 \
-#view[
-  #figure(
-    image("assets/wireframe-1.png"),
-    caption: [esempio di wireframe disegnato con #link("https://excalidraw.com")[excalidraw]],
-  )  <wireframe-1>
-  #h(0pt)
-]
+#figure(
+  image("assets/wireframe-1.png"),
+  caption: [esempio di wireframe disegnato con #link("https://excalidraw.com")[excalidraw]],
+)  <wireframe-1>
 \
 
 Proviamo ad implementare il *wireframe* in @wireframe-1
@@ -411,13 +408,11 @@ Il costruttore ```java JPanel(LayoutManager layout)``` permette di specificare u
 
 Supponiamo di voler implementare questo wireframe
 
-#view[
-  #figure(
-    image("assets/wireframe-2.png"),
-    caption: [caso d'uso di un ```java BorderLayout```],
-  ) <wireframe-2>
-  #v(5pt)
-]
+#figure(
+  image("assets/wireframe-2.png"),
+  caption: [caso d'uso di un ```java BorderLayout```],
+) <wireframe-2>
+\
 
 Abbiamo un rettangolo con le statistiche in alto, e il restante spazio è occupato da un rettangolo centrale con un pulsante. 
 
@@ -529,7 +524,7 @@ Il ```java BorderLayout``` permette di specificare in quale posizione mettere un
 
 Il costruttore ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" verticale e orizzontale fra due componenti.
 
-#view[#align(image("assets/borderlayout-3.png"), center)]
+#align(image("assets/borderlayout-3.png"), center)
 
 #pagebreak()
 
@@ -539,13 +534,10 @@ Il costruttore ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" 
 
 Il ```java CardLayout``` è molto utile quando abbiamo più schermate (menu principale, impostazioni, partita etc...)
 
-#view[
-  #figure(
-    image("assets/wireframe-3.png"),
-    caption: [caso d'uso di un ```java CardLayout```],
-  ) <wireframe-3>
-  \
-]
+#figure(
+  image("assets/wireframe-3.png"),
+  caption: [caso d'uso di un ```java CardLayout```],
+) <wireframe-3>
 
 #pagebreak()
 
@@ -681,59 +673,7 @@ public class App extends JFrame implements Observer {
   - è un *Observer* per poter essere notificato tramite ```java update(Observable o, Object arg)``` dei cambiamenti di schermata
   - usa ```java Navigator.getInstance().addObserver(this);``` per osservare l'unica istanza di ```java Navigator```
 
-// L'idea sarebbe quella di associare ad ogni componente una ```java String``` che lo identifica. In questo caso usiamo un ```java enum``` per non sbagliare a scrivere il nome del componente. 
-
-// In questo esempio, verrà visualizzato solo il ```java JPanel``` associato a ```java "Menu"```, vediamo come poter cambiare da un ```java JPanel``` all'altro.
-
-// ```java
-// enum Screens {
-//     Menu, Settings, Game;
-
-//     static void show(JPanel panel, Screens screen) {
-//         CardLayout layout = (CardLayout) panel.getLayout();
-//         layout.show(panel, screen.name());
-//     }
-
-// }
-// frame.add(new JPanel(new CardLayout()) {
-//   {
-//     JPanel panel = this;
-
-//     add(new JPanel() {
-//       {
-//         add(new JLabel("Menu principale"));
-//         add(new JButton("Gioca") {{ 
-//           addActionListener(e -> Screens.show(panel, Screens.Game)); 
-//         }});
-//         add(new JButton("Impostazioni") {{ 
-//           addActionListener(e -> Screens.show(panel, Screens.Settings));
-//         }});
-//       }
-//     }, Screens.Menu.name());
-
-//     add(new JPanel() {
-//       {
-//         add(new JLabel("Impostazioni"));
-//         add(new JButton("torna indietro") {{ 
-//           addActionListener(e -> Screens.show(panel, Screens.Menu)); 
-//         }});
-//       }
-//     }, Screens.Settings.name());
-
-//     add(new JPanel() {
-//         {
-//           add(new JLabel("Gioco"));
-//           add(new JButton("termina partita") {{ 
-//             addActionListener(e -> Screens.show(panel, Screens.Menu)); 
-//           }});
-//         }
-//     }, Screens.Game.name());
-//   }
-// });
-// ```
-
 #pagebreak()
-
 
 === #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/GridLayout.html")[GridLayout]
 
