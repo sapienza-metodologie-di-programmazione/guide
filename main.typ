@@ -503,19 +503,19 @@ Nota interessante: di default, lo sfondo di un ```java JLabel``` è trasparente,
 
 #pagebreak()
 
-==== Come funziona il ```java BorderLayout``` in generale?
+==== Funzionamento del ```java BorderLayout```
 
-```java
-new JPanel(new BorderLayout()) {
-  {
-    add(new JPanel(), BorderLayout.CENTER);
-    add(new JPanel(), BorderLayout.NORTH);
-    add(new JPanel(), BorderLayout.SOUTH);
-    add(new JPanel(), BorderLayout.WEST);
-    add(new JPanel(), BorderLayout.EAST);
-  }
-}
-```
+// ```java
+// new JPanel(new BorderLayout()) {
+//   {
+//     add(new JPanel(), BorderLayout.CENTER);
+//     add(new JPanel(), BorderLayout.NORTH);
+//     add(new JPanel(), BorderLayout.SOUTH);
+//     add(new JPanel(), BorderLayout.WEST);
+//     add(new JPanel(), BorderLayout.EAST);
+//   }
+// }
+// ```
 
 Il ```java BorderLayout``` permette di specificare in quale posizione mettere un componente, secondo certe regole:
 - il componente ```java CENTER``` occuperà tutto lo spazio possibile 
