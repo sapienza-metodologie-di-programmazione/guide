@@ -1,3 +1,5 @@
+#import "logic.typ": *
+
 #let darkred = rgb(192, 0, 0)
 #let background = rgb(251, 251, 251)
 
@@ -6,6 +8,12 @@
 #set page(margin: 1.5cm)
 #set figure(supplement: [Figura])
 
+
+// #show regex("[[:^alpha:]]\d+"): set text(rgb("#4caf50"))
+// #show regex("[()\[\]:,\.\{\}|]"): set text(rgb("#4caf50"))
+// #show regex("[a-zA-Zàèìù]+\("): set text(blue)
+#show regex("this|result|auth|adesso|old|new"): set text(blue)
+#show regex("True"): set text(rgb("#4caf50"))
 
 #show regex("JFrame|JButton|JPanel|JLabel"): set text(blue)
 #show link: it => underline[#text(blue)[#it#h(3pt)#text(size: 7pt)[(doc)]]]
@@ -21,11 +29,11 @@
   text(size: 12pt)[#it.body]
   [ #v(10pt) ]
 }
+
 #show heading.where(level: 4): it => {
   it.body
   [ #v(10pt) ]
 }
-
 #let note(body) = [
   #block(
     fill: rgb(250, 250, 255),
@@ -108,7 +116,7 @@ frame.setVisible(true);
 
 - ```java new JFrame(String title)``` crea una finestra _invisibile_ con il titolo specificato
 
-- ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` termina il programma quando la finestra viene chiusa (di default la finestra viene _nascosta_)
+- ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` termina il programma quando la finestra viene chiusa (di default la finestra viene _solo nascosta_)
 
 - ```java setIconImage(Image image)``` imposta l'icona in alto a sinistra della finestra
 
@@ -148,6 +156,10 @@ frame.add(panel);
 
 Sia ```java JFrame``` sia ```java JPanel``` sono ```java java.awt.Container```, quindi possiamo aggiungere contenuto (testo, immagini, pulsanti etc...) al loro interno tramite ```java add(Component comp)```.
 
+#note[
+	```java java.awt.Container``` è un esempio di #link("https://refactoring.guru/design-patterns/composite")[Composite Pattern]
+]
+
 - ```java JPanel``` occuperà l'intero spazio disponibile nella finestra
 - ```java JLabel``` serve a visualizzare testo (```java "Questa è una finstra"``` @wireframe-1)
 
@@ -155,9 +167,9 @@ Sia ```java JFrame``` sia ```java JPanel``` sono ```java java.awt.Container```, 
 
 Ora l'obiettivo è quello di colorare lo sfondo e il testo come in @wireframe-1
 
-#note[
-  Normalmente un *wireframe* _non prevede_ colori o scelte stilistiche, ma nel caso di un progetto piccolo possiamo permetterci di usarlo come se fosse un design 
-]
+// #note[
+//   Normalmente un *wireframe* _non prevede_ colori o scelte stilistiche, ma nel caso di un progetto piccolo possiamo permetterci di usarlo come se fosse un design 
+// ]
 
 ```java
 JPanel panel = new JPanel() {
@@ -388,12 +400,6 @@ Per stampare l'elenco di chiavi disponibili:
 javax.swing.UIManager.getDefaults().keys().asIterator().forEachRemaining(System.out::println);
 ```
 
-== Pulsanti
-
-== Immagini
-
-== Animazioni
-
 #pagebreak()
 
 == Layout Manager
@@ -421,110 +427,177 @@ Abbiamo un rettangolo con le statistiche in alto, e il restante spazio è occupa
 ==== Barra delle statistiche e menu di gioco
 
 ```java
-frame.add(new JPanel(new BorderLayout(10, 10)) {
-    {
-        setBackground(new Color(240, 255, 240)); // verdignolo
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+public class App extends JFrame {
+	static { UIManager.put("Panel.background", Color.WHITE); }
 
-        add(
-          new JPanel() {{ setBackground(new Color(220, 220, 255)); }},  // bluastro
-          BorderLayout.NORTH
-        );
+	App() {
+		super("JGioco");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		try { setIconImage(ImageIO.read(new File("icon.png"))); } catch (IOException e) { }
 
-        add(
-          new JPanel() {{ setBackground(new Color(220, 220, 255)); }}, 
-          BorderLayout.CENTER
-        );
-    }
-});
+		add(new JPanel(new BorderLayout(10, 10)) { // Sfondo
+			{
+				setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Spazio dal bordo della finesta
+
+				add(new JPanel() { // Barra in altro
+					{
+						setBackground(new Color(255, 255, 255, 0)); // Trasparente
+						setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createLineBorder(Color.decode("#2f9e44")),
+              BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+					}
+				}, BorderLayout.NORTH); // Posizionata a NORD
+
+				add(new JPanel() { // Blocco centrale
+					{
+						setBackground(new Color(255, 255, 255, 0)); // Trasparente
+						setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createLineBorder(Color.decode("#2f9e44")),
+              BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+					}
+				}, BorderLayout.CENTER); // Posizionato al CENTRO
+			}
+
+			@Override
+			protected void paintComponent(Graphics g) { // Sfondo linee oblique verdi
+				super.paintComponent(g);
+				int density = 5;
+				g.setColor(Color.decode("#b2f2bb"));
+				for (int x = 0; x <= getWidth() + getHeight(); x += density)
+					g.drawLine(x, 0, 0, x);
+			}
+		});
+
+		setSize(600, 400);
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
+
+	public static void main(String[] args) { new App(); }
+}
 ```
 
-Il costruttore ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" verticale e orizzontale fra due componenti.
+- ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" verticale e orizzontale fra due componenti.
 
-Con ```java setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10))``` impostiamo un bordo trasparente (per lasciare uno spazio dal bordo della finestra)
+- con ```java setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))``` impostiamo un bordo trasparente (per lasciare uno spazio dal bordo della finestra)
 
 Quando aggiungo un elemento ad un container, posso specificare come deve essere trattato tramite il metodo ```java add(Component comp, Object constraints)```: in base al layout del container, ```java Object constraints``` avrà un significato diverso.
 
 #note([```java BorderFactory``` è un esempio di #link("https://refactoring.guru/design-patterns/factory-method")[Factory Pattern]])
 
-// #v(0.5cm);
+Risultato
 
-
+\
 #align(image("assets/borderlayout-1.png"), center)
+\
 
-#v(0.5cm);
+==== Implementazione
+
+#note[di default, lo sfondo di un ```java JLabel``` è trasparente, per renderlo visibile bisogna usare ```java setOpaque(true)```]
+
+```java
+public class App extends JFrame {
+
+	static {
+		UIManager.put("Label.font", new Font("Cascadia Code", Font.PLAIN, 17));
+		UIManager.put("Label.foreground", Color.decode("#2f9e44"));
+		UIManager.put("Label.background", Color.WHITE);
+
+		UIManager.put("Button.font", new Font("Cascadia Code", Font.PLAIN, 17));
+		UIManager.put("Button.foreground", Color.decode("#2f9e44"));
+		UIManager.put("Button.background", Color.WHITE);
+		UIManager.put("Button.border", BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(Color.decode("#2f9e44")),
+      BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+		UIManager.put("Button.highlight", Color.decode("#b2f2bb"));
+		UIManager.put("Button.select", Color.decode("#b2f2bb"));
+		UIManager.put("Button.focus", Color.WHITE);
+
+		UIManager.put("Panel.background", Color.WHITE);
+	}
+
+
+```
 
 #pagebreak()
 
-==== Aggiungere uno sfondo ai ```java JLabel```
-
 ```java
-frame.add(new JPanel(new BorderLayout(10, 10)) {
-    {
-        setBackground(new Color(240, 255, 240));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	App() {
+		add(new JPanel(new BorderLayout(10, 10)) {
+			{
+        // ...
 
-        add(new JPanel() {
-            {
-                setBackground(new Color(220, 220, 255));
+				add(new JPanel() {
+					{
+            // ...
 
-                String[] labels = {"Pincopallino", "partite giocate: 10", "partite vinte: 2"};
+						String[] labels = { "Pincopallino", "partite: 10", "vittorie: 2" };
+						for (String label : labels)
+							add(new JLabel(label) {
+								{
+									setOpaque(true);
+									setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(Color.decode("#2f9e44")),
+                    BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+								}
+							});
+					}
+				}, BorderLayout.NORTH);
 
-                for (String label : labels)
-                    add(new JLabel(label) {
-                        {
-                            setForeground(Color.BLUE);
-                            setBackground(Color.WHITE);
-                            setOpaque(true);
-                            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                        }
-                    });
-            }
-        }, BorderLayout.NORTH);
+				add(new JPanel() { { ...; add(new JButton("Gioca")); } }, BorderLayout.CENTER);
+			}
 
-        add(new JPanel() {
-            {
-                setBackground(new Color(220, 220, 255));
-                add(new JButton("Gioca") {{ setBackground(new Color(220, 255, 220)); }});
-            }
-        }, BorderLayout.CENTER);
-    }
-});
+			@Override
+			protected void paintComponent(Graphics g) { ... }
+		});
+
+    // ...
+	}
+
+	public static void main(String[] args) { new App(); }
+}
 ```
 
-Nota interessante: di default, lo sfondo di un ```java JLabel``` è trasparente, per renderlo visibile bisogna usare ```java setOpaque(true)```
-
-
-#v(0.5cm);
-
+\
 #align(image("assets/borderlayout-2.png"), center);
-
-#v(0.5cm);
+\
 
 #pagebreak()
 
 ==== Funzionamento del ```java BorderLayout```
 
-// ```java
-// new JPanel(new BorderLayout()) {
-//   {
-//     add(new JPanel(), BorderLayout.CENTER);
-//     add(new JPanel(), BorderLayout.NORTH);
-//     add(new JPanel(), BorderLayout.SOUTH);
-//     add(new JPanel(), BorderLayout.WEST);
-//     add(new JPanel(), BorderLayout.EAST);
-//   }
-// }
-// ```
-
-Il ```java BorderLayout``` permette di specificare in quale posizione mettere un componente, secondo certe regole:
-- il componente ```java CENTER``` occuperà tutto lo spazio possibile 
-- i componenti ```java NORTH``` e ```java SOUTH```  avranno larghezza massima (indipendentemente dalla larghezza impostata) e avranno altezza minima, o, se impostata, l'altezza impostata
-- i componenti ```java WEST``` e ```java EAST```  avranno altezza massima (indipendentemente dall'altezza impostata) e avranno larghezza minima, o, se impostata, la larghezza impostata
+Il ```java BorderLayout``` permette di specificare come posizionare gli elementi:
+- l'elemento ```java CENTER``` occuperà tutto lo spazio possibile 
+- gli elementi ```java NORTH``` e ```java SOUTH```  avranno larghezza massima (indipendentemente dalla larghezza impostata) e avranno altezza minima, o, se impostata, l'altezza impostata
+- gli elementi ```java WEST``` e ```java EAST```  avranno altezza massima (indipendentemente dall'altezza impostata) e avranno larghezza minima, o, se impostata, la larghezza impostata
 
 Il costruttore ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" verticale e orizzontale fra due componenti.
 
 #align(image("assets/borderlayout-3.png"), center)
+
+```java
+public class App extends JFrame {
+	App() {
+    //...
+
+		add(new JPanel(new BorderLayout()) {
+			{
+				add(new DecoratedPanel("Nord"), BorderLayout.NORTH);
+				add(new DecoratedPanel("Sud"), BorderLayout.SOUTH);
+				add(new DecoratedPanel("West") {
+					{
+						setPreferredSize(new Dimension(120, 0)); // Larghezza custom
+					}
+				}, BorderLayout.WEST);
+				add(new DecoratedPanel("East"), BorderLayout.EAST);
+				add(new DecoratedPanel("Center"), BorderLayout.CENTER);
+			}
+		});
+	}
+
+	public static void main(String[] args) { new App(); }
+}
+```
 
 #pagebreak()
 
@@ -761,47 +834,528 @@ public class App extends JFrame {
 
 #pagebreak()
 
-=== #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/GridBagLayout.html")[GridBagLayout]
+=== #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")[GridBagLayout]
 
 
 ==== Il layout #text(darkred)[più flessibile]
 
+Il ```java GridBagLayout``` permette di dividere il panel in una griglia (nell'esempio, le celle della griglia sono 3, e sono divise dalla linea gialla) in maniera molto flessibile:
+- una cella può essere *posizionata* in qualunque ```java x``` e ```java y``` della griglia
+- la *dimensione* di una cella può essere definita in diversi modi
+  - numero di righe e numero di colonne
+  - può essere specificato che deve occupare "tutto lo *spazio rimanente*"
+    - in largheza
+    - in altezza 
+    - in entrambe le dimensioni
+
+La particolarità (rispetto agli altri layout) è che gli elementi *non vengono ridimensionati* per occupare tutto lo spazio di una cella, ma vengono posizionati all'interno della cella rispettando le loro dimensioni (nella cella a sinistra, si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```)
+
 #figure(
 	image("assets/wireframe-4.png"),
-	caption: [esempio di wireframe per il gioco "Minesweeper"],
+	caption: [caso d'uso di un ```java GridBagLayout```],
 ) <wireframe-4>
-
-// === #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/BoxLayout.html")[BoxLayout]
-
-// === #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/FlowLayout.html")[FlowLayout]
 
 #pagebreak()
 
-// == Graphics
+==== Implementazione
 
-// == Ritardare azioni con il Timer
+```java
+public class App extends JFrame {
+	static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
-// == Animazioni
+	static {
+		UIManager.put("Label.font", new Font("Cascadia Code", Font.PLAIN, 14));
+		UIManager.put("Panel.background", Color.WHITE);
+	}
 
-// == Bug Strani
-// === .pack() e panel vuoto
+	App() {
+		super("JGioco");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-// == Style
+		try {
+			setIconImage(ImageIO.read(new File("icon.png")));
+		} catch (IOException e) {
+		}
 
-// == Graphics
+		JFrame frame = this;
+		setSize(600, 400);
+
+		add(new JPanel(new GridLayout(1, 1)) {
+			{
+				setBorder(BorderFactory.createEmptyBorder(50, 30, 50, 30));
+
+				add(new JPanel(new GridBagLayout()) {
+					{
+						setBackground(TRANSPARENT);
+						setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.DARK_GRAY),
+								BorderFactory.createEmptyBorder(30, 30, 30, 30)));
+
+						GridBagConstraints constraints = new GridBagConstraints();
+
+						constraints.weightx = 1;
+						constraints.weighty = 1;
+
+						constraints.anchor = GridBagConstraints.NORTHEAST;
+						constraints.gridx = 0;
+						constraints.gridy = 0;
+						constraints.gridwidth = 1;
+						constraints.gridheight = 3;
+
+						add(new JLabel("testo"), constraints);
+
+						constraints.anchor = GridBagConstraints.CENTER;
+						constraints.gridx = 1;
+						constraints.gridy = 0;
+						constraints.gridwidth = GridBagConstraints.REMAINDER;
+						constraints.gridheight = 2;
+
+						add(new JLabel("x: 1,\n y: 0, w: spaz. rim., h: 2 righe"), constraints);
+
+						constraints.gridx = 1;
+						constraints.gridy = 2;
+						constraints.gridwidth = GridBagConstraints.REMAINDER;
+						constraints.gridheight = 1;
+
+						add(new JLabel("x: 1, y: 0, w: spaz. rim., h: 1 riga"), constraints);
+					}
+
+					@Override
+					protected void paintComponent(Graphics g) {
+						setPreferredSize(new Dimension(frame.getWidth() - 80, frame.getHeight() - 80));
+						super.paintComponent(g);
+					}
+				});
+			}
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				int density = 5;
+				g.setColor(Color.decode("#e9ecef"));
+				for (int x = 0; x <= getWidth() + getHeight(); x += density)
+					g.drawLine(x, 0, 0, x);
+			}
+		});
+
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
+
+	public static void main(String[] args) { new App(); }
+}
+```
+
+\
+#align(image("assets/gridbaglayout-1.png"), center)
+\
+
+#pagebreak()
+
+=== In conclusione (sui Layout)
+
+Dato un *wireframe* ora dovreste avere gli strumenti per implementare il layout 
+
+#figure(
+	image("assets/wireframe-5.png"),
+	caption: [esempio di wireframe per il gioco "Minesweeper"],
+) <wireframe-5>
+\
+
+I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/visual.html")[non sono gli unici] (e non sono state coperte tutte le loro funzionalità), ma, capiti i concetti chiave, si può iniziare ad usare la #link("https://docs.oracle.com/en/java/javase/21/docs/api/index.html")[documentazione].
+
+#pagebreak()
+
+== Pulsanti
+
+== Immagini
+
+== Animazioni
+
+== Graphics
+
+== Timer
+
+#pagebreak()
 
 = #text(darkred)[MVC]
 
+#align(
+	center, 
+	image("assets/mvc.png", width: 100%)
+)
+
+*MVC* è un *pattern architetturale* per sviluppare diversi tipi di applicazioni: servizi web, programmi GUI, programmi per terminale etc...
+
+L'idea è quella di *separare la logica del programma dall'interfaccia*. In questo modo:
+- la logica e i dati sono *definiti in modo chiaro e pulito*
+- la logica è *riusabile* (più interfacce diverse possono condividere la logica)
+
+Ad esempio, posso definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (terminal user interface) etc... Il *Model* è condiviso da più *View*.
+
+\
+
+Fin'ora abbiamo discusso solo della *View*, ora l'obiettivo è quello di *progettare una semplice applicazione* e mostrare un possibile modo di strutturare il codice. 
+
+#pagebreak()
+
 == Minesweeper _(prato fiorito)_
 
-== Model
+Trovate il codice completo del progetto #link("https://github.com/CuriousCI/minesweeper")[su GitHub]
 
-== Controller
+=== UML e modello
 
-== View
+Iniziamo definendo il modello
 
-// == boh, qualche esempio?
+#align(
+	center, 
+	image("assets/uml.png", width: 100%)
+)
 
+#note[
+	#text(darkred)[*Attenzione!*] Questo *NON è il tipo di UML che avete visto a lezione*.
+	
+	È definito tramite la #link("https://en.wikipedia.org/wiki/First-order_logic")[logica di primo ordine] ed è *agnostico*. Si vede in corsi come *Basi di dati 2* e *Ingegneria del software*. Lo uso per bervità e semplicità.
+]
+
+==== In breve
+
+- vogliamo gestire le partite (Game)
+	- ogni partita ha 100 caselle (Tile) 
+		- sono disposte in una griglia 10x10
+		- c'è un numero variabile di mine da 0 a 100
+	- una partita può essere finita (Ended) 
+		- caso in cui va segnata la durata
+		- può avere uno di tre esiti
+			- sconfitta (Loss)
+			- vittoria (Victory)
+			- terminata dall'utente (Terminated)
+	- di ogni partita si devono poter calcolare
+		- il numero di mine
+		- il numero di bandiere
+
+- ogni casella (Tile)
+	- può essere di uno dei due tipi
+		- vuota (Empty)
+		- con una mina (Mine)
+	- può trovarsi in uno dei tre stati
+		- nascosta (Hidden)
+		- con una bandiera (Flagged)
+		- scoperta (Revealed)
+	- di ogni casella si devono poter calcolare le caselle adiacenti
+	- di ogni casella vuota si deve conoscere il numero di mine vicine
+	
+#pagebreak()
+
+=== Vincoli e regole del modello
+
+Il modello che abbiamo definito è *incompleto*: permette *alcuni stati che non vogliamo*
+- una partita potrebbe essere una vittoria anche con una mina scoperta 
+- una partita potrebbe essere una vittoria con tutte le caselle nascoste 
+
+Ci servono dei vincoli (qui scritti in _logica di primo ordine_) per definire le *regole*.
+
+#note[
+Di seguito sono riportati alcuni vincoli, #link("https://github.com/CuriousCI/minesweeper/blob/main/docs/main.pdf")[qui c'è il documento completo]
+]
+
+\
+
+Una partita è una vittoria in uno di due casi 
+	- tutte le mine hanno una bandiera e tutte le caselle vuote sono senza bandiera
+	- tutte le caselle vuote sono scoperte
+
+#constraint(
+  [*Game*._victory_condition_],
+  [
+    $forall$ game\
+    #t Victory(game) <=> \
+    #t#t $forall$ tile _mine_game_(tile, game) #[==>] Flagged(tile) $and$ \
+    #t#t $not$ $exists$ tile _tile_game_(tile, game) $and$ Empty(tile) $and$ Flagged(tile) \
+    #t#t $or$ \
+    #t#t $forall$ tile (_tile_game_(tile, game) $and$ Empty(tile) #[==>] Revealed(tile)) \
+  ]
+) 
+
+\
+
+Una partita è una sconfitta se e solo se c'è una mina scoperta
+
+#constraint(
+  [*Game*._loss_condition_],
+  [
+    $forall$ game \
+    #t Loss(game) <=> \
+		#t#t $exists$ mine _mine_game_(mine, game) $and$ Revealed(mine)
+  ]
+)
+
+\
+
+#note[ Vedremo che in Java questi vincoli sono comodi da scrivere con gli ```java Stream``` ]
+
+#pagebreak()
+
+=== Use Case e operazioni sul modello
+
+Gli use case sono un insieme di *operazioni* che un *utente* deve poter effettuare sul *model*. Sono le funzionalità che dobbiamo garantire nella progettazione del *wireframe* e che verranno tradotte in parte in operazioni del *Controller*.
+
+\
+
+#operation([start_game], type: [*Game*])
+#operation([terminate_game], args: [game: *Game*], type: [*Terminated*]) 
+#operation([reveal], args: [tile: *Hidden*], type: [*Revealed*])
+#operation([flag], args: [tile: *Hidden*], type: [*Flagged*])
+#operation([remove_flag], args: [tile: *Flagged*], type: [*Hidden*])
+#operation([games_played], type: [*Integer* >= 0])
+#operation([games_won], type: [*Integer* >= 0])
+#operation([time], type: [*Duration*])
+#operation([mines], type: [(0..100)])
+#operation([flags], type: [(0..100)])
+
+\
+
+=== Wireframe della vista
+
+Ora dobbiamo solo progettare la vista dell'applicazione con un *wireframe*
+
+#align(
+	center, 
+	image("assets/wireframe.png")
+)
+
+#pagebreak()
+
+== Codice
+
+Nel #link("https://github.com/CuriousCI/minesweeper/tree/main/src/main/java/minesweeper")[codice] del progetto ho deciso di creare un *package* principale chiamato *minesweeper* e di suddividerlo a sua volta in 3 *package* per *model*, *view* e *controller*. Il progetto è piccolo, quindi bastano questi tre. I *package* sono lo strumento più importante per l'*encapsulation*.
+
+=== Model
+
+Vediamo alcune particolarità degne di nota.
+
+```java
+package minesweeper.model;
+
+import static minesweeper.model.Tile.Visibility.Flagged;
+import static minesweeper.model.Tile.Visibility.Hidden;
+import static minesweeper.model.Tile.Visibility.Revealed;
+
+import java.util.Observable;
+import java.util.Optional;
+
+@SuppressWarnings("deprecation")
+public class Tile extends Observable {
+
+	public enum Kind {
+		Mine,
+		Empty
+	}
+
+	public enum Visibility {
+		Hidden,
+		Flagged,
+		Revealed
+	}
+
+	public final int x, y;
+	public final Kind kind;
+	private Visibility visibility = Visibility.Hidden;
+	Optional<Integer> adjacentMines = Optional.empty();
+
+	Tile(int x, int y, Kind kind) {
+		this.x = x;
+		this.y = y;
+		this.kind = kind;
+	}
+
+	public Visibility visibility() { return visibility; }
+
+	public Optional<Integer> adjacentMines() { return adjacentMines; }
+
+	public void flag() {
+		visibility = switch (visibility) {
+			case Hidden -> {
+				setChanged();
+				yield Flagged;
+			}
+			case Flagged -> {
+				setChanged();
+				yield Hidden;
+			}
+			case Revealed -> Revealed;
+		};
+
+		notifyObservers(visibility);
+	}
+
+	public void reveal() {
+		if (visibility != Hidden)
+			return;
+
+		visibility = Revealed;
+
+		setChanged();
+		notifyObservers(Revealed);
+	}
+
+}
+```
+
+==== Encapsulation con ```java public final```
+
+La strategia di ridurre la visibilità di un attributo a ```java private``` e di definire *getter* e *setter* non è l'unico modo di fare encapsulation.
+
+Un'altra strategia è quella di segnare un attributo come ```java public final```, e di rendere il *costruttore visibile solo all'interno del package* (visibilità di default)
+
+In questo modo, le *Tile* possono essere istanziate con valori per ```java x```, ```java y``` e ```java kind``` all'interno del package (quindi si spera in modo corretto), e questi valori possono essere letti (ma non modificati) all'esterno. 
+
+==== Tipizzazione con ```java enum```
+
+Ho deciso di codificare i tipi di caselle e i possibili stati con degli ```java enum```: usare l'ereditarietà in questo caso sarebbe stato inutilmente complesso e verboso. 
+
+Gli ```java enum``` sono interni alla classe per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile (e rende il codice più semplice da navigare non dovendo creare altri due file).
+
+==== Tipi ```java null``` con ```java Optional<T>```
+
+Nel modello che abbiamo definito solo le caselle *Empty* hanno il *numero di mine adiacenti*. Per poterlo fare in Java possiamo aggiungere un attributo ```java Integer adjacentMines``` a tutte le caselle, e impostarlo a ```java null``` per le caselle *non Empty*.
+
+Il problema di questo approccio è che chi usa la libreria *deve sapere* in qualche modo che quell'attributo potrebbe essere ```java null```. 
+
+Per risolvere il problema, basta rendere l'attributo ```java Optional<Integer>```, in questo modo stiamo *esplicitamente* dichiarando nel codice che quell'attributo potrebbe non avere un valore impostato (```java Optional.empty()```), e chi usa l'attributo deve gestire il caso in cui il valore non c'è.
+
+==== ```java switch``` sotto steroidi (```java switch``` #text(darkred)[expression])
+
+In Java 14 sono state uficializzate le ```java switch``` expression che possono restituire un valore (vedere metodo ```java flag()```). 
+
+Hanno anche altre funzionalità (permettono di determinare il tipo di un oggetto e castarlo senza usare ```java instanceof```, vedere ```java update(Observable o, Object arg)``` in ```java model.Game```)
+
+==== Observer Pattern
+
+Per la casella ho deciso di usare l'*Observer* per due motivi:
+- notificare la *View* (per ridisegnare la casella)
+- notificare le altre classi del model (la classe *Game* deve sapere quando una *Tile* cambia stato, per decidere se terminare la partita o scoprire le caselle adiacenti)
+
+#pagebreak()
+
+```java
+@SuppressWarnings("deprecation")
+public class Game extends Observable implements Observer {
+
+	// ...
+
+	final Tile[] tiles = new Tile[100];
+	public final int mines;
+	int flags = 0;
+	Duration time = Duration.ofSeconds(0);
+
+	public Game() {
+		Random random = new Random();
+
+		for (int y = 0; y < 10; y++)
+			for (int x = 0; x < 10; x++)
+				tiles[y * 10 + x] = new Tile(x, y, random.nextInt(100) >= 15 ? Empty : Mine);
+
+		for (Tile tile : tiles) {
+			tile.addObserver(this);
+
+			int adjacentMines = (int) adjacent(tile.x, tile.y)
+					.filter(t -> t.kind == Mine)
+					.count();
+
+			if (tile.kind == Empty && adjacentMines > 0)
+				tile.adjacentMines = Optional.of(adjacentMines);
+		}
+
+		mines = (int) Stream.of(tiles)
+				.filter(t -> t.kind == Mine)
+				.count();
+	}
+
+	public void updateTime() {
+		time = time.plusSeconds(1);
+		setChanged();
+		notifyObservers(Message.Timer);
+	}
+
+	// ...
+
+```
+
+Un errore che ho visto è quello di creare un attributo per ogni variabile. Ad esempio: alcuni hanno creato un attributo ```java Random random``` per la classe ```java Game```, nonostante questo venga usato solo nel costruttore. *NON* c'è bisogno di *creare un attributo per ogni variabile*.
+
+==== Gestire il timer
+
+Il *Model* non dovrebbe gestire l'eventuale *timer*, quello è un compito del *Controller*. Mettendo il *timer* fuori dal *Model* diventa più facile mettere in *pausa* il gioco.
+
+Il *Model* dovrebbe semplicemente avere un metodo ```java update()``` (nel mio caso ```java updateTime()```) che deve essere invocato dal *Controller* quando scatta il *timer*.
+
+==== Alcuni esempi di ```java Stream```
+
+Nella classe ```java model.Game``` ci sono alcuni esempi di ```java Stream``` oltre a quelli sopra.
+
+
+#pagebreak()
+
+```java
+
+	// ...
+
+	@Override
+	public void update(Observable o, Object arg) {
+		switch (o) {
+			case Tile tile -> {
+				switch (arg) {
+					case Tile.Visibility visibility -> {
+						switch (visibility) {
+							case Flagged -> flags++;
+							case Hidden -> flags--;
+							case Revealed -> {
+								if (tile.kind == Mine) {
+									setChanged();
+									notifyObservers(Result.Loss);
+									deleteObservers();
+									return;
+								}
+
+								if (tile.adjacentMines().isEmpty())
+									adjacent(tile.x, tile.y).forEach(Tile::reveal);
+
+								boolean allEmptyRevealed = Stream.of(tiles)
+										.allMatch(t -> t.visibility() == Revealed || t.kind == Mine);
+
+								boolean allMinesFlagged = Stream.of(tiles)
+										.allMatch(t -> (t.kind == Mine && t.visibility() == Flagged)
+												|| (t.kind == Empty && t.visibility() != Flagged));
+
+								if (allEmptyRevealed || allMinesFlagged) {
+									setChanged();
+									notifyObservers(Result.Victory);
+									deleteObservers();
+									return;
+								}
+							}
+						}
+					}
+					default -> {}
+				}
+			}
+			default -> {}
+		}
+	}
+
+}
+```
+
+
+#pagebreak()
+
+=== Controller
+
+=== View
+
+
+
+#pagebreak()
 
 = #text(darkred)[git]
 
