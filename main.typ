@@ -15,8 +15,10 @@
 #show regex("this|result|auth|adesso|old|new"): set text(blue)
 #show regex("True"): set text(rgb("#4caf50"))
 
-#show regex("JFrame|JButton|JPanel|JLabel"): set text(blue)
-#show link: it => underline[#text(blue)[#it#h(3pt)#text(size: 7pt)[(doc)]]]
+// #show regex("JFrame|JButton|JPanel|JLabel"): set text(blue)
+// #show link: it => underline[#text(navy)[#it#h(3pt)#text(size: 7pt)[(doc)]]]
+#show link: it => underline[#text(navy)[#it]]
+
 #show heading.where(level: 1): it => {
   text(size: 17pt)[#it.body]
   [ #v(10pt) ]
@@ -71,17 +73,25 @@
 
 = #text(darkred)[Java Swing]
 
-L'obiettivo di _questa guida_ è dare, tramite esempi pratici, gli *strumenti fondamentali* per lo _sviluppo agevole_ di interfacce grafiche. 
+L'obiettivo di questa sezione è fornire, tramite esempi pratici, gli *strumenti fondamentali* per lo *sviluppo agevole* di interfacce grafiche con #text(darkred)[Java Swing].
+
+// TODO: successivamente in MVC come progettare un'applicazione completa + come collaborare a automatizzare con git
+
+// L'obiettivo di questa guida è fornire, tramite esempi pratici, gli *strumenti fondamentali* per lo *sviluppo agevole* di interfacce grafiche con #text(darkred)[Java Swing]
 
 // Questa è una guida molto *breve* e *semplificata*.
 // sulle funzionalità principali serve solo come introduzione per semplificare il lavoro per eventuali progetti.
 
+// Il *wireframe* serve perché è difficile progettare un'interfaccia *intuitiva* e *funzionale*. Una volta progettata l'interfaccia *scrivere il codice è semplice*, perché abbiamo un'idea chiara di quello che vogliamo, e dobbiamo solo implementarlo.
+
+// Il *wireframe* permette di disegnare rapidamente un'interfaccia *intuitiva* e *funzionale*, riducendo il tempo passato a scrivere codice.
+// , perché abbiamo un'idea chiara e dobbiamo solo implementarla.
+
 == Wireframe
 
-Per sviluppare un'interfaccia grafica (per un sito web, un'applicazione, un gioco etc...) è utile disegnare un *wireframe* fatto di *rettangoli*, *testo* e *icone* come in @wireframe-1. 
+Per sviluppare l'interfaccia grafica di un sito web, un'applicazione, un gioco etc... è utile disegnare un *wireframe*. 
 
-Il *wireframe* serve perché è difficile progettare un'interfaccia *intuitiva* e *funzionale*. Una volta progettata l'interfaccia *scrivere il codice è semplice*, perché abbiamo un'idea chiara di quello che vogliamo, e dobbiamo solo disegnarlo.
-
+Un *wireframe* è un diagramma fatto di *rettangoli*, *testo*, *icone* e *frecce* (come in @wireframe-1) che permette di progettare *rapidamente* un'interfaccia *intuitiva* e *funzionale*, riducendo il tempo passato a scrivere codice.
 \
 #figure(
   image("assets/wireframe-1.png"),
@@ -99,52 +109,68 @@ Proviamo ad implementare il *wireframe* in @wireframe-1
 
 Il codice completo è *in fondo alla spiegazione*
 
-=== Creare una finestra con #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JFrame.html")[JFrame]
+=== Creare una finestra (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JFrame.html")[JFrame])
 
 ```java
 JFrame frame = new JFrame("Questo \u00E8 un titolo");
 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 try {
-  frame.setIconImage(ImageIO.read(new File("icon.png")));
+  frame.setIconImage(ImageIO.read(new File("icon.png"))); 
 } catch (IOException e) { }
 
 frame.setSize(600, 400);
 frame.setLocationRelativeTo(null);
-frame.setVisible(true);
+frame.setVisible(true); 
 ```
 
-- ```java new JFrame(String title)``` crea una finestra _invisibile_ con il titolo specificato
-
-- ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` termina il programma quando la finestra viene chiusa (di default la finestra viene _solo nascosta_)
-
-- ```java setIconImage(Image image)``` imposta l'icona in alto a sinistra della finestra
-
-#note[ 
-  Non lasciate l'icona di default! Fate vedere un po' di attenzione ai dettagli :)
-]
-
-- ```java setSize(int width, int height)``` imposta la dimensione della finestra
-
-#note[
-  Esistono altre strategie per dimensionare la finestra:
-  - ```java frame.pack()``` imposta larghezza e altezza al valore _minimo_ che rispetta il contenuto della finestra
-  _Se la finestra non ha contenuto_, la larghezza e l'altezza vengono impostati a 0  
-]
-
+#text(darkred)[Java Swing] ha alcuni *default particolari*:
+- ```java new JFrame(...)``` istanzia una finestra *invisibile*, per questo si usa ```java setVisible(true)```
+- la finestra, alla chiusura, viene *solo nascosta*, per questo si usa ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)```
 - ```java setLocationRelativeTo(null)``` posiziona la finestra al centro dello schermo
 
-- ```java setVisible(true)``` rende la finestra _visibile_
+Oltre a ```java setSize(int width, int height)```, una finestra si può dimensionare anche con il metodo ```java pack()``` che imposta le *dimensioni minime* per disegnare il contenuto della finestra. 
 
-==== Errori comuni 
+#note[```java pack()``` imposta le *dimensioni a 0* se la finestra non ha contenuto, per cui ricordatevi di invocare ```java pack()``` *dopo* aver aggiunto componenti al ```java JFrame```.]
 
-Se la finestra *non rispetta la dimensione impostata* con ```java setSize(int width, int height)``` probabilmente state usando anche ```java pack()``` nel codice (non vanno usati entrambi).
+#note[Ricordatevi di *cambiare l'icona* di default :)]
 
-Se usando ```java pack()``` *larghezza e altezza sono impostati a 0* è perché state usando ```java pack()``` _prima_ di aggiungere il contenuto alla finestra. 
+// Alcuni componenti di  hanno *comportamenti di default* particolari:
+// - alla chiusura della finestra il ```java JFrame``` viene *solo nascosto*, per questo si usa ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)```
+// -  ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` serve a terminare il programma alla chiusura
+
+// ```java setSize(int width, int height)``` imposta la dimensione della finestra
+
+// #note[ ]
+
+// Se usando ```java pack()``` *larghezza e altezza sono impostati a 0* è perché state usando ```java pack()``` _prima_ di aggiungere il contenuto alla finestra. 
+
+// Se la finestra *non rispetta la dimensione impostata* con ```java setSize(int width, int height)``` probabilmente state usando anche ```java pack()``` nel codice (non vanno usati entrambi).
+
+
+// Oltre a ```java setSize(int w, int h)``` c'è un altro modo per ridimensionare la finestra:
+  // - ```java frame.pack()``` imposta larghezza e altezza al valore _minimo_ che rispetta il contenuto della finestra
+  // _Se la finestra non ha contenuto_, la larghezza e l'altezza vengono impostati a 0  
+// #note[// ]
+
+//  termina il programma quando la finestra viene chiusa (di default la finestra viene *solo nascosta*)
+
+// - ```java setIconImage(Image image)``` imposta l'icona in alto a sinistra della finestra
+
+  // Non lasciate l'icona di default! 
+	// Fate vedere un po' di attenzione ai dettagli :)
+
+
+
+// - ```java setVisible(true)``` rende la finestra *visibile*
+
+// ==== Errori comuni 
+
+
 
 #pagebreak()
 
-=== Aggiungere contenuti a una finestra con #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JPanel.html")[JPanel]
+=== Aggiungere ```java Component``` a una finestra (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JPanel.html")[JPanel])
 
 ```java
 JPanel panel = new JPanel();
@@ -154,16 +180,25 @@ panel.add(label);
 frame.add(panel);
 ```
 
-Sia ```java JFrame``` sia ```java JPanel``` sono ```java java.awt.Container```, quindi possiamo aggiungere contenuto (testo, immagini, pulsanti etc...) al loro interno tramite ```java add(Component comp)```.
+Sia ```java JFrame``` sia ```java JPanel``` sono ```java java.awt.Container```, quindi dispongono del metodo ```java add(Component comp)```.  #text(darkred)[Java Swing] mette a disposizione vari ```java Component```
+- ```java JLabel``` per testo e immagini
+- ```java JButton``` per pulsanti
+- ```java JPanel``` per interfacce più complesse 
+- ```java JTable```, ```java JSlider``` etc...
+
+// per aggiungere compoenti (testo, immagini, pulsanti etc...)
+
+//  possiamo aggiungere contenuto (testo, immagini, pulsanti etc...) al loro interno tramite .
 
 #note[
 	```java java.awt.Container``` è un esempio di #link("https://refactoring.guru/design-patterns/composite")[Composite Pattern]
 ]
 
-- ```java JPanel``` occuperà l'intero spazio disponibile nella finestra
-- ```java JLabel``` serve a visualizzare testo (```java "Questa è una finstra"``` @wireframe-1)
+// - ```java JPanel``` occupa l'intero spazio a disposizione 
+// - ```java JLabel``` serve a visualizzare testo (```java "Questa è una finstra"``` @wireframe-1)
 
-==== Colori, font e personalizzare lo sfondo con ```java paintComponent(Graphics g)```
+// ==== Colori, font e personalizzare lo sfondo con ```java paintComponent(Graphics g)```
+=== Colori, font e sfondo (```java paintComponent(Graphics g)```)
 
 Ora l'obiettivo è quello di colorare lo sfondo e il testo come in @wireframe-1
 
@@ -193,7 +228,7 @@ panel.add(label);
 frame.add(panel);
 ```
 
-```jframe JPanel``` viene visualizzato invocando il metodo ```java paint(Graphics g)``` tramite ```java repaint()```. A sua volta ```java paint(Graphics g)``` invoca in ordine:
+Il ```java JFrame``` invoca il metodo ```java paint(Graphics g)``` del ```jframe JPanel```. A sua volta ```java paint(Graphics g)``` invoca in ordine:
 - ```java paintComponent(Graphics g)```
 - ```java paintBorder(Graphics g)```
 - ```java paintChildren(Graphics g)```
@@ -212,7 +247,7 @@ Risultato
 #align(image("assets/gui-1.png", width: 65%), center)
 \
 
-=== Centrare un elemento con #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")[GridBagLayout]
+=== Centrare un componente (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")[GridBagLayout])
 
 
 ```java
@@ -352,9 +387,9 @@ public class App extends JFrame {
 
 #pagebreak()
 
-== Modificare l'aspetto dell'interfaccia con #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/UIManager.html")[UIManager]
+== Modificare font e colori globalmente (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/UIManager.html")[UIManager])
 
-Per gestire l'aspetto dei componenti e il loro comportamento in Java Swing viene usata la classe #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/LookAndFeel.html")[LookAndFeel]. È possibile modificare *globalmente* l'aspetto del ```java LookAndFeel``` impostato tramite la classe ```java UIManager```. 
+L'aspetto dei componenti e il loro comportamento in #text(darkred)[Java Swing] viene gestito con #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/LookAndFeel.html")[```java javax.swing.LookAndFeel```]. È possibile modificare *globalmente* l'aspetto del ```java LookAndFeel``` tramite ```java javax.swing.UIManager``` (sostanzialmente un'```java HashMap```). 
 
 Ad esempio, per impostare il ```java Font``` di default di tutti i ```java JLabel``` a ```java "Cascadia Code"```
 
@@ -389,6 +424,8 @@ public class App {
   }
 }
 ```
+
+=== Chiavi di ```java UIManager```
 
 #note[
   Un elenco delle #link("https://github.com/CuriousCI/minesweeper/blob/main/keys.txt")[possibili chiavi]
@@ -603,13 +640,13 @@ public class App extends JFrame {
 
 === #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/CardLayout.html")[CardLayout]
 
-==== Menu, impostazioni e partita _(cambiare schermata con Sigleton e Observer)_
+==== Menu, impostazioni e partita _(cambiare schermata)_
 
 Il ```java CardLayout``` è molto utile quando abbiamo più schermate (menu principale, impostazioni, partita etc...)
 
 #figure(
   image("assets/wireframe-3.png"),
-  caption: [caso d'uso di un ```java CardLayout```],
+  caption: [caso d'uso di un ```java CardLayout``` e frecce nel *wireframe* per le transizioni],
 ) <wireframe-3>
 
 #pagebreak()
@@ -738,19 +775,22 @@ public class App extends JFrame implements Observer {
 }
 ```
 
+// - usa il pattern *Observer* per notificare gli ```java Observer``` dei cambiamenti di schermata 
+
 - ```java Navigator``` è la classe che permette di cambiare schermata 
   - usa il pattern *Singleton* perché deve avere una sola istanza globale
-  - usa il pattern *Observer* per notificare gli ```java Observer``` dei cambiamenti di schermata 
+  - usa il pattern *Observer* per notificare i componenti quando cambia schermata 
   - per cambiare schermata, _da qualsiasi parte del codice_, basta usare ```java Navigator.getInstance().navigate(Screen.Schermata);```
 - ```java App``` 
-  - è un *Observer* per poter essere notificato tramite ```java update(Observable o, Object arg)``` dei cambiamenti di schermata
+  - è un *Observer* perché deve essere notificato quando cambia la schermata 
   - usa ```java Navigator.getInstance().addObserver(this);``` per osservare l'unica istanza di ```java Navigator```
+	- nel metodo ```java update(Observable o, Object arg)``` cambia la schermata usando ```java CardLayout::show```
 
 #pagebreak()
 
 === #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/GridLayout.html")[GridLayout]
 
-Non è un layout particolarmente complesso: permette di specificare il numero di righe, il numero di colonne, e lo spazio fra due componenti.  
+Non è un layout particolarmente complesso: permette di specificare il numero di righe, il numero di colonne, e lo spazio fra le righe e le colonne.  
 
 
 ```java
@@ -830,7 +870,6 @@ public class App extends JFrame {
 	public static void main(String[] args) { new App(); }
 }
 ```
-
 
 #pagebreak()
 
@@ -949,6 +988,8 @@ public class App extends JFrame {
 #align(image("assets/gridbaglayout-1.png"), center)
 \
 
+```java GridBagConstraints``` ha anche *altri attributi* estremamente utili come ```java ipdax```, ```java ipady``` e ```java insets``` che sono discussi nella #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/gridbag.html#gridbagConstraints")[guida ufficiale]
+
 #pagebreak()
 
 === In conclusione (sui Layout)
@@ -961,7 +1002,7 @@ Dato un *wireframe* ora dovreste avere gli strumenti per implementare il layout
 ) <wireframe-5>
 \
 
-I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/visual.html")[non sono gli unici] (e non sono state coperte tutte le loro funzionalità), ma, capiti i concetti chiave, si può iniziare ad usare la #link("https://docs.oracle.com/en/java/javase/21/docs/api/index.html")[documentazione].
+I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/visual.html")[non sono gli unici] (e non sono state coperte tutte le loro funzionalità), ma, capiti i concetti chiave, si può passare alla #link("https://docs.oracle.com/en/java/javase/21/docs/api/index.html")[documentazione].
 
 #pagebreak()
 
@@ -993,7 +1034,6 @@ L'idea è quella di *separare la logica del programma dall'interfaccia*. In ques
 Ad esempio, posso definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (terminal user interface) etc... Il *Model* è condiviso da più *View*.
 
 \
-
 Fin'ora abbiamo discusso solo della *View*, ora l'obiettivo è quello di *progettare una semplice applicazione* e mostrare un possibile modo di strutturare il codice. 
 
 #pagebreak()
@@ -1046,16 +1086,16 @@ Iniziamo definendo il modello
 	
 #pagebreak()
 
-=== Vincoli e regole del modello
+=== Vincoli del modello
 
 Il modello che abbiamo definito è *incompleto*: permette *alcuni stati che non vogliamo*
 - una partita potrebbe essere una vittoria anche con una mina scoperta 
 - una partita potrebbe essere una vittoria con tutte le caselle nascoste 
 
-Ci servono dei vincoli (qui scritti in _logica di primo ordine_) per definire le *regole*.
+Servono dei vincoli (qui scritti in _logica di primo ordine_) per *limitare* i possibili stati del modello. 
 
 #note[
-Di seguito sono riportati alcuni vincoli, #link("https://github.com/CuriousCI/minesweeper/blob/main/docs/main.pdf")[qui c'è il documento completo]
+Di seguito sono riportati alcuni vincoli, #link("https://github.com/CuriousCI/minesweeper/blob/main/docs/main.pdf")[qui trovate il documento completo]
 ]
 
 \
@@ -1095,12 +1135,12 @@ Una partita è una sconfitta se e solo se c'è una mina scoperta
 
 #pagebreak()
 
-=== Use Case e operazioni sul modello
+=== Operazioni sul modello
 
-Gli use case sono un insieme di *operazioni* che un *utente* deve poter effettuare sul *model*. Sono le funzionalità che dobbiamo garantire nella progettazione del *wireframe* e che verranno tradotte in parte in operazioni del *Controller*.
+//  Sono le funzionalità che dobbiamo garantire nella progettazione del *wireframe* e che verranno tradotte in parte in operazioni del *Controller*.
+Bisogna definire un insieme di *operazioni* che un *utente* deve poter effettuare sul modello. Queste operazioni verranno tradotte in metodi del controller.
 
 \
-
 #operation([start_game], type: [*Game*])
 #operation([terminate_game], args: [game: *Game*], type: [*Terminated*]) 
 #operation([reveal], args: [tile: *Hidden*], type: [*Revealed*])
@@ -1114,14 +1154,11 @@ Gli use case sono un insieme di *operazioni* che un *utente* deve poter effettua
 
 \
 
-=== Wireframe della vista
+=== Wireframe
 
-Ora dobbiamo solo progettare la vista dell'applicazione con un *wireframe*
+Ora dobbiamo solo progettare l'interfaccia dell'applicazione con un *wireframe* (garantendo le operazioni definite prima)
 
-#align(
-	center, 
-	image("assets/wireframe.png")
-)
+#align(center, image("assets/wireframe.png"))
 
 #pagebreak()
 
@@ -1131,14 +1168,12 @@ Nel #link("https://github.com/CuriousCI/minesweeper/tree/main/src/main/java/mine
 
 === Model
 
-Vediamo alcune particolarità degne di nota.
+Il ```java model``` ha solo due classi: ```java model.Tile``` e ```java model.Game```. Di seguito ```java model.Tile``` con alcune particolarità degne di nota.
 
 ```java
 package minesweeper.model;
 
-import static minesweeper.model.Tile.Visibility.Flagged;
-import static minesweeper.model.Tile.Visibility.Hidden;
-import static minesweeper.model.Tile.Visibility.Revealed;
+import static minesweeper.model.Tile.Visibility.*;
 
 import java.util.Observable;
 import java.util.Optional;
@@ -1146,16 +1181,9 @@ import java.util.Optional;
 @SuppressWarnings("deprecation")
 public class Tile extends Observable {
 
-	public enum Kind {
-		Mine,
-		Empty
-	}
+	public enum Kind { Mine, Empty }
 
-	public enum Visibility {
-		Hidden,
-		Flagged,
-		Revealed
-	}
+	public enum Visibility { Hidden, Flagged, Revealed }
 
 	public final int x, y;
 	public final Kind kind;
@@ -1174,14 +1202,8 @@ public class Tile extends Observable {
 
 	public void flag() {
 		visibility = switch (visibility) {
-			case Hidden -> {
-				setChanged();
-				yield Flagged;
-			}
-			case Flagged -> {
-				setChanged();
-				yield Hidden;
-			}
+			case Hidden -> { setChanged(); yield Flagged; }
+			case Flagged -> { setChanged(); yield Hidden; }
 			case Revealed -> Revealed;
 		};
 
@@ -1193,7 +1215,6 @@ public class Tile extends Observable {
 			return;
 
 		visibility = Revealed;
-
 		setChanged();
 		notifyObservers(Revealed);
 	}
@@ -1201,33 +1222,50 @@ public class Tile extends Observable {
 }
 ```
 
+#pagebreak()
+
 ==== Encapsulation con ```java public final```
 
-La strategia di ridurre la visibilità di un attributo a ```java private``` e di definire *getter* e *setter* non è l'unico modo di fare encapsulation.
+// La strategia di ridurre la visibilità di un attributo a ```java private``` e di definire *getter* e *setter* non è l'unico modo di fare encapsulation.
 
-Un'altra strategia è quella di segnare un attributo come ```java public final```, e di rendere il *costruttore visibile solo all'interno del package* (visibilità di default)
+// rendere il costruttore visibile solo all'interno del package* (visibilità di default)
 
-In questo modo, le *Tile* possono essere istanziate con valori per ```java x```, ```java y``` e ```java kind``` all'interno del package (quindi si spera in modo corretto), e questi valori possono essere letti (ma non modificati) all'esterno. 
+// In questo modo, le *Tile* possono essere istanziate con valori per ```java x```, ```java y``` e ```java kind``` all'interno del package (con valori ragionevoli), e questi valori possono essere letti (ma non modificati) all'esterno. 
+
+Una modo alternativo per ottenere *encapsulation* è quello di segnare un *attributo* come ```java public final```, e di lasciare al *costruttore* la *visibilità di default*. In questo modo:
+- ```java model.Tile``` può essere istanziata solo con valori validi all'interno del package 
+- questi valori possono essere letti ma non modificati
 
 ==== Tipizzazione con ```java enum```
 
-Ho deciso di codificare i tipi di caselle e i possibili stati con degli ```java enum```: usare l'ereditarietà in questo caso sarebbe stato inutilmente complesso e verboso. 
+// Ho deciso di codificare i tipi di caselle e i possibili stati con degli ```java enum```: usare l'ereditarietà in questo caso sarebbe stato inutilmente complesso e verboso. 
 
-Gli ```java enum``` sono interni alla classe per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile (e rende il codice più semplice da navigare non dovendo creare altri due file).
+// Gli ```java enum``` sono interni alla classe per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile (e rende il codice più semplice da navigare non dovendo creare altri due file).
 
-==== Tipi ```java null``` con ```java Optional<T>```
 
-Nel modello che abbiamo definito solo le caselle *Empty* hanno il *numero di mine adiacenti*. Per poterlo fare in Java possiamo aggiungere un attributo ```java Integer adjacentMines``` a tutte le caselle, e impostarlo a ```java null``` per le caselle *non Empty*.
+Le tipologie di ```java Tile``` (```java Mine```, ```java Empty```) e le visibilità (```java Hidden```, ```java Flagged``` e ```java Revealed```)  sono definite con ```java enum```: usare l'*ereditarietà* in questo caso sarebbe stato inutilmente *verboso*. 
 
-Il problema di questo approccio è che chi usa la libreria *deve sapere* in qualche modo che quell'attributo potrebbe essere ```java null```. 
+I tipi ```java enum Kind``` e ```java enum Visibility``` sono definiti *internamente* alla ```java class Tile``` per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile. Inoltre non serve creare altri due file per questi ```java enum```, facilitando la navigazione del codice.
+// (e rende il codice più semplice da navigare non dovendo creare altri due file).
 
-Per risolvere il problema, basta rendere l'attributo ```java Optional<Integer>```, in questo modo stiamo *esplicitamente* dichiarando nel codice che quell'attributo potrebbe non avere un valore impostato (```java Optional.empty()```), e chi usa l'attributo deve gestire il caso in cui il valore non c'è.
+// ==== Tipi ```java null``` con ```java Optional<T>```
+==== Il potere di ```java Optional<T>```
 
-==== ```java switch``` sotto steroidi (```java switch``` #text(darkred)[expression])
+In alcuni casi *ha senso* ed *è utile* avere attributi che possono essere ```java null```. Il problema di usare ```java null``` è che chi usa la libreria *deve sapere* in qualche modo (tramite la documentazione) che quell'attributo potrebbe essere ```java null```. 
 
-In Java 14 sono state uficializzate le ```java switch``` expression che possono restituire un valore (vedere metodo ```java flag()```). 
+Per risolvere il problema, basta rendere l'attributo ```java Optional<T>```, in questo modo stiamo *esplicitamente dichiarando nel codice* che quell'attributo potrebbe non avere un valore impostato (```java Optional.empty()```), e chi usa l'attributo deve gestire il caso in cui il valore non c'è.
 
-Hanno anche altre funzionalità (permettono di determinare il tipo di un oggetto e castarlo senza usare ```java instanceof```, vedere ```java update(Observable o, Object arg)``` in ```java model.Game```)
+// Ad esempio, nell'UML che abbiamo progettato, solo le caselle ```java Empty``` hanno l'attributo ```java adjacentMines```. 
+
+// Per poterlo fare in Java possiamo aggiungere un attributo ```java Integer adjacentMines``` a tutte le caselle, e impostarlo a ```java null``` per le caselle *non Empty*.
+
+
+
+==== ```java switch``` con steroidi (```java switch``` expression)
+
+In Java 14 sono state uficializzate le ```java switch``` expression che possono restituire un valore e non necessitano l'utilizzo di ```java break;``` (vedere il metodo ```java flag()```). 
+
+// Hanno anche altre funzionalità (permettono di determinare il tipo di un oggetto e castarlo senza usare ```java instanceof```, vedere ```java update(Observable o, Object arg)``` in ```java model.Game```)
 
 ==== Observer Pattern
 
@@ -1296,56 +1334,67 @@ Nella classe ```java model.Game``` ci sono alcuni esempi di ```java Stream``` ol
 
 #pagebreak()
 
+==== Il metodo ```java update(Observable o, Object arg)```
+
 ```java
+@Override
+public void update(Observable o, Object arg) {
+	switch (o) {
+		case Tile tile -> {
+			switch (arg) {
+				case Tile.Visibility visibility -> {
+					switch (visibility) {
+						case Flagged -> flags++;
+						case Hidden -> flags--;
+						case Revealed -> {
+							if (tile.kind == Mine) {
+								setChanged();
+								notifyObservers(Result.Loss);
+								deleteObservers();
+								return;
+							}
 
-	// ...
+							if (tile.adjacentMines().isEmpty())
+								adjacent(tile.x, tile.y).forEach(Tile::reveal);
 
-	@Override
-	public void update(Observable o, Object arg) {
-		switch (o) {
-			case Tile tile -> {
-				switch (arg) {
-					case Tile.Visibility visibility -> {
-						switch (visibility) {
-							case Flagged -> flags++;
-							case Hidden -> flags--;
-							case Revealed -> {
-								if (tile.kind == Mine) {
-									setChanged();
-									notifyObservers(Result.Loss);
-									deleteObservers();
-									return;
-								}
+							boolean allEmptyRevealed = Stream.of(tiles)
+									.allMatch(t -> t.visibility() == Revealed || t.kind == Mine);
 
-								if (tile.adjacentMines().isEmpty())
-									adjacent(tile.x, tile.y).forEach(Tile::reveal);
+							boolean allMinesFlagged = Stream.of(tiles)
+									.allMatch(t -> (t.kind == Mine && t.visibility() == Flagged)
+											|| (t.kind == Empty && t.visibility() != Flagged));
 
-								boolean allEmptyRevealed = Stream.of(tiles)
-										.allMatch(t -> t.visibility() == Revealed || t.kind == Mine);
-
-								boolean allMinesFlagged = Stream.of(tiles)
-										.allMatch(t -> (t.kind == Mine && t.visibility() == Flagged)
-												|| (t.kind == Empty && t.visibility() != Flagged));
-
-								if (allEmptyRevealed || allMinesFlagged) {
-									setChanged();
-									notifyObservers(Result.Victory);
-									deleteObservers();
-									return;
-								}
+							if (allEmptyRevealed || allMinesFlagged) {
+								setChanged();
+								notifyObservers(Result.Victory);
+								deleteObservers();
 							}
 						}
 					}
-					default -> {}
+				}
+				default -> {
 				}
 			}
-			default -> {}
+		}
+		default -> {
 		}
 	}
-
 }
 ```
 
+// Il metodo ```java update(Observable o, Object arg)``` in ```java model.Game``` viene invocato quando cambia lo stato di una delle caselle della partita.
+
+Per assicurarci che ```java Observable o``` sia effettivamente un'istanza di ```java Tile``` e per castare l'istanza a ```java Tile``` usiamo la sintassi ```java case Tile tile -> { }``` di Java 21.
+
+A questo punto, sappiano che il metodo è stato invocato da una ```java Tile```, e possiamo usare uno ```java switch``` per determinare il valore effettivo di ```java Object arg```. Preferisco questa strategia perché in questo modo posso distinguere diversi tipi di messaggi, e comportarmi adeguatamente in base al tipo di messaggio, ad esempio:
+
+```java mode.Game``` può inviare due tipi di messaggi:
+- ```java model.Game.Result``` (con le varianti ```java Loss, Victory, Terminated```), caso in cui devo cambiare schermata nella view
+- ```java model.Game.Messagge``` (con la variante ```java Timer```) caso in cui devo solo aggiornare il ```java JLabel``` con il tempo nella view
+
+Questo approccio in cui "event driven" ha una serie di vantaggi:
+- se aggiungo un ```java Observer``` alle ```java Tile``` non rompo il comportamento attuale
+- se aggiungo una PowerUp che agisce sulle ```java Tile``` preservo il comportamento attuale 
 
 #pagebreak()
 
