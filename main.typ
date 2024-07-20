@@ -126,7 +126,7 @@ frame.setVisible(true);
 
 #text(darkred)[Java Swing] ha alcuni *default particolari*:
 - ```java new JFrame(...)``` istanzia una finestra *invisibile*, per questo si usa ```java setVisible(true)```
-- la finestra, alla chiusura, viene *solo nascosta*, per questo si usa ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)```
+- la finestra, alla chiusura, viene *solo nascosta*, per questo si usa ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` per fare in modo che l'intera applicazione venga terminata
 - ```java setLocationRelativeTo(null)``` posiziona la finestra al centro dello schermo
 
 Oltre a ```java setSize(int width, int height)```, una finestra si può dimensionare anche con il metodo ```java pack()``` che imposta le *dimensioni minime* per disegnare il contenuto della finestra. 
@@ -601,6 +601,98 @@ public class App extends JFrame {
 
 #pagebreak()
 
+==== Implementazione pt.2 
+// import javax.imageio.ImageIO;
+// import javax.swing.BorderFactory;
+// import javax.swing.JButton;
+// import javax.swing.JFrame;
+// import javax.swing.JLabel;
+// import javax.swing.JPanel;
+// import javax.swing.UIManager;
+
+// import java.awt.BorderLayout;
+// import java.awt.Color;
+// import java.awt.Font;
+// import java.awt.Graphics;
+// import java.io.File;
+// import java.io.IOException;
+		// UIManager.put("Label.font", new Font("Cascadia Code", Font.PLAIN, 17));
+		// UIManager.put("Label.foreground", Color.decode("#2f9e44"));
+		// UIManager.put("Label.background", Color.WHITE);
+		// UIManager.put("Button.font", new Font("Cascadia Code", Font.PLAIN, 17));
+		// UIManager.put("Button.foreground", Color.decode("#2f9e44"));
+		// UIManager.put("Button.background", Color.WHITE);
+		// UIManager.put("Button.border", BorderFactory.createCompoundBorder(
+		// 		BorderFactory.createLineBorder(Color.decode("#2f9e44")),
+		// 		BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+		// UIManager.put("Button.highlight", Color.decode("#b2f2bb"));
+		// UIManager.put("Button.select", Color.decode("#b2f2bb"));
+		// UIManager.put("Button.focus", Color.WHITE);
+		// UIManager.put("Panel.background", Color.WHITE);
+
+```java
+public class App extends JFrame {
+	static { /* Usate il blocco alla pagina 12 */ }
+
+	Border simpleBorder(int horizontal, int vertical) {
+		return BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.decode("#2f9e44")),
+				BorderFactory.createEmptyBorder(horizontal, vertical, horizontal, vertical));
+	}
+
+	App() {
+		super("JGioco");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(600, 400);
+		try { setIconImage(ImageIO.read(new File("icon.png"))); } catch (IOException e) { }
+
+		add(new JPanel(new BorderLayout(10, 10)) {
+			{
+				setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+				add(new JPanel() {
+					{
+						setBackground(new Color(255, 255, 255, 0)); // Il quarto valore indica l'opacità 
+
+						setBorder(simpleBorder(10, 10));
+						Stream.of(new String[] { "Pincopallino", "partite: 10", "vittorie: 2" })
+								.map(label -> new JLabel(label) {
+									{
+										setOpaque(true);
+										setBorder(simpleBorder(5, 10));
+									}
+								}).forEach(this::add);
+					}
+				}, BorderLayout.NORTH);
+
+				add(new JPanel() {
+					{
+						setBackground(new Color(255, 255, 255, 0)); // Il quarto valore indica l'opacità 
+						setBorder(simpleBorder(10, 10));
+						add(new JButton("Gioca"));
+					}
+				}, BorderLayout.CENTER);
+			}
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				int density = 5;
+				g.setColor(Color.decode("#b2f2bb"));
+				for (int x = 0; x <= getWidth() + getHeight(); x += density)
+					g.drawLine(x, 0, 0, x);
+			}
+		});
+
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
+
+	public static void main(String[] args) { new App(); }
+}
+```
+
+#pagebreak()
+
 ==== Funzionamento del ```java BorderLayout```
 
 Il ```java BorderLayout``` permette di specificare come posizionare gli elementi:
@@ -613,6 +705,8 @@ Il costruttore ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" 
 #align(image("assets/borderlayout-3.png"), center)
 
 ```java
+class DecoratedPanel { ... }
+
 public class App extends JFrame {
 	App() {
     //...
@@ -622,9 +716,7 @@ public class App extends JFrame {
 				add(new DecoratedPanel("Nord"), BorderLayout.NORTH);
 				add(new DecoratedPanel("Sud"), BorderLayout.SOUTH);
 				add(new DecoratedPanel("West") {
-					{
-						setPreferredSize(new Dimension(120, 0)); // Larghezza custom
-					}
+					{ setPreferredSize(new Dimension(120, 0)); } // Larghezza custom
 				}, BorderLayout.WEST);
 				add(new DecoratedPanel("East"), BorderLayout.EAST);
 				add(new DecoratedPanel("Center"), BorderLayout.CENTER);
@@ -1417,3 +1509,11 @@ Questo approccio in cui "event driven" ha una serie di vantaggi:
 === Generare la documentazione in automatico
 
 === Generare l'eseguibile in automatico
+
+#pagebreak()
+
+= #text(darkred)[Tip]
+
+== Formattazione automatica del codice
+
+== Shortcut per i commenti
