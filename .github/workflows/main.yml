@@ -1,0 +1,32 @@
+name: Build Typst Document
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Install Typst
+        uses: typst-community/setup-typst@v2.0.1
+      
+      - name: Compile Typst Documents
+        run: typst compile main.typ main.pdf
+      
+      - name: Upload PDF File
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF
+          path: main.pdf
+          
+      - name: Get Current Date
+        id: date
+        run: echo "DATE=$(date +%Y-%m-%d-%H:%M)" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref_type == 'tag'
+        with:
+          name: "${{ github.ref_name }} — ${{ env.DATE }}"
+          files: main.pdf
