@@ -10,7 +10,7 @@ jobs:
       - run: typst compile main.typ main.pdf
       - uses: actions/upload-artifact@v4
         with:
-          name: PDF
+          name: java-swing-mvc-git.pdf
           path: main.pdf
           
       - name: Get Current Date
@@ -22,4 +22,4 @@ jobs:
         if: github.ref_type == 'tag'
         with:
           name: "${{ github.ref_name }} — ${{ env.DATE }}"
-          files: main.pdf
+          files: java-swing-mvc-git.pdf
