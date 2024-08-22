@@ -11,14 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: typst-community/setup-typst@v3
-      - run: typst compile main.typ java-swing-mvc-git.pdf
+      - run: apt-get install fonts-cascadia-code
+      - run: typst compile main.typ java-swing-mvc.pdf
       
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.ref_type == 'tag'
         with:
           name: "${{ github.ref_name }} — ${{ env.DATE }}"
-          files: java-swing-mvc-git.pdf
+          files: java-swing-mvc.pdf
           
       - uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -26,7 +27,7 @@ jobs:
           automatic_release_tag: 'latest'
           prerelease: false
           files: |
-            java-swing-mvc-git.pdf 
+            java-swing-mvc.pdf 
             
       - uses: dev-drprasad/delete-older-releases@v0.3.3
         with:
@@ -35,13 +36,3 @@ jobs:
           delete_tag_pattern: latest 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: java-swing-mvc-git.pdf
-      #     path: main.pdf
-          
-      # - name: Get Current Date
-      #   id: date
-      #   run: echo "DATE=$(date +%Y-%m-%d-%H:%M)" >> $GITHUB_ENV
-

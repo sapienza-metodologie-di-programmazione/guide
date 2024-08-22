@@ -8,17 +8,7 @@
 #set page(margin: 1.5cm)
 #set figure(supplement: [Figura])
 
-
-// #show regex("[[:^alpha:]]\d+"): set text(rgb("#4caf50"))
-// #show regex("[()\[\]:,\.\{\}|]"): set text(rgb("#4caf50"))
-// #show regex("[a-zA-Zàèìù]+\("): set text(blue)
-#show regex("this|result|auth|adesso|old|new"): set text(blue)
-#show regex("True"): set text(rgb("#4caf50"))
-
-// #show regex("JFrame|JButton|JPanel|JLabel"): set text(blue)
-// #show link: it => underline[#text(navy)[#it#h(3pt)#text(size: 7pt)[(doc)]]]
 #show link: it => underline[#text(navy)[#it]]
-
 #show heading.where(level: 1): it => {
   text(size: 17pt)[#it.body]
   [ #v(10pt) ]
@@ -36,6 +26,7 @@
   it.body
   [ #v(10pt) ]
 }
+
 #let note(body) = [
   #block(
     fill: rgb(250, 250, 255),
@@ -60,7 +51,6 @@
   )
 ]
 
-// #set raw(theme: "halcyon.tmTheme")
 #show raw.where(block: true): view
 
 #align(center, text(17pt)[ *Un approccio pratico a #text(darkred)[Java Swing] e #text(darkred)[MVC]* ])
