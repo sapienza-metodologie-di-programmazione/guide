@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: typst-community/setup-typst@v3
-      - run: apt-get install fonts-cascadia-code
+      - run: sudo apt-get install fonts-cascadia-code
       - run: typst compile main.typ java-swing-mvc.pdf
       
       - name: Release
