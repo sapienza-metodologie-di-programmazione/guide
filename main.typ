@@ -1037,7 +1037,7 @@ public class App extends JFrame {
 						constraints.gridwidth = GridBagConstraints.REMAINDER;
 						constraints.gridheight = 1;
 
-						add(new JLabel("x: 1, y: 0, w: spaz. rim., h: 1 riga"), constraints);
+						add(new JLabel("x: 1, y: 2, w: spaz. rim., h: 1 riga"), constraints);
 					}
 
 					@Override
@@ -1115,6 +1115,14 @@ L'idea è quella di *separare la logica del programma dall'interfaccia*. In ques
 
 Ad esempio, posso definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (terminal user interface) etc... Il *Model* è condiviso da più *View*.
 
+== TODO: definizioni 
+
+=== Model
+
+=== View
+
+=== Controller
+
 \
 Fin'ora abbiamo discusso solo della *View*, ora l'obiettivo è quello di *progettare una semplice applicazione* e mostrare un possibile modo di strutturare il codice. 
 
@@ -1136,7 +1144,7 @@ Iniziamo definendo il modello
 #note[
 	#text(darkred)[*Attenzione!*] Questo *NON è il tipo di UML che avete visto a lezione*.
 	
-	È definito tramite la #link("https://en.wikipedia.org/wiki/First-order_logic")[logica di primo ordine] ed è *agnostico*. Si vede in corsi come *Basi di dati 2* e *Ingegneria del software*. Lo uso per bervità e semplicità.
+	È definito tramite la #link("https://en.wikipedia.org/wiki/First-order_logic")[logica di primo ordine]. Si vede in corsi come *Basi di dati 2* e *Ingegneria del software*. Lo uso per brevità e semplicità.
 ]
 
 ==== In breve
@@ -1314,7 +1322,7 @@ public class Tile extends Observable {
 
 // In questo modo, le *Tile* possono essere istanziate con valori per ```java x```, ```java y``` e ```java kind``` all'interno del package (con valori ragionevoli), e questi valori possono essere letti (ma non modificati) all'esterno. 
 
-Una modo alternativo per ottenere *encapsulation* è quello di segnare un *attributo* come ```java public final```, e di lasciare al *costruttore* la *visibilità di default*. In questo modo:
+Un modo alternativo per ottenere *encapsulation* è quello di segnare un *attributo* come ```java public final```, e di lasciare al *costruttore* la *visibilità di default*. In questo modo:
 - ```java model.Tile``` può essere istanziata solo con valori validi all'interno del package 
 - questi valori possono essere letti ma non modificati
 
@@ -1488,17 +1496,19 @@ Questo approccio in cui "event driven" ha una serie di vantaggi:
 
 #pagebreak()
 
-= #text(darkred)[git]
+// = #text(darkred)[git]
 
-== Lavorare in gruppo
+// == Lavorare in gruppo
 
-=== Merge conflict
+// === Merge conflict
 
-== GitHub Actions
+= #text(darkred)[GitHub Actions]
 
-=== Generare la documentazione in automatico
+Trovate una guida su come usare git qui...
 
-=== Generare l'eseguibile in automatico
+== Generare la documentazione in automatico
+
+== Generare l'eseguibile in automatico
 
 #pagebreak()
 
