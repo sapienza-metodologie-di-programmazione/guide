@@ -13,13 +13,16 @@ jobs:
       - uses: typst-community/setup-typst@v3
       - run: sudo apt-get install fonts-cascadia-code
       - run: typst compile main.typ java-swing-mvc.pdf
+      - run: typst compile git.typ git.pdf
       
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.ref_type == 'tag'
         with:
           name: "${{ github.ref_name }} — ${{ env.DATE }}"
-          files: java-swing-mvc.pdf
+          files: |
+            java-swing-mvc.pdf
+            git.pdf
           
       - uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -27,7 +30,8 @@ jobs:
           automatic_release_tag: 'latest'
           prerelease: false
           files: |
-            java-swing-mvc.pdf 
+            java-swing-mvc.pdf
+            git.pdf
             
       - uses: dev-drprasad/delete-older-releases@v0.3.3
         with:
