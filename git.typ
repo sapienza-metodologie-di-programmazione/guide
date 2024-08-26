@@ -2,6 +2,7 @@
 #let darkgreen = rgb(4, 128, 31)
 #let darkblue = rgb(3, 50, 138)
 #let darkpurple = rgb(102, 2, 122)
+#let darkcyan = rgb(7, 116, 138)
 #let background = rgb(251, 251, 251)
 
 #set text(10pt, font: "Cascadia Code")
@@ -92,15 +93,16 @@ Quante volte ti è capitato di cambiare il codice di una classe Java con l'inten
 
 #figure(
   image("assets/distributed.png", width: 40%),
-  caption: [Git è un #link("https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control")[VCS distribuito], ogni client ha l'intero backup di tutti i dati],
+  caption: [\
+  Git è un #link("https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control")[VCS distribuito], ogni client ha l'intero backup di tutti i dati],
 )  <distributed>
 \
 
-Git infatti è un *VCS* (Version Control System), ovvero, in parole povere, un software in grado di tenere traccia delle modifiche eseguite su un insieme di file. Lavorando ad un progetto è quindi possibile mantentere nel tempo la storia delle sue versioni passate e, in caso di necessità, recuperarle.
+Git infatti è un #text(darkcyan)[VCS] (Version Control System), ovvero, in parole povere, un software in grado di tenere traccia delle modifiche eseguite su un insieme di file. Lavorando ad un progetto è quindi possibile mantentere nel tempo la storia delle sue versioni passate e, in caso di necessità, recuperarle.
 
 \
 
-Inoltre Git facilita la *collaborazione* di più sviluppatori allo stesso progetto, offrendo meccanismi per sincronizzare le modifiche su file conservati in un server remoto condiviso. Poiché Git è un sistema distribuito (@distributed), ogni collaboratore avrà una copia locale di tutte le versioni del progetto, riducendo il rischio di perdite di dati.
+Inoltre Git facilita la #text(darkcyan)[collaborazione] di più sviluppatori allo stesso progetto, offrendo meccanismi per sincronizzare le modifiche su file conservati in un server remoto condiviso. Poiché Git è un #text(darkcyan)[sistema distribuito] (@distributed), ogni collaboratore avrà una copia locale di tutte le versioni del progetto, riducendo il rischio di perdite di dati.
 
 \
 
@@ -113,7 +115,7 @@ Inoltre Git facilita la *collaborazione* di più sviluppatori allo stesso proget
 
 )  )
 
-*GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare.
+#text(darkcyan)[GitHub] è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare.
  
  Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale.
 
@@ -122,23 +124,27 @@ Inoltre Git facilita la *collaborazione* di più sviluppatori allo stesso proget
 
 = Operazioni sulla struttura dati di Git
 
-Per poter capire veramente Git (e usarlo più facilmente) è necessario conoscere il *modello a grafo* (non ti spaventare, è abbastanza intuitivo) da esso utilizzato per mantenere i dati.
+Per poter capire veramente Git (e usarlo più facilmente) è necessario conoscere il #text(darkcyan)[modello a grafo] (non ti spaventare, è abbastanza intuitivo) da esso utilizzato per mantenere i dati.
 
 \
 
 == Oggetti Git e DAG
 
-Git memorizza la storia delle versioni di un insieme di file e cartelle come una sequenza di "snapshots" (o  "istantanee") della cartella principale (alla radice del progetto) al momento corrente. I file vengono denominati *_blob_* mentre le cartelle sono chiamate *_tree_*. Esse mappano i nomi di file e cartelle da loro contenute ai corrispondenti blobs e trees (@datamodel).
+Git memorizza la storia delle versioni di un insieme di file e cartelle come una sequenza di "#text(darkcyan)[snapshots]" (o  "istantanee") della cartella principale (alla radice del progetto) al momento corrente. I file vengono denominati #text(darkcyan)[_blob_] mentre le cartelle sono chiamate #text(darkcyan)[_tree_]. Esse mappano i nomi di file e cartelle da loro contenute ai corrispondenti blobs e trees (@datamodel).
 
 #figure(
   image("assets/data-model-1.png", width: 50%),
-  caption: [Illustrazione concettuale del #link("https://git-scm.com/book/en/v2/Git-Internals-Git-Objects")[modello dei dati] di Git: una cartella contiene 2 file ("README" e "Rakefile") e una sotto-cartella "lib", che a sua volta contiene un file "simplegit.rb"],
+  caption: [Illustrazione concettuale del #link("https://git-scm.com/book/en/v2/Git-Internals-Git-Objects")[modello dei dati] di Git: la cartella top-level contiene due file ("README" e "Rakefile") e una sotto-cartella "lib", che a sua volta contiene un file "simplegit.rb"],
 )  <datamodel>
 
 \
 
 
-I vari snapshots del progetto sono rappresentati dai *_commits_* e vengono organizzati in un *_DAG_* (grafo aciclico diretto, @datamodel2) che semplicemente associa con una freccia ogni commit ai suoi "genitori", cioè i commit immediatamente precedenti (il commit può avere più di un genitore perché ad esempio, come sarà spiegato più avanti, è possibile fondere due rami paralleli di sviluppo tramite un'operazione di _merge_). Commits, blobs e trees formano gli oggetti (*_objects_*) principali utilizzati da Git nel suo modello dati.
+I vari snapshots del progetto sono rappresentati dai #text(darkcyan)[_commits_] e vengono organizzati in un #text(darkcyan)[_DAG_] (grafo diretto e aciclico, @datamodel2) che semplicemente associa con una freccia ogni commit ai suoi "genitori", cioè i commits immediatamente precedenti (il commit può avere più di un genitore perché, ad esempio, come sarà spiegato più avanti, è possibile fondere due rami paralleli di sviluppo tramite un'operazione di _merge_). 
+
+\
+
+Commits, blobs e trees formano gli oggetti (#text(darkcyan)[_objects_]) principali utilizzati da Git nel suo modello dati.
 
 \
 
