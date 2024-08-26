@@ -51,6 +51,21 @@
   )
 ]
 
+
+#let imageonleft(lefttext, rightimage, bottomtext: none, marginleft: 0em, margintop: 0em) = {
+  set par(justify: true)
+  grid(columns: 2, column-gutter: 0em, lefttext, rightimage)
+  set par(justify: false)
+  block(inset: (left: marginleft, top: -margintop))
+}
+
+#let imageonright(rightext, leftimage,bottomtext: none, marginleft: 0em, margintop: 0.5em)  = {
+  set par(justify: true)
+  grid(columns: 2, column-gutter: 0em, leftimage, rightext)
+  set par(justify: false)
+  block(inset: (left: marginleft, top: -margintop), bottomtext) }
+
+
 #show raw.where(block: true): view
 
 #align(center, text(17pt)[ *Un approccio pratico a #text(darkred)[Git]* ])
@@ -70,13 +85,13 @@ Questa guida si propone di fornire i concetti base per capire il funzionamento d
 = Cos'è #text(darkred)[Git]?
 
 
-Quante volte ti è capitato di cambiare il codice di una classe Java con l'intento di migliorarlo ma poi causando problemi con le funzionalità pre-esistenti? Con Git avresti potuto facilmente far finta di nulla e tornare velocemente alla versione precedente del progetto, senza dover cercare e correggere a mano tutte le linee di codice modificate.
+Quante volte ti è capitato di cambiare il codice di una classe Java con l'intento di migliorarlo per poi finire solo col creare problemi alle funzionalità pre-esistenti? Con Git avresti potuto facilmente far finta di nulla e tornare velocemente alla versione precedente del progetto, senza dover cercare e correggere a mano tutte le linee di codice modificate.
 
 \
 
 
 #figure(
-  image("assets/distributed.png", width: 31%),
+  image("assets/distributed.png", width: 35%),
   caption: [Git è un #link("https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control")[VCS distribuito], ogni client ha l'intero backup di tutti i dati],
 )  <distributed>
 \
@@ -90,6 +105,9 @@ Inoltre Git facilita la *collaborazione* di più sviluppatori allo stesso proget
 
 Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
 
+\
+
+#imageonleft(text([*GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare. Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale. ]), figure(image("assets/git-github.png", width: 50%)))
 
 
 *GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare. Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale. 
