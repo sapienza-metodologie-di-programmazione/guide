@@ -54,7 +54,7 @@
 
 #let imageonleft(lefttext, rightimage, bottomtext: none, marginleft: 0em, margintop: 0em) = {
   set par(justify: true)
-  grid(columns: 2, column-gutter: 0em, lefttext, rightimage)
+  grid(columns: 2, column-gutter: 2em, lefttext, rightimage)
   set par(justify: false)
   block(inset: (left: marginleft, top: -margintop))
 }
@@ -103,14 +103,16 @@ Inoltre Git facilita la *collaborazione* di più sviluppatori allo stesso proget
 
 == Git vs #text(darkblue)[GitHub]
 
-Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
+
+#imageonleft(text([Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
 
 \
 
-#imageonleft(text([*GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare. Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale. ]), figure(image("assets/git-github.png", width: 50%)))
-
-
-*GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare. Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale. 
+ *GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare. Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale. ]), figure(
+  image("assets/github.png", width: 90%),
+  caption: [Schermata con un repository GitHub],
+)  )
+ 
 
 = Operazioni sulla struttura dati di Git
 
