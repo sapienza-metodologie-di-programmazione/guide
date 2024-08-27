@@ -15,6 +15,7 @@ jobs:
       - run: |
           curl -LO https://github.com/microsoft/cascadia-code/releases/download/v2404.23/CascadiaCode-2404.23.zip
           unzip CascadiaCode-2404.23.zip -d ~/cascadia-code
+          mkdir ~/.local/share/fonts/
           cp ~/cascadia-code/ttf/*.ttf ~/.local/share/fonts/
           fc-cache -f -v
       - run: typst compile java-swing-mvc.typ java-swing-mvc.pdf
