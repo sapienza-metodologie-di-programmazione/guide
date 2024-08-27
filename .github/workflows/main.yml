@@ -11,8 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: typst-community/setup-typst@v3
-      - run: sudo apt-get install fonts-cascadia-code
-      - run: typst compile main.typ java-swing-mvc.pdf
+      # - run: sudo apt-get install fonts-cascadia-code
+      - run: |
+          curl -LO https://github.com/microsoft/cascadia-code/releases/download/v2404.23/CascadiaCode-2404.23.zip
+          unzip CascadiaCode-v*.zip -d ~/cascadia-code
+          cp ~/cascadia-code/ttf/*.ttf ~/.local/share/fonts/
+          fc-cache -f -v
+      - run: typst compile java-swing-mvc.typ java-swing-mvc.pdf
       - run: typst compile git.typ git.pdf
       
       - name: Release
