@@ -2,6 +2,7 @@
 #let darkgreen = rgb(4, 128, 31)
 #let darkblue = rgb(3, 50, 138)
 #let darkpurple = rgb(102, 2, 122)
+#let darkcyan = rgb(7, 116, 138)
 #let background = rgb(251, 251, 251)
 
 #set text(10pt, font: "Cascadia Code")
@@ -51,6 +52,21 @@
   )
 ]
 
+
+#let imageonleft(lefttext, rightimage, bottomtext: none, marginleft: 0em, margintop: 0em) = {
+  set par(justify: true)
+  grid(columns: 2, column-gutter: 2em, lefttext, rightimage)
+  set par(justify: false)
+  block(inset: (left: marginleft, top: -margintop))
+}
+
+#let imageonright(rightext, leftimage,bottomtext: none, marginleft: 0em, margintop: 0.5em)  = {
+  set par(justify: true)
+  grid(columns: 2, column-gutter: 0em, leftimage, rightext)
+  set par(justify: false)
+  block(inset: (left: marginleft, top: -margintop), bottomtext) }
+
+
 #show raw.where(block: true): view
 
 #align(center, text(17pt)[ *Un approccio pratico a #text(darkred)[Git]* ])
@@ -63,38 +79,98 @@ Questa guida si propone di fornire i concetti base per capire il funzionamento d
 
 #outline(title: [Sommario], indent: 1.5em)
 
-\
-//#pagebreak()
+
+#pagebreak()
 
 
 = Cos'è #text(darkred)[Git]?
 
 
-Quante volte ti è capitato di cambiare il codice di una classe Java con l'intento di migliorarlo ma poi causando problemi con le funzionalità pre-esistenti? Con Git avresti potuto facilmente far finta di nulla e tornare velocemente alla versione precedente del progetto, senza dover cercare e correggere a mano tutte le linee di codice modificate.
+Quante volte ti è capitato di cambiare il codice di una classe Java con l'intento di migliorarlo per poi finire solo col creare problemi alle funzionalità pre-esistenti? Con Git avresti potuto facilmente far finta di nulla e tornare velocemente alla versione precedente del progetto, senza dover cercare e correggere a mano tutte le linee di codice modificate.
 
 \
 
 
 #figure(
-  image("assets/distributed.png", width: 31%),
-  caption: [Git è un #link("https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control")[VCS distribuito], ogni client ha l'intero backup di tutti i dati],
+  image("assets/distributed.png", width: 40%),
+  caption: [\
+  Git è un #link("https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control")[VCS distribuito], ogni client ha l'intero backup di tutti i dati],
 )  <distributed>
 \
 
-Git infatti è un *VCS* (Version Control System), ovvero, in parole povere, un software in grado di tenere traccia delle modifiche eseguite su un insieme di file. Lavorando ad un progetto è quindi possibile mantentere nel tempo la storia delle sue versioni passate e, in caso di necessità, recuperarle.
+Git infatti è un #text(darkcyan)[VCS] (Version Control System), ovvero, in parole povere, un software in grado di tenere traccia delle modifiche eseguite su un insieme di file. Lavorando ad un progetto è quindi possibile mantentere nel tempo la storia delle sue versioni passate e, in caso di necessità, recuperarle.
 
-Inoltre Git facilita la *collaborazione* di più sviluppatori allo stesso progetto, offrendo meccanismi per sincronizzare le modifiche su file conservati in un server remoto condiviso. Poiché Git è un sistema distribuito (@distributed), ogni collaboratore avrà una copia locale di tutte le versioni del progetto, riducendo il rischio di perdite di dati.
+\
 
+Inoltre Git facilita la #text(darkcyan)[collaborazione] di più sviluppatori allo stesso progetto, offrendo meccanismi per sincronizzare le modifiche su file conservati in un server remoto condiviso. Poiché Git è un #text(darkcyan)[sistema distribuito] (@distributed), ogni collaboratore avrà una copia locale di tutte le versioni del progetto, riducendo il rischio di perdite di dati.
+
+\
 
 == Git vs #text(darkblue)[GitHub]
 
-Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
 
+#imageonleft(text([Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
+  ]), figure(
+  image("assets/git-github.png", width: 80%, fit:"stretch"),
 
+)  )
 
-*GitHub* è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare. Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale. 
+#text(darkcyan)[GitHub] è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare.
+ 
+ Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale.
+
+ \
+
 
 = Operazioni sulla struttura dati di Git
+
+Per poter capire veramente Git (e usarlo più facilmente) è necessario conoscere il #text(darkcyan)[modello a grafo] (non ti spaventare, è abbastanza intuitivo) da esso utilizzato per mantenere i dati.
+
+\
+
+== Oggetti Git e DAG
+
+Git memorizza la storia delle versioni di un insieme di file e cartelle come una sequenza di "#text(darkcyan)[snapshots]" (o  "istantanee") della cartella principale (alla radice del progetto) al momento corrente. I file vengono denominati #text(darkcyan)[_blob_] mentre le cartelle sono chiamate #text(darkcyan)[_tree_]. Esse mappano i nomi di file e cartelle da loro contenute ai corrispondenti blobs e trees (@datamodel).
+
+#figure(
+  image("assets/data-model-1.png", width: 50%),
+  caption: [Illustrazione concettuale del #link("https://git-scm.com/book/en/v2/Git-Internals-Git-Objects")[modello dei dati] di Git: la cartella top-level contiene due file ("README" e "Rakefile") e una sotto-cartella "lib", che a sua volta contiene un file "simplegit.rb"],
+)  <datamodel>
+
+\
+
+
+I vari snapshots del progetto sono rappresentati dai #text(darkcyan)[_commits_] e vengono organizzati in un #text(darkcyan)[_DAG_] (grafo diretto e aciclico, @datamodel2) che semplicemente associa con una freccia ogni commit ai suoi "genitori", cioè i commits immediatamente precedenti (il commit può avere più di un genitore perché, ad esempio, come sarà spiegato più avanti, è possibile fondere due rami paralleli di sviluppo tramite un'operazione di _merge_). 
+
+\
+
+Commits, blobs e trees formano gli oggetti (#text(darkcyan)[_objects_]) principali utilizzati da Git nel suo modello dati.
+
+\
+
+#figure(
+  image("assets/data-model-2.png", width: 70%),
+  caption: [\
+  Illustrazione del #link("https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/devops-git-internals-for-visual-studio-developers")[DAG] di Git: i commits sono i nodi (o vertici) del grafo, mentre gli archi legano i commit ai propri genitori. Un commit con più figli è legato a un'azione di _branch_, mentre un commit con più genitori corrisponde ad un'azione di _merge_],
+)  <datamodel2>
+
+\
+
+I commit sono #underline("immutabili"): non si possono modificare. Quando si cambia qualcosa nei file di un progetto si possono creare nuovi commit da aggiungere al DAG, senza interferire con quelli pre-esistenti. Oltre al riferimento ad una specifica versione del progetto (sotto forma di tree), un commit contiene meta-dati come il suo autore e un messaggio descrittivo. Se volessimo rappresentarlo con una classe Java, scriveremmo qualcosa tipo: 
+
+```java
+class Commit {
+  List<Commit> genitori;
+  String autore;
+  String messaggio;
+  Tree snapshot;
+  ...
+} 
+```
+\
+
+== Riferimenti
+
 
 = Comandi #text(darkred)[git]
 
