@@ -2,7 +2,7 @@
 
 ## Dove trovo i pdf delle guide?
 
-I pdf delle guide li trovi [qui](https://github.com/sapienza-metodologie-di-programmazione/guide/releases) (o cliccando su `Releases > latest` qui a destra)
+I pdf delle guide li trovi [qui](https://github.com/sapienza-metodologie-di-programmazione/guide/releases) (o cliccando su `Releases > latest` nella sezione a destra)
 
 ## Ci sono alcuni esempi di progetto?
 

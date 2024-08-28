@@ -1,4 +1,4 @@
-name: Build Typst Document
+name: Build & Release Typst Documents
 on: [push, workflow_dispatch]
 
 permissions:
@@ -9,27 +9,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v4
+
       - uses: typst-community/setup-typst@v3
-      # - run: sudo apt-get install fonts-cascadia-code
+
       - run: |
           curl -LO https://github.com/microsoft/cascadia-code/releases/download/v2404.23/CascadiaCode-2404.23.zip
           unzip CascadiaCode-2404.23.zip -d ~/cascadia-code
           sudo cp ~/cascadia-code/otf/static/*.otf /usr/local/share/fonts
           sudo fc-cache -f -v
-         #  mkdir ~/.local/share/fonts/
-         # ~/.local/share/fonts/
-      - run: typst compile java-swing-mvc.typ java-swing-mvc.pdf
-      - run: typst compile git.typ git.pdf
-      
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: github.ref_type == 'tag'
-        with:
-          name: "${{ github.ref_name }} — ${{ env.DATE }}"
-          files: |
-            java-swing-mvc.pdf
-            git.pdf
+          typst compile java-swing-mvc.typ java-swing-mvc.pdf
+          typst compile git.typ git.pdf
           
       - uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -47,3 +38,12 @@ jobs:
           delete_tag_pattern: latest 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      
+      # - uses: softprops/action-gh-release@v1
+      #   if: github.ref_type == 'tag'
+      #   with:
+      #     name: "${{ github.ref_name }} — ${{ env.DATE }}"
+      #     files: |
+      #       java-swing-mvc.pdf
+      #       git.pdf
