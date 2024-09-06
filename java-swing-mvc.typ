@@ -1258,55 +1258,57 @@ Nel #link("https://github.com/CuriousCI/minesweeper/tree/main/src/main/java/mine
 
 === Model
 
-Il ```java model``` ha solo due classi: ```java model.Tile``` e ```java model.Game```. Di seguito ```java model.Tile``` con alcune particolarità degne di nota.
+Di seguito una breve analisi dele classi del model.
+
+// Il ```java model``` ha solo due classi: ```java model.Tile``` e ```java model.Game```. Di seguito ```java model.Tile``` con alcune particolarità degne di nota.
 
 ```java
 package minesweeper.model;
 
 import static minesweeper.model.Tile.Visibility.*;
-
 import java.util.Observable;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")
 public class Tile extends Observable {
 
-	public enum Kind { Mine, Empty }
-
-	public enum Visibility { Hidden, Flagged, Revealed }
+	public enum Visibility {
+		Hidden, Flagged, Revealed
+	}
 
 	public final int x, y;
-	public final Kind kind;
-	private Visibility visibility = Visibility.Hidden;
+	public final boolean isMine;
+	private Visibility visibility = Hidden;
 	Optional<Integer> adjacentMines = Optional.empty();
 
-	Tile(int x, int y, Kind kind) {
+	Tile(int x, int y, boolean isMine) {
 		this.x = x;
 		this.y = y;
-		this.kind = kind;
+		this.isMine = isMine;
 	}
 
 	public Visibility visibility() { return visibility; }
 
 	public Optional<Integer> adjacentMines() { return adjacentMines; }
 
-	public void flag() {
-		visibility = switch (visibility) {
-			case Hidden -> { setChanged(); yield Flagged; }
-			case Flagged -> { setChanged(); yield Hidden; }
-			case Revealed -> Revealed;
-		};
-
-		notifyObservers(visibility);
-	}
-
 	public void reveal() {
 		if (visibility != Hidden)
 			return;
 
-		visibility = Revealed;
 		setChanged();
-		notifyObservers(Revealed);
+		notifyObservers(visibility = Revealed);
+	}
+
+	public void flag() {
+		setChanged();
+		notifyObservers(visibility = switch (visibility) {
+			case Hidden -> Flagged;
+			case Flagged -> Hidden;
+			case Revealed -> {
+				clearChanged();
+				yield Revealed;
+			}
+		});
 	}
 
 }
@@ -1333,17 +1335,18 @@ Un modo alternativo per ottenere *encapsulation* è quello di segnare un *attrib
 // Gli ```java enum``` sono interni alla classe per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile (e rende il codice più semplice da navigare non dovendo creare altri due file).
 
 
-Le tipologie di ```java Tile``` (```java Mine```, ```java Empty```) e le visibilità (```java Hidden```, ```java Flagged``` e ```java Revealed```)  sono definite con ```java enum```: usare l'*ereditarietà* in questo caso sarebbe stato inutilmente *verboso*. 
+I tipi di visibilità delle ```java Tile``` (```java Hidden```, ```java Flagged``` e ```java Revealed```)  sono definiti tramite ```java enum```.  Il tipo ```java Visibility``` è definito *internamente* alla classe ```java Tile``` per poter usare la notazione ```java Tile.Visibility``` che trovo più leggibile. Inoltre non serve creare un altro file per questo ```java enum```, facilitando la *navigabilità del codice*.
 
-I tipi ```java enum Kind``` e ```java enum Visibility``` sono definiti *internamente* alla ```java class Tile``` per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile. Inoltre non serve creare altri due file per questi ```java enum```, facilitando la navigazione del codice.
 // (e rende il codice più semplice da navigare non dovendo creare altri due file).
 
 // ==== Tipi ```java null``` con ```java Optional<T>```
-==== Il potere di ```java Optional<T>```
+==== Valori indefiniti: ```java null``` vs ```java Optional<T>```
 
-In alcuni casi *ha senso* ed *è utile* avere attributi che possono essere ```java null```. Il problema di usare ```java null``` è che chi usa la libreria *deve sapere* in qualche modo (tramite la documentazione) che quell'attributo potrebbe essere ```java null```. 
+In alcuni casi *ha senso ed è utile* avere attributi che opzionalmente sono *indefiniti* (```java adjacentMines``` non è definito se la ```java Tile``` è una mina).
 
-Per risolvere il problema, basta rendere l'attributo ```java Optional<T>```, in questo modo stiamo *esplicitamente dichiarando nel codice* che quell'attributo potrebbe non avere un valore impostato (```java Optional.empty()```), e chi usa l'attributo deve gestire il caso in cui il valore non c'è.
+Usare ```java null``` è scomodo: chi usa la libreria *deve scoprire*, tramite la documentazione, che quell'attributo potrebbe non essere definito. 
+
+Con ```java Optional<T>``` si *dichiara esplicitamente nel codice* che l'attributo potrebbe essere indefinito (```java Optional.empty()```), e chi usa l'attributo *deve gestire* il caso in cui il valore non c'è.
 
 // Ad esempio, nell'UML che abbiamo progettato, solo le caselle ```java Empty``` hanno l'attributo ```java adjacentMines```. 
 
@@ -1351,9 +1354,9 @@ Per risolvere il problema, basta rendere l'attributo ```java Optional<T>```, in 
 
 
 
-==== ```java switch``` con steroidi (```java switch``` expression)
+==== Le ```java switch``` expression (```java switch``` con steroidi)
 
-In Java 14 sono state uficializzate le ```java switch``` expression che possono restituire un valore e non necessitano l'utilizzo di ```java break;``` (vedere il metodo ```java flag()```). 
+In Java 14 sono state uficializzate le ```java switch``` expression che possono opzionalmente restituire un valore e non necessitano dell'utilizzo di ```java break;``` (vedere il metodo ```java flag()```). 
 
 // Hanno anche altre funzionalità (permettono di determinare il tipo di un oggetto e castarlo senza usare ```java instanceof```, vedere ```java update(Observable o, Object arg)``` in ```java model.Game```)
 
@@ -1361,7 +1364,7 @@ In Java 14 sono state uficializzate le ```java switch``` expression che possono 
 
 Per la casella ho deciso di usare l'*Observer* per due motivi:
 - notificare la *View* (per ridisegnare la casella)
-- notificare le altre classi del model (la classe *Game* deve sapere quando una *Tile* cambia stato, per decidere se terminare la partita o scoprire le caselle adiacenti)
+- notificare le altre classi del model (la classe *Game* deve sapere quando una *Tile* cambia stato, per decidere se terminare la partita o rivelare le caselle adiacenti)
 
 #pagebreak()
 
@@ -1424,67 +1427,63 @@ Nella classe ```java model.Game``` ci sono alcuni esempi di ```java Stream``` ol
 
 #pagebreak()
 
-==== Il metodo ```java update(Observable o, Object arg)```
+==== Il metodo ```java update(Observable o, Object arg)``` e ```java instanceof```
 
 ```java
 @Override
 public void update(Observable o, Object arg) {
-	switch (o) {
-		case Tile tile -> {
-			switch (arg) {
-				case Tile.Visibility visibility -> {
-					switch (visibility) {
-						case Flagged -> flags++;
-						case Hidden -> flags--;
-						case Revealed -> {
-							if (tile.kind == Mine) {
-								setChanged();
-								notifyObservers(Result.Loss);
-								deleteObservers();
-								return;
-							}
+	if (!(o instanceof Tile tile && arg instanceof Visibility visibility))
+		return;
 
-							if (tile.adjacentMines().isEmpty())
-								adjacent(tile.x, tile.y).forEach(Tile::reveal);
+	setChanged();
 
-							boolean allEmptyRevealed = Stream.of(tiles)
-									.allMatch(t -> t.visibility() == Revealed || t.kind == Mine);
+	switch (visibility) {
+		case Flagged -> flags++;
+		case Hidden -> flags--;
+		case Revealed -> {
+			if (tile.isMine) {
+				notifyObservers(Loss);
+				deleteObservers();
+				return;
+			}
 
-							boolean allMinesFlagged = Stream.of(tiles)
-									.allMatch(t -> (t.kind == Mine && t.visibility() == Flagged)
-											|| (t.kind == Empty && t.visibility() != Flagged));
+			if (tile.adjacentMines().isEmpty())
+				adjacent(tile).forEach(Tile::reveal);
 
-							if (allEmptyRevealed || allMinesFlagged) {
-								setChanged();
-								notifyObservers(Result.Victory);
-								deleteObservers();
-							}
-						}
-					}
-				}
-				default -> {
-				}
+			boolean allEmptyRevealed = Stream.of(tiles)
+					.allMatch(t -> t.isMine || t.visibility() == Revealed);
+
+			boolean allMinesFlagged = Stream.of(tiles)
+					.allMatch(t -> !(t.isMine ^ t.visibility() == Flagged));
+
+			if (allEmptyRevealed || allMinesFlagged) {
+				notifyObservers(Victory);
+				deleteObservers();
 			}
 		}
-		default -> {
-		}
 	}
+
+	notifyObservers(tile);
 }
 ```
 
 // Il metodo ```java update(Observable o, Object arg)``` in ```java model.Game``` viene invocato quando cambia lo stato di una delle caselle della partita.
 
-Per assicurarci che ```java Observable o``` sia effettivamente un'istanza di ```java Tile``` e per castare l'istanza a ```java Tile``` usiamo la sintassi ```java case Tile tile -> { }``` di Java 21.
+// Per assicurarci che ```java Observable o``` sia effettivamente un'istanza di ```java Tile``` e per castare l'istanza a ```java Tile``` usiamo la sintassi ```java case Tile tile -> { }``` di Java 21.
 
-A questo punto, sappiano che il metodo è stato invocato da una ```java Tile```, e possiamo usare uno ```java switch``` per determinare il valore effettivo di ```java Object arg```. Preferisco questa strategia perché in questo modo posso distinguere diversi tipi di messaggi, e comportarmi adeguatamente in base al tipo di messaggio, ad esempio:
+Le versioni più recenti di Java hanno introdotto la sintassi ```java o instanceof Tile tile``` per il casting:
+- se ```java o``` non è un'istanza di ```java Tile``` ritorna ```java false```
+- se ```java o``` è un'istanza di ```java Tile``` ritorna ```java true``` e calcola ```java Tile tile = (Tile)o```
 
-```java mode.Game``` può inviare due tipi di messaggi:
-- ```java model.Game.Result``` (con le varianti ```java Loss, Victory, Terminated```), caso in cui devo cambiare schermata nella view
-- ```java model.Game.Messagge``` (con la variante ```java Timer```) caso in cui devo solo aggiornare il ```java JLabel``` con il tempo nella view
+// A questo punto, sappiano che il metodo è stato invocato da una ```java Tile```, e possiamo usare uno ```java switch``` per determinare il valore effettivo di ```java Object arg```. Preferisco questa strategia perché in questo modo posso distinguere diversi tipi di messaggi, e comportarmi adeguatamente in base al tipo di messaggio, ad esempio:
 
-Questo approccio in cui "event driven" ha una serie di vantaggi:
-- se aggiungo un ```java Observer``` alle ```java Tile``` non rompo il comportamento attuale
-- se aggiungo una PowerUp che agisce sulle ```java Tile``` preservo il comportamento attuale 
+// ```java mode.Game``` può inviare due tipi di messaggi:
+// - ```java model.Game.Result``` (con le varianti ```java Loss, Victory, Terminated```), caso in cui devo cambiare schermata nella view
+// - ```java model.Game.Messagge``` (con la variante ```java Timer```) caso in cui devo solo aggiornare il ```java JLabel``` con il tempo nella view
+
+// Questo approccio in cui "event driven" ha una serie di vantaggi:
+// - se aggiungo un ```java Observer``` alle ```java Tile``` non rompo il comportamento attuale
+// - se aggiungo una PowerUp che agisce sulle ```java Tile``` preservo il comportamento attuale 
 
 #pagebreak()
 
@@ -1502,18 +1501,120 @@ Questo approccio in cui "event driven" ha una serie di vantaggi:
 
 // === Merge conflict
 
-= #text(darkred)[GitHub Actions]
+= Funzionalità di #text(darkred)[GitHub] per il progetto
 
-Trovate una guida su come usare git qui...
+GitHub ha tutta una serie di funzionalità molto utili a supporto dello sviluppo di software.
 
-== Generare la documentazione in automatico
+== GitHub Action
 
-== Generare l'eseguibile in automatico
+Le #link("https://github.com/features/actions")[GitHub Action] sono uno strumento che permette di *automatizzare* tutti i processi che legati alla produzione del software: testing, generazione di documentazione, generazione di eseguibili, deploy su server, pubblicazione di librerie etc... 
+
+#note[Prima di procedere con questa parte è fondamentale aver capito la differenza fra git e GitHub e come vengono usati. Trovate una breve guida #link("https://github.com/sapienza-metodologie-di-programmazione/guide/releases/tag/latest")[qui]]
+
+=== Anatomia di una GitHub Action
+
+
+== GitHub Pages
+
+#link("https://pages.github.com/")[GitHub Pages] è uno strumento che permette di pubblicare (gratuitamente) siti web tramite GitHub...
+
+== Releases
+
+Le #link("https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases")[Releases] sono uno strumento che permette di pubblicare file scaricabili: eseguibili di programmi, documenti, asset etc...
 
 #pagebreak()
 
-= #text(darkred)[Tip]
+== Generare e pubblicare la documentazione in automatico
+
+File `.github/workflows/javadoc.yml`
+
+// #align(image("assets/github-pages.png" ), center)
+
+```yaml
+name: Publish Docs
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - run: mvn install javadoc:javadoc
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: target/reports/apidocs
+  deploy:
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      runs-on: ubuntu-latest
+      needs: build
+      steps:
+        - uses: actions/deploy-pages@v4
+```
+
+#pagebreak()
+
+== Generare l'eseguibile in automatico
+
+File `.github/workflows/jar.yml`
+
+```yaml
+name: Build JAR
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - run: mvn clean compile assembly:single
+      - name:
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: 'latest'
+          prerelease: false
+          files: target/*.jar         
+      - uses: dev-drprasad/delete-older-releases@v0.3.3
+        with:
+          keep_latest: 1
+          delete_tags: true
+          delete_tag_pattern: latest 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+#pagebreak()
+
+= #text(darkred)[Tips & tricks]
+
+== Compressione di immagini e audio
 
 == Formattazione automatica del codice
 
-== Shortcut per i commenti
+// - formattazione automatica del codice
+
+È possibile
+
+#align(image("assets/format-on-save.png" ), center)
+
+// == Shortcut per i commenti
