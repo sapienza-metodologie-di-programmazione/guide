@@ -98,7 +98,7 @@ Quante volte ti è capitato di cambiare il codice di una classe Java con l'inten
 )  <distributed>
 \
 
-Git infatti è un #text(darkcyan)[VCS] (Version Control System), ovvero, in parole povere, un software in grado di tenere traccia delle modifiche eseguite su un insieme di file. Lavorando ad un progetto è quindi possibile mantentere nel tempo la storia delle sue versioni passate e, in caso di necessità, recuperarle.
+Git infatti è un #text(darkcyan)[VCS] (_Version Control System_), ovvero, in parole povere, un software in grado di tenere traccia delle modifiche eseguite su un insieme di file. Lavorando ad un progetto è quindi possibile mantentere nel tempo la storia delle sue versioni passate e, in caso di necessità, recuperarle.
 
 \
 
@@ -122,7 +122,7 @@ Inoltre Git facilita la #text(darkcyan)[collaborazione] di più sviluppatori all
  \
 
 
-= Operazioni sulla struttura dati di Git
+= Struttura dati di Git
 
 Per poter capire veramente Git (e usarlo più facilmente) è necessario conoscere il #text(darkcyan)[modello a grafo] (non ti spaventare, è abbastanza intuitivo) da esso utilizzato per mantenere i dati.
 
@@ -140,7 +140,7 @@ Git memorizza la storia delle versioni di un insieme di file e cartelle come una
 \
 
 
-I vari snapshots del progetto sono rappresentati dai #text(darkcyan)[_commits_] e vengono organizzati in un #text(darkcyan)[_DAG_] (grafo diretto e aciclico, @datamodel2) che semplicemente associa con una freccia ogni commit ai suoi "genitori", cioè i commits immediatamente precedenti (il commit può avere più di un genitore perché, ad esempio, come sarà spiegato più avanti, è possibile fondere due rami paralleli di sviluppo tramite un'operazione di _merge_). 
+I vari snapshots del progetto sono rappresentati da oggetti chiamati #text(darkcyan)[_commits_] e vengono organizzati in un #text(darkcyan)[_DAG_] (grafo diretto e aciclico, @datamodel2) che semplicemente associa con una freccia ogni commit ai suoi "genitori", cioè i commits immediatamente precedenti (il commit può avere più di un genitore perché, ad esempio, come sarà spiegato più avanti, è possibile fondere due rami paralleli di sviluppo tramite un'operazione di _merge_). 
 
 \
 
@@ -156,7 +156,7 @@ Commits, blobs e trees formano gli oggetti (#text(darkcyan)[_objects_]) principa
 
 \
 
-I commit sono #underline("immutabili"): non si possono modificare. Quando si cambia qualcosa nei file di un progetto si possono creare nuovi commit da aggiungere al DAG, senza interferire con quelli pre-esistenti. Oltre al riferimento ad una specifica versione del progetto (sotto forma di tree), un commit contiene meta-dati come il suo autore e un messaggio descrittivo. Se volessimo rappresentarlo con una classe Java, scriveremmo qualcosa tipo: 
+I commit sono #underline("immutabili"): non si possono modificare. Quando si cambia qualcosa nei file di un progetto si possono creare nuovi commit da aggiungere al DAG, ma senza interferire con quelli pre-esistenti. Oltre al riferimento ad una specifica versione del progetto (sotto forma di tree), un commit contiene meta-dati come il suo autore e un messaggio descrittivo. Se volessimo rappresentarlo con una classe Java, scriveremmo qualcosa tipo: 
 
 ```java
 class Commit {
@@ -168,9 +168,43 @@ class Commit {
 } 
 ```
 \
+Il #text(darkcyan)[_tag_] è un ulteriore tipo di oggetto Git. Esso contiene il riferimento ad un commit e viene utilizzato per annotarlo con un nome ed eventualmente un messaggio (ad esempio si usa spesso taggare i commit con nomi di versione come "_v1.0_", "_v2.0_", ecc.).
+
+\
 
 == Riferimenti
+Per utilizzare un oggetto Git non si richiede ogni volta l'intera copia del suo contenuto in memoria ma si sfrutta il #text(darkcyan)[riferimento] all'unica copia presente nello _store_ generale degli oggetti di Git (@objectstore), identificata dal suo *hash SHA-1* (una stringa esadecimale di dimensione fissa ottenuta dall'applicazione di una funzione, detta _funzione di hash_, sull'oggetto stesso).
 
+\
+
+Poiché per noi umani è difficile leggere e ricordare lunghe stringhe di caratteri esadecimali, Git fornisce la possibilità di usare stringhe con nomi semplici per riferirsi a particolari oggetti nello store (ad esempio di solito si usa il nome "#text(darkcyan)[_main_]" per riferirsi all'ultimo commit del ramo principale di sviluppo del proprio progetto).
+
+In pratica si crea una mappa da stringhe con contenuto comprensibile all'uomo a stringhe esadecimali che rappresentano gli identificativi degli oggetti (@referencestore).
+
+Questo tipo di riferimento è #underline("mutabile"): si può riassegnare un nome semplice ad un nuovo valore esadecimale.
+
+
+#figure(
+  image("assets/gitdatabase.png", width: 40%),
+  caption: [\
+  Rappresentazione dell'#link("https://github.blog/open-source/git/gits-database-internals-i-packed-object-store/#:~:text=pack%2D9f9258a8ffe4187f08a93bcba47784e07985d999.pack-,The%20.,ID%20and%20the%20object%20content.")[object store] di Git: una tabella di oggetti dove le chiavi sono i rispettivi hash],
+)  <objectstore>
+
+
+#figure(
+  image("assets/gitdatabase2.png", width: 80%),
+  caption: [\
+  Rappresentazione della tabella di riferimenti che mappa stringhe con nomi semplici a identificativi di oggetti Git],
+)  <referencestore>
+\
+
+Esiste un riferimento speciale per indicare il commit corrente (quello che diventerebbe il genitore di un eventuale nuovo commit), indicato come "#text(darkcyan)[_HEAD_]": esso punta alla posizione attuale all'interno del grafo dei commits.
+
+\
+
+
+
+== Operazioni
 
 = Comandi #text(darkred)[git]
 
