@@ -214,7 +214,7 @@ L'operazione più semplice è il #text(darkcyan)[commit]: si aggiunge uno snapsh
 
 #imageonleft(
 figure(
-  image("assets/Commit-1.drawio.svg", width: 75%),
+  image("assets/Commit-1.drawio.png", width: 75%),
   caption: [\
   Ipotetico grafo _G_ di partenza, contenente i commit C1, C2, C3],
 ), figure(
