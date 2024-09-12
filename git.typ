@@ -218,7 +218,7 @@ figure(
   caption: [\
   Ipotetico grafo _G_ di partenza, contenente i commit C1, C2, C3],
 ), figure(
-  image("assets/Commit-2.drawio.svg", width: 100%),
+  image("assets/Commit-2.drawio.png", width: 100%),
   caption: [\
   Grafo _G_ dopo l'aggiunta del commit C4 tramite l'operazione di _commit_]))
 
@@ -234,26 +234,26 @@ Per poter lavorare su un ramo in particolare bisogna assicurarsi che "_HEAD_" pu
 
 #imageonleft(
 figure(
-  image("assets/Branching-1.drawio.svg", width: 80%),
+  image("assets/Branching-1.drawio.png", width: 80%),
   caption: [\
   Ipotetico grafo _G1_ di partenza, contenente i commit C1, C2, C3 sul ramo _main_],
 ), figure(
-  image("assets/Branching-2.drawio.svg", width: 80%),
+  image("assets/Branching-2.drawio.png", width: 80%),
   caption: [\
   Grafo _G2_ ottenuto dal grafo _G1_ dopo la creazione del ramo _nuovo Ramo_ tramite operazione di _branching_]))
 
   #imageonleft(
 figure(
-  image("assets/Branching-3a.drawio.svg", width: 100%),
+  image("assets/Branching-3.drawio.png", width: 100%),
   caption: [\
   Grafo _G3_ ottenuto dal grafo _G2_ dopo l'aggiunta del commit C4 tramite operazione di _commit_ (l'aggiunta avviene sul ramo _main_ perché puntato da _HEAD_ in _G2_)],
 ), figure(
-  image("assets/Branching-3b.drawio.svg", width: 100%),
+  image("assets/Branching-4.drawio.png", width: 100%),
   caption: [\
   Grafo _G4_ ottenuto dal grafo _G3_ dopo lo _switch_ da _main_ a _nuovoRamo_ (si sposta il puntatore _HEAD_)]))
 
 #figure(
-  image("assets/Branching-3c.drawio.svg", width: 55%),
+  image("assets/Branching-5.drawio.png", width: 55%),
   caption: [\
   Grafo _G5_ ottenuto dal grafo _G4_ dopo l'aggiunta del commit C5 tramite operazione di _commit_ (l'aggiunta avviene sul ramo _nuovoRamo_ perché puntato da _HEAD_ in _G4_)],
 ) 
