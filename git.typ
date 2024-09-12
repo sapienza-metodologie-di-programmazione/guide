@@ -109,13 +109,13 @@ Inoltre Git facilita la #text(darkcyan)[collaborazione] di più sviluppatori all
 == Git vs #text(darkblue)[GitHub]
 
 
-#imageonleft(text([Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
-  ]), figure(
+#imageonright(figure(
   image("assets/git-github.png", width: 80%, fit:"stretch"),
 
-)  )
+), text([Contrariamente a quanto spesso si pensa, Git e GitHub #underline("non") sono la stessa cosa. Come detto sopra, Git è un VCS, mentre #link("https://github.com/")[GitHub] è una piattaforma online che offre un'interfaccia grafica alle funzionalità di Git (non è l'unica ma sicuramente la più utilizzata).
+  ]),   )
 
-#text(darkcyan)[GitHub] è di fatto un sito su cui creare account, creare e conservare progetti (_repository_), gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare.
+#text(darkcyan)[GitHub] è di fatto un sito su cui creare account, creare e conservare progetti, gestire le modifiche su di essi e le collaborazioni con altri utenti; spesso funge da "magazzino" in cui trovare software da scaricare.
  
  Lavorando in gruppo, il progetto condiviso sarà ospitato da GitHub, su cui ognuno potrà sincronizzare, tramite specifiche operazioni Git, le modifiche realizzate prima sulla propria copia locale.
 
@@ -151,7 +151,7 @@ Commits, blobs e trees formano gli oggetti (#text(darkcyan)[_objects_]) principa
 #figure(
   image("assets/data-model-2.png", width: 70%),
   caption: [\
-  Illustrazione del #link("https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/devops-git-internals-for-visual-studio-developers")[DAG] di Git: i commits sono i nodi (o vertici) del grafo, mentre gli archi legano i commit ai propri genitori. Un commit con più figli è legato a un'azione di _branch_, mentre un commit con più genitori corrisponde ad un'azione di _merge_],
+  Illustrazione del #link("https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/devops-git-internals-for-visual-studio-developers")[DAG] di Git: i commits sono i nodi (o vertici) del grafo, mentre gli archi legano i commit ai propri genitori. Un commit con più figli è legato a un'azione di _branching_, mentre un commit con più genitori corrisponde ad un'azione di _merging_],
 )  <datamodel2>
 
 \
@@ -202,9 +202,69 @@ Esiste un riferimento speciale per indicare il commit corrente (quello che diven
 
 \
 
-
-
 == Operazioni
+
+La struttura a grafo di Git appena discussa può essere modificata con le *operazioni concettuali* presentate di seguito, di cui si forniranno i comandi per l'esecuzione nella sezione successiva.
+
+\
+
+=== Commit
+
+L'operazione più semplice è il #text(darkcyan)[commit]: si aggiunge uno snapshot dei contenuti attuali del progetto al grafo con i commits precedenti, creando un nuovo nodo che avrà come genitore il commit puntato dal riferimento _HEAD_ al momento della creazione. Dopo l'aggiunta del nuovo commit, _HEAD_ si sposterà automaticamente su di esso: 
+
+#imageonleft(
+figure(
+  image("assets/Commit-1.drawio.svg", width: 75%),
+  caption: [\
+  Ipotetico grafo _G_ di partenza, contenente i commit C1, C2, C3],
+), figure(
+  image("assets/Commit-2.drawio.svg", width: 100%),
+  caption: [\
+  Grafo _G_ dopo l'aggiunta del commit C4 tramite l'operazione di _commit_]))
+
+
+=== Branching
+
+Git permette di creare diversi *rami di sviluppo* tramite un'operazione di #text(darkcyan)[branching], per facilitare ad esempio il lavoro su progetti di gruppo o l'implementazione di funzionalità parallele. Nella struttura a grafo, ciò corrisponde ad osservare un nodo con più figli, ciascuno su un ramo diverso. 
+
+Ogni ramo è identificato da un *puntatore* con nome (ad esempio "_main_"): esso specifica l'ultimo commit del ramo, cioè il punto in cui aggiungere eventuali nuovi commits per il ramo stesso.
+
+Per poter lavorare su un ramo in particolare bisogna assicurarsi che "_HEAD_" punti su di esso, eseguendo se necessario un'operazione di #text(darkcyan)[switch] dal ramo correntemente puntato a quello desiderato.
+
+
+#imageonleft(
+figure(
+  image("assets/Branching-1.drawio.svg", width: 80%),
+  caption: [\
+  Ipotetico grafo _G1_ di partenza, contenente i commit C1, C2, C3 sul ramo _main_],
+), figure(
+  image("assets/Branching-2.drawio.svg", width: 80%),
+  caption: [\
+  Grafo _G2_ ottenuto dal grafo _G1_ dopo la creazione del ramo _nuovo Ramo_ tramite operazione di _branching_]))
+
+  #imageonleft(
+figure(
+  image("assets/Branching-3a.drawio.svg", width: 100%),
+  caption: [\
+  Grafo _G3_ ottenuto dal grafo _G2_ dopo l'aggiunta del commit C4 tramite operazione di _commit_ (l'aggiunta avviene sul ramo _main_ perché puntato da _HEAD_ in _G2_)],
+), figure(
+  image("assets/Branching-3b.drawio.svg", width: 100%),
+  caption: [\
+  Grafo _G4_ ottenuto dal grafo _G3_ dopo lo _switch_ da _main_ a _nuovoRamo_ (si sposta il puntatore _HEAD_)]))
+
+#figure(
+  image("assets/Branching-3c.drawio.svg", width: 55%),
+  caption: [\
+  Grafo _G5_ ottenuto dal grafo _G4_ dopo l'aggiunta del commit C5 tramite operazione di _commit_ (l'aggiunta avviene sul ramo _nuovoRamo_ perché puntato da _HEAD_ in _G4_)],
+) 
+
+\
+
+=== Merging
+
+=== Rebase
+
+
 
 = Comandi #text(darkred)[git]
 
