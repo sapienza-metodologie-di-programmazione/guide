@@ -262,13 +262,45 @@ figure(
 
 === Merging
 
-=== Rebase
+L'operazione di #text(darkcyan)[merging] può essere considerata quasi "inversa" a quella di _branching_, in quanto permette di fondere insieme rami diversi, unendo i cambiamenti da essi apportati ai file del progetto. Talvolta ciò dà origine a un nodo con più genitori nel grafo dei commits. Il _merge_ può essere utilizzato, ad esempio, per ritornare ad un unica linea di sviluppo dopo aver testato e messo insieme le funzionalità implementate in precedenza su rami paralleli.
+
+Quando si vuole fondere un ramo _B_ in un ramo _A_ il cui ultimo commit si trova sul percorso a ritroso dall'ultimo commit di _B_ alla radice del grafo (cioè se il commit di _A_ è un antenato del commit di _B_), Git esegue il _merge_ semplicemente spostando il puntatore del ramo _A_ sull'ultimo commit di _B_ (questo procedimento è denominato "#text(darkcyan)[_fast-forward_]"):
+
+#imageonleft(
+figure(
+  image("assets/Merging-1.drawio.png", width: 100%),
+  caption: [\
+ Ipotetico grafo di partenza _G_, con rami _A_, _B_ e _C_ (il ramo _A_ è correntemente selezionato)],
+), figure(
+  image("assets/Merging-2.drawio.png", width: 100%),
+  caption: [\
+  Grafo _G_ dopo il _merging_ di _B_ in _A_ tramite _fast-forward_: il puntatore del ramo _A_ viene spostato sul commit puntato dal ramo _B_]))
+
+Se invece si desidera fondere due rami i cui ultimi commits sono su linee di sviluppo divergenti (cioè se nessuno dei due commit è antenato dell'altro), Git esegue una fusione dei due commits e del loro antenato comune più recente, generando un nuovo commit che avrà come genitori i commits puntati dai rami fusi.
+
+Se però si tenta di fondere due rami divergenti in cui è stata modificata la stessa parte di uno stesso file del progetto in modi diversi, Git non potrà eseguire la fusione automaticamente e chiederà all'utente di risolvere manualmente i conflitti generati (#text(darkcyan)[_merge conflicts_]), scegliendo quali modifiche mantenere e quali eliminare.
+
+#imageonleft(
+figure(
+  image("assets/Merging-3.drawio.png", width: 80%),
+  caption: [\
+ Ipotetico grafo di partenza _G_, con rami _A_ e _B_ (il ramo _A_ è correntemente selezionato)],
+), figure(
+  image("assets/Merging-4.drawio.png", width: 100%),
+  caption: [\
+  Grafo _G_ dopo il _merging_ di _B_ in _A_ e la generazione del _merge commit_ C6 tramite la fusione di C3, C4 e C5]))
+
+=== Rebasing
 
 
 
 = Comandi #text(darkred)[git]
 
 == Come creare un repository
+
+//init, fork, clone
+
+
 == Come fare un commit
 == Come recuperare le versioni precedenti del progetto
 == Come connettersi a un repository remoto
