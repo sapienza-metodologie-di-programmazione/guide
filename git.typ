@@ -225,7 +225,7 @@ figure(
 
 === Branching
 
-Git permette di creare diversi *rami di sviluppo* tramite un'operazione di #text(darkcyan)[branching], per facilitare ad esempio il lavoro su progetti di gruppo o l'implementazione di funzionalità parallele. Nella struttura a grafo, ciò corrisponde ad osservare un nodo con più figli, ciascuno su un ramo diverso. 
+Git permette di creare diversi *rami di sviluppo* tramite un'operazione di #text(darkcyan)[branching], per facilitare ad esempio il lavoro su progetti di gruppo o l'implementazione di funzionalità in parallelo. Nella struttura a grafo, ciò corrisponde ad osservare un nodo con più figli, ciascuno su un ramo diverso. 
 
 Ogni ramo è identificato da un *puntatore* con nome (ad esempio "_main_"): esso specifica l'ultimo commit del ramo, cioè il punto in cui aggiungere eventuali nuovi commits per il ramo stesso.
 
@@ -311,16 +311,50 @@ Il commit finale risultante dal _rebasing_ include una fusione del contenuto del
 
 = Comandi #text(darkred)[git]
 
+Di seguito vengono illustrati alcuni comandi per usare Git da terminale ed eseguire, tra le varie azioni, anche le operazioni presentate nella sezione precedente.
+
+Per inziare, installare Git (#link("https://git-scm.com/downloads")[pagina download]) e verificare da linea di comando (su un terminale di sistema) che l'installazione sia andata a buon fine, usando il comando #text(darkred)[`git --version`] per visualizzare la versione di Git presente sul proprio computer.
+
+
+
+#(
+  image("assets/Screenshot-git-v.png", width: 70%)
+) 
+
+\
+Per ottenere informazioni sui comandi Git disponibili, è sempre possibile usare #text(darkred)[`git --help`].
+
 == Come creare un repository
 
-//init, fork, clone
+Un #text(darkcyan)[repository] Git è un deposito in memoria per gli oggetti e i riferimenti Git (spiegati nel capitolo precedente) del proprio progetto.
+
+
+Si può creare un repository a partire da una *cartella sul filesystem locale* e abilitare così il controllo di versione Git su di essa: posizionarsi nella cartella scelta ed eseguire il comando #text(darkred)[`git init`]. 
+
+
+#(
+  image("assets/Screenshot-git-init.png", width: 90%)
+) 
+
+Ciò genera una nuova sotto-cartella nascosta, denominata "*.git*", contenente i file necessari per mantenere il nuovo repository.
+
+In alternativa è possibile ottenere un repository locale clonando un *repository pre-esistente*, ad esempio da GitHub, ma di questo si parla in una apposita sezione successiva.
+
+\
 
 
 == Come fare un commit
+
+//area staging, git status, git add, git commit
+Una volta creato un repository, è possibile scegliere di memorizzare nella storia delle versioni del progetto i cambiamenti apportati ad uno o più file nella cartella considerata.
+
+
 == Come recuperare le versioni precedenti del progetto
-== Come connettersi a un repository remoto
+
 
 = Lavorare in gruppo
+//clone, fork
+== Come connettersi a un repository remoto
 == Fare branching e merge
 
 = Usare Git e GitHub da #text(darkpurple)[Eclipse]
