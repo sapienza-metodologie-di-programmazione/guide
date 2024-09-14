@@ -292,7 +292,22 @@ figure(
 
 === Rebasing
 
+Un'operazione alternativa al _merging_ è il #text(darkcyan)[rebasing], che consiste nel replicare i cambiamenti apportati al progetto da un ramo di sviluppo _A_ a partire dall'ultimo commit di un ramo _B_, "spostando" il ramo _A_ in modo tale da accodarsi a _B_:
 
+#imageonleft(
+figure(
+  image("assets/Merging-3.drawio.png", width: 80%),
+  caption: [\
+ Ipotetico grafo di partenza _G_, con rami _A_ e _B_ (il ramo _A_ è correntemente selezionato)],
+), figure(
+  image("assets/Rebasing.drawio.png", width: 100%),
+  caption: [\
+  Grafo _G_ dopo il _rebasing_ di _A_ su _B_ e la generazione del _commit_ C4' tramite la fusione di C3, C4 e C5]))
+
+  
+Il commit finale risultante dal _rebasing_ include una fusione del contenuto del primo antenato comune tra i rami _A_ e _B_ e dei loro rispettivi ultimi commits, quindi il risultato è lo stesso che si otterrebbe con un _merge_. Ciò che cambia è la forma del grafo, cioè della *storia delle versioni* del progetto: nel _merge_ appare un commit di fusione come un nodo con più genitori, nel _rebase_ la storia è lineare e ordinata, facendo apparire le modifiche come se fossero avvenute in modo sequenziale, nonostante siano state in realtà introdotte in parallelo.
+
+\
 
 = Comandi #text(darkred)[git]
 
