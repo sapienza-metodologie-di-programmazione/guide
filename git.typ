@@ -345,12 +345,80 @@ In alternativa è possibile ottenere un repository locale clonando un *repositor
 
 == Come fare un commit
 
-//area staging, git status, git add, git commit
-Una volta creato un repository, è possibile scegliere di memorizzare nella storia delle versioni del progetto i cambiamenti apportati ad uno o più file nella cartella considerata.
+Una volta creato un repository, si può scegliere di memorizzare nella storia delle versioni del progetto i cambiamenti apportati ad uno o più file nella cartella considerata. Git, infatti, mette a disposizione una #text(darkcyan)[staging area] (@staging), cioè una zona di memoria temporanea per selezionare i file che si desidera includere nel prossimo commit. 
+
+#figure(
+  image("assets/git_staging_area.png", width: 70%),
+  caption: [\
+  Rappresentazione delle tre #link("https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F#")[sezioni principali di un progetto Git]: la cartella di lavoro del progetto (_working directory_), la _staging area_, dove è possibile selezionare alcuni file dalla working directory ("_stage fixes_") e la cartella .git (il _repository_), dove vengono salvati i file presenti nella staging area al momento del _commit_]
+) <staging>
+
+\
+
+
+In generale, un file di un progetto con controllo di versione viene definito "*_untracked_*" ("non tracciato") se non fa parte dell'ultimo snapshot del progetto e non è incluso nella staging area, "*_tracked_*"" altrimenti.
+
+Un file _tracked_ può trovarsi negli stati:
+
+- "*_modified_*": il file è stato modificato ma i cambiamenti non sono ancora stati salvati nel repository Git;
+
+- "*_staged_*": il file è stato modificato e incluso nella _staging area_ (ovvero è tra i file pronti per essere salvati nel repository con il prossimo commit);
+
+- "*_unmodified_*" o "*_committed_*": il file è al sicuro, salvato nel repository.
+
+\
+
+#figure(
+  image("assets/file-status.png", width: 80%),
+  caption: [\
+  Rappresentazione degli #link("https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository")[stati di un file] in un repository Git]
+) 
+
+\
+
+Il comando #text(darkred)[`git status`] permette di visualizzare lo stato della cartella di lavoro (cioè gli stati dei file in essa contenuti) e il contenuto della staging area. Di seguito un esempio con un repository ancora senza commit e una cartella di lavoro contenente tre nuovi file di testo ("testoA.txt", "testoB.txt", "testoC.txt") non inclusi nella staging area (quindi in stato _untracked_):
+
+#(
+  image("assets/git-status-1.png", width: 90%)
+) 
+
+\
+
+Con #text(darkred)[`git add`] `"nome_file"` si può aggiungere il file con nome _nome_file_ all'area di staging.
+
+#(
+  image("assets/git-add-1.png", width: 80%)
+) 
+
+\
+
+Scrivendo #text(darkred)[`git add`] `.`, invece, si selezionano automaticamente tutti i file della cartella di lavoro per l'inclusione nella staging area.
+
+#(
+  image("assets/git-add-2.png", width: 80%)
+) 
+
+\
+
+Tramite il comando #text(darkred)[`git commit`] `-m "messaggio"` si genera un commit contenente le versioni correnti dei file nella staging area. Esso avrà descrizione testuale _messaggio_ e un hash esadecimale identificativo. Il commit corrisponde a un nodo nel grafo della struttura dati Git, posizionato sul ramo selezionato (nell'esempio seguente il ramo "_master_", l'unico presente):
+
+#(
+  image("assets/git-commit.png", width: 90%)
+)
+
+\
+
+Per visualizzare la storia delle versioni del progetto come un grafo di commits si può usare  #text(darkred)[`git log --graph`]. Per l'esempio è stato usato un repository con 3 commits sullo stesso ramo (_master_), quindi vengono visualizzati in un'unica sequenza verticale, dal più recente (puntato da _HEAD_) al più vecchio:
+
+#(
+  image("assets/git-log-1.png", width: 90%)
+)
 
 
 == Come recuperare le versioni precedenti del progetto
 
+
+== Come creare e unire rami di sviluppo
 
 = Lavorare in gruppo
 //clone, fork
