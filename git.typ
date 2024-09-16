@@ -322,9 +322,9 @@ Per inziare, installare Git (#link("https://git-scm.com/downloads")[pagina downl
 ) 
 
 \
-Per ottenere informazioni sui comandi Git disponibili, è sempre possibile usare #text(darkred)[`git --help`].
+Per ottenere informazioni sui comandi Git esistenti è sempre possibile usare #text(darkred)[`git --help`], mentre #text(darkred)[`git help`] `nome_comando` fornisce la documentazione per il comando `nome_comando`.
 
-== Come creare un repository
+== Creare un repository
 
 Un #text(darkcyan)[repository] Git è un deposito in memoria per gli oggetti e i riferimenti Git (spiegati nel capitolo precedente) del proprio progetto.
 
@@ -343,7 +343,7 @@ In alternativa è possibile ottenere un repository locale clonando un *repositor
 \
 
 
-== Come fare un commit
+== Fare un commit
 
 Una volta creato un repository, si può scegliere di memorizzare nella storia delle versioni del progetto i cambiamenti apportati ad uno o più file nella cartella considerata. Git, infatti, mette a disposizione una #text(darkcyan)[staging area] (@staging), cioè una zona di memoria temporanea per selezionare i file che si desidera includere nel prossimo commit. 
 
@@ -408,17 +408,76 @@ Tramite il comando #text(darkred)[`git commit`] `-m "messaggio"` si genera un co
 
 \
 
-Per visualizzare la storia delle versioni del progetto come un grafo di commits si può usare  #text(darkred)[`git log --graph`]. Per l'esempio è stato usato un repository con 3 commits sullo stesso ramo (_master_), quindi vengono visualizzati in un'unica sequenza verticale, dal più recente (puntato da _HEAD_) al più vecchio:
+Per visualizzare la storia delle versioni del progetto come un grafo di commits si può usare #text(darkred)[`git log --graph`]. Per l'esempio è stato usato un repository con 3 commits sullo stesso ramo (_master_), quindi vengono visualizzati in un'unica sequenza verticale, dal più recente (puntato da _HEAD_) al più vecchio:
 
 #(
   image("assets/git-log-1.png", width: 90%)
 )
 
+\
 
-== Come recuperare le versioni precedenti del progetto
+== Recuperare le versioni precedenti del progetto
 
+Mettiamo caso di aver eseguito diverse operazioni di commit sul repository Git del nostro progetto e di renderci conto ad un certo punto di voler "annullare" le ultime modifiche e tornare ad una versione passata. Come si fa?
 
-== Come creare e unire rami di sviluppo
+Il comando #text(darkred)[`git checkout`] `id_commit` permette di selezionare un commit dalla storia delle versioni del progetto tramite il suo codice esadecimale identificativo `id_commit` (che può essere visualizzato con `git log`), muovendo il riferimento _HEAD_ su di esso. Nell'esempio viene scelto il secondo di una serie di tre commits sullo stesso ramo:
+
+#(
+  image("assets/git-checkout-commit.png", width: 100%)
+)
+
+\
+
+Se il commit selezionato non è l'ultimo commit di un ramo di sviluppo, l'operazione appena descritta genera una situazione segnalata da Git come #text(darkcyan)[ _detached HEAD state_] (@detached-head), in cui eventuali nuovi commits non verrebbero associati a nessun ramo e sarebbero perciò difficili da trovare in futuro (si dovrebbero ricordare a memoria i loro codici hash).
+
+#figure(
+  image("assets/git-detached-head.png", width: 90%),
+  caption: [\
+  Esempio di #link("https://inmachineswetrust.com/posts/git-deep-dive-checkout/")[detached HEAD state]: è stato selezionato un commit (C1) che non è posizionato alla fine di alcun ramo di sviluppo]
+) <detached-head>
+
+\
+
+Per uscire dallo stato di _detached head_:
+
+- se si desidera continuare a lavorare sul commit corrente, si può creare un nuovo ramo, in modo che i commits seguenti siano associati ad esso;
+
+- se si vuole abbandonare il commit corrente senza modifiche, si può tornare ad un ramo pre-esistente.
+
+\
+
+La creazione e gestione dei rami di sviluppo è spiegata nella sezione seguente.
+
+\
+
+== Creare e unire rami di sviluppo
+Il comando  #text(darkred)[`git branch`] permette di visualizzare i rami presenti nel proprio progetto Git. 
+
+#(
+  image("assets/git-branch.png", width: 70%)
+)
+
+\
+
+Uno dei modi per creare un nuovo ramo è utilizzare #text(darkred)[`git branch`] `nome_ramo`. Per poter lavorare su di esso (cioè far sì che i commits seguenti ne facciano parte) sarà necessario selezionarlo con #text(darkred)[`git checkout`] `nome_ramo`, facendo sì che il riferimento _HEAD_ venga spostato su di esso.
+
+#(
+  image("assets/git-branch-2.png", width: 80%)
+)
+
+\
+
+Un'alternativa è #text(darkred)[`git checkout`] `-b nome_ramo`, che crea un nuovo ramo e lo seleziona in un unico passaggio.
+
+#(
+  image("assets/git-branch-3.png", width: 80%)
+)
+
+\
+
+=== Risolvere merge conflicts
+
+//merge e immagine con git log
 
 = Lavorare in gruppo
 //clone, fork
