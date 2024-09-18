@@ -465,8 +465,6 @@ Uno dei modi per creare un nuovo ramo è utilizzare #text(darkred)[`git branch`]
   image("assets/git-branch-2.png", width: 80%)
 )
 
-\
-
 Un'alternativa è #text(darkred)[`git checkout`] `-b nome_ramo`, che crea un nuovo ramo e lo seleziona in un unico passaggio.
 
 #(
@@ -475,9 +473,64 @@ Un'alternativa è #text(darkred)[`git checkout`] `-b nome_ramo`, che crea un nuo
 
 \
 
-=== Risolvere merge conflicts
+Nel momento in cui si decide di unire due rami di sviluppo con un'operazione di _merging_, è possibile selezionare un ramo "_target_" tramite `git checkout` e usare il comando #text(darkred)[`git merge`] `nome_ramo`, dove `nome_ramo` identifica un ramo "_source_" da fondere in _target_: sarà il riferimento del ramo _target_ ad essere aggiornato dopo il _merge_ per includere i dati provenienti da entrambi i rami.
 
-//merge e immagine con git log
+Nell'esempio, il ramo _ramoA_ viene scelto come target in cui fondere il ramo _ramoB_.
+
+#(
+  image("assets/git-merge.png", width: 95%)
+)
+
+\
+
+
+Se invece si opta per l'unione dei rami tramite _rebasing_, ci si può posizionare sul ramo che si desidera "spostare" (nell'esempio, il ramo _ramoB_) tramite `git checkout`, e digitare #text(darkred)[`git rebase`] `nome_ramo`, dove `nome_ramo` è il ramo a cui "appendere" il risultato del _rebase_ (nell'esempio, il ramo _ramoA_).
+
+#(
+  image("assets/git-rebase.png", width: 85%)
+)
+
+=== Risolvere merge conflicts
+Quando si tenta di unire (con _merge_ o _rebase_) rami che hanno apportato *modifiche diverse* nella stessa riga in uno *stesso file* del progetto, si incorre in dei _merge conflicts_. Se si esegue #text(darkred)[`git status`], viene segnalata la presenza dei conflitti e vengono indicati i file interessati. 
+
+Nell'esempio seguente, si prova a fondere un ramo _ramoB_ in un ramo _ramoA_, ma entrambi hanno cambiato la prima riga di un file di testo "_testoA.txt_":
+
+#(
+  image("assets/git-merge-conflict-1.png", width: 100%)
+)
+
+\
+
+Per risolvere un merge conflict su un file `nome_file` si può:
+
+- forzare il _merge_ a mantenere solo le modifiche apportate dal ramo selezionato (nell'esempio _ramoA_) usando #text(darkred)[`git checkout`] `--ours nome_file`, #text(darkred)[`git add`] `nome_file` e #text(darkred)[`git commit`] `-m "messaggio"`;
+
+- forzare il _merge_ a mantenere solo le modifiche apportate dal ramo che si sta fondendo (nell'esempio _ramoB_), usando #text(darkred)[`git checkout`] `--theirs nome_file`, #text(darkred)[`git add`] `nome_file` e #text(darkred)[`git commit`] `-m "messaggio"`;
+
+- modificare manualmente il contenuto del file `nome_file`, in modo da poter integrare i cambiamenti dai due rami. Quando si verifica un merge conflict, il contenuto dei file interessati include entrambe le versioni dei rami coinvolti dal merging: Git delimita con "<<<<<<<" e "======="" la versione del ramo selezionato e con "=======" e ">>>>>>>" quella del ramo che si sta fondendo. Una volta scelte le modiche da tenere ed eliminati i delimitatori, si può procedere con #text(darkred)[`git add`] `nome_file` e #text(darkred)[`git commit`] `-m "messaggio"` per completare il _merge_.
+
+\
+
+Nell'esempio, si risolve un merge conflict modificando manualmente il contenuto del file "_testoA.txt_":
+
+#imageonleft(
+figure(
+  image("assets/file-merge-conflict-1.png", width: 65%),
+  caption: [\
+  Contenuto del file "_testoA.txt_" dopo il tentativo di _merging_ del ramo _ramoB_ nel ramo _ramoA_ (puntato da _HEAD_) ],
+), figure(
+  image("assets/file-merge-conflict-2.png", width: 80%),
+  caption: [\
+  Contenuto del file "_testoA.txt_" dopo una modifica manuale arbitraria eseguita per risolvere il _merge conflict_]))
+
+#(
+  image("assets/git-merge-conflict-2.png", width: 100%)
+)
+
+\
+
+//git diff
+//git reset e git clean
 
 = Lavorare in gruppo
 //clone, fork
