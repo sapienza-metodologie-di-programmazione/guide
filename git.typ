@@ -529,13 +529,38 @@ figure(
 
 \
 
-//git diff
-//git reset e git clean
+== Lavorare in gruppo
+I comandi finora discussi permettono di lavorare su un progetto in *locale*, cioè esclusivamente sul proprio computer. Tuttavia, a volte si desidera salvare una copia dei dati su un server per maggiore sicurezza, oppure si vuole collaborare con altre persone e condividere i file del progetto ponendoli su un repository *remoto*. Come fare?
 
-= Lavorare in gruppo
-//clone, fork
-== Come connettersi a un repository remoto
-== Fare branching e merge
+\
 
-= Usare Git e GitHub da #text(darkpurple)[Eclipse]
+=== Connettersi a un repository remoto
+
+Si definisce #text(darkcyan)[_remote repository_] qualsiasi copia del progetto che, rispetto a quella correntemente considerata, sia ospitata in un "luogo" diverso, che può essere una zona di internet, come nel caso di un repository su GitHub, ma anche un'altra cartella del filesystem locale.
+
+\
+
+Il comando #text(darkred)[`git remote`] `-v` permette di visualizzare i repository remoti (un nome breve e l'URL corrispondente) salvati per il progetto. 
+
+Per salvare esplicitamente il riferimento ad un repository remoto (che può essere _read-only_ o _read/write_ in base ai propri permessi su di esso) si può eseguire #text(darkred)[`git remote add`] `nome  url`: in questo modo si aggiunge il repository identificato dall'URL indicato e in seguito ci si potrà riferire ad esso semplicemente con il nome fornito.
+#(
+  image("assets/git-remote-1.png", width: 100%)
+)
+Per rimuovere un riferimento che non si intende più usare si può invece eseguire #text(darkred)[`git remote remove`] `nome`, dove `nome` è  il nome con cui si era salvato il repository remoto interessato. 
+
+\
+
+Spesso si usa lavorare su una copia locale di un *repository remoto pre-esistente*: il comando #text(darkred)[`git clone`] `url` *clona* il repository presente all'indirizzo `url` in una cartella nel proprio computer creata automaticamente con il nome del repository (alternativamente si può specificare la cartella dove posizionare la copia del repository usando #text(darkred)[`git clone`] `url  cartella`). Git salverà implicitamente il riferimento al repository remoto originale, denominandolo "_origin_".
+#(
+  image("assets/git-clone.png", width: 95%)
+)
+
+\
+
+=== Fare pull e push
+
+//fetch, pull, push
+
+= Gestire un progetto con Git e #text(darkblue)[GitHub]
+== Usare Git e GitHub da #text(darkpurple)[Eclipse]
 = Link utili
