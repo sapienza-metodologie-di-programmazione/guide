@@ -546,6 +546,9 @@ Per salvare esplicitamente il riferimento ad un repository remoto (che può esse
 #(
   image("assets/git-remote-1.png", width: 100%)
 )
+
+\
+
 Per rimuovere un riferimento che non si intende più usare si può invece eseguire #text(darkred)[`git remote remove`] `nome`, dove `nome` è  il nome con cui si era salvato il repository remoto interessato. 
 
 \
@@ -556,10 +559,43 @@ Spesso si usa lavorare su una copia locale di un *repository remoto pre-esistent
 )
 
 \
+\
+\
 
 === Fare pull e push
 
-//fetch, pull, push
+#imageonleft(figure(
+  image("assets/git-push-pull.png", width: 55%, fit:"stretch"),
+
+), text([Per sincronizzare la *copia locale* di un progetto con le modifiche eseguite sulla sua *versione in remoto* o, viceversa, propagare i cambiamenti eseguiti in locale sulla copia remota, si possono eseguire le azioni opposte di #text(darkcyan)[_pull_] ("tirare", cioè portare anche in locale l'ultima versione remota del progetto) e  #text(darkcyan)[_push_] ("spingere", cioè mandare anche in remoto l'ultima versione locale del progetto).
+  ]),   )
+
+
+#imageonright(figure(
+  image("assets/git-pull-vs-git-fetch.png", width: 70%, fit:"stretch"),
+
+), text([In aggiunta, esiste l'operazione di #text(darkcyan)[_fetch_] ("prendere"), che permette di visualizzare in locale le modifiche effettuate sulla versione remota del progetto, senza però sovrascrivere o interagire con i file della cartella locale di lavoro. Si può procedere così in modo cauto, decidendo solo dopo aver controllato le nuove modifiche se unirle o meno alla copia locale del progetto con un _merge_. Il _pull_, invece, esegue automaticamente la fusione delle modifiche importate dalla versione remota.
+  ]))
+
+\
+
+#figure(
+  image("assets/git-fetch-pull-push.png", width: 80%),
+  caption: [\
+  Illustrazione del funzionamento dei comandi #link("https://medium.com/@mehulgala77/github-fundamentals-clone-fetch-push-pull-fork-16d79bb16b79")[push, fetch e pull]: _push_ sincronizza i cambiamenti del repository locale (realizzati tramite commits) sul repository remoto; _fetch_ prende i cambiamenti del repository remoto e li mette a disposizione nel repository locale, senza interagire con la cartella di lavoro ("_workspace_"); _pull_ fonde direttamente i cambiamenti del repository remoto con la cartella di lavoro locale])
+
+\
+
+Il comando #text(darkred)[`git push`] `nome_repository_remoto  nome_ramo_locale` esegue il push del ramo locale `nome_ramo_locale` del progetto (nell'esempio "_ramoA_") sul repository remoto salvato con il riferimento `nome_repository_remoto` (nell'esempio "_esempio_").
+
+#(
+  image("assets/git-push.png", width: 85%)
+)
+
+Si può anche digitare #text(darkred)[`git push`] `--all  nome_repository_remoto` per fare il push di tutti i rami locali del progetto sul repository remoto.
+
+\
+
 
 = Gestire un progetto con Git e #text(darkblue)[GitHub]
 == Usare Git e GitHub da #text(darkpurple)[Eclipse]
