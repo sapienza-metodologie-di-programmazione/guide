@@ -596,7 +596,29 @@ Si può anche digitare #text(darkred)[`git push`] `--all  nome_repository_remoto
 
 \
 
+Il comando #text(darkred)[`git fetch`] `nome_repository_remoto` esegue il fetch di tutti i rami del repository remoto con il nome fornito (alternativamente si può specificare un solo ramo da includere con #text(darkred)[`git fetch`] `nome_repository_remoto  nome_ramo_remoto`). Tali rami potranno essere visualizzati con #text(darkred)[`git branch`] `-r` ed eventualmente essere uniti ai file locali di lavoro tramite merging. Nell'esempio seguente, il ramo "_nuova-feature_" del repository remoto "_esempio_" viene fuso nel ramo "_master_" locale:
+
+#(
+  image("assets/git-fetch-1.png", width: 100%)
+)
+
+
+#(
+  image("assets/git-fetch-2.png", width: 90%)
+)
+
+\
+
+Il comando #text(darkred)[`git pull`] `nome_repository_remoto` incorpora automaticamente i cambiamenti eseguiti nel repository remoto `nome_repository_remoto` all'interno del ramo locale correntemente selezionato, eseguendo un fetch seguito da un merge automatico. Richiede quindi attenzione, in quanto si potrebbero sovrascrivere involontariamente alcune modifiche locali. Si può usare anche #text(darkred)[`git pull`] `nome_repository_remoto  nome_ramo_remoto` per includere solo le modifiche eseguite in remoto sul ramo `nome_ramo_remoto` (nell'esempio "_ramoA_").
+
+#(
+  image("assets/git-pull.png", width: 90%)
+)
+
+\
 
 = Gestire un progetto con Git e #text(darkblue)[GitHub]
+//fork
+//pull requests
 == Usare Git e GitHub da #text(darkpurple)[Eclipse]
 = Link utili
