@@ -418,7 +418,7 @@ Per visualizzare la storia delle versioni del progetto come un grafo di commits 
 
 == Recuperare le versioni precedenti del progetto
 
-Mettiamo caso di aver eseguito diverse operazioni di commit sul repository Git del nostro progetto e di renderci conto ad un certo punto di voler "annullare" le ultime modifiche e tornare ad una versione passata. Come si fa?
+Supponiamo di aver eseguito diverse operazioni di commit sul repository Git del nostro progetto e di renderci conto ad un certo punto di voler "annullare" le ultime modifiche e tornare ad una versione passata. Come si fa?
 
 Il comando #text(darkred)[`git checkout`] `id_commit` permette di selezionare un commit dalla storia delle versioni del progetto tramite il suo codice esadecimale identificativo `id_commit` (che può essere visualizzato con `git log`), muovendo il riferimento _HEAD_ su di esso. Nell'esempio viene scelto il secondo di una serie di tre commits sullo stesso ramo:
 
@@ -582,7 +582,7 @@ Spesso si usa lavorare su una copia locale di un *repository remoto pre-esistent
 #figure(
   image("assets/git-fetch-pull-push.png", width: 80%),
   caption: [\
-  Illustrazione del funzionamento dei comandi #link("https://medium.com/@mehulgala77/github-fundamentals-clone-fetch-push-pull-fork-16d79bb16b79")[push, fetch e pull]: _push_ sincronizza i cambiamenti del repository locale (realizzati tramite commits) sul repository remoto; _fetch_ prende i cambiamenti del repository remoto e li mette a disposizione nel repository locale, senza interagire con la cartella di lavoro ("_workspace_"); _pull_ fonde direttamente i cambiamenti del repository remoto con la cartella di lavoro locale])
+  Illustrazione del funzionamento dei comandi #link("https://medium.com/@mehulgala77/github-fundamentals-clone-fetch-push-pull-fork-16d79bb16b79")[push, fetch e pull]: _push_ sincronizza i cambiamenti del repository locale (realizzati tramite commits) sul repository remoto; _fetch_ prende i cambiamenti del repository remoto e li mette a disposizione nel repository locale, senza interagire con la cartella di lavoro ("_workspace_"); _pull_ fonde direttamente i cambiamenti del repository remoto con la cartella di lavoro locale]) 
 
 \
 
@@ -618,7 +618,90 @@ Il comando #text(darkred)[`git pull`] `nome_repository_remoto` incorpora automat
 \
 
 = Gestire un progetto con Git e #text(darkblue)[GitHub]
+
+Come menzionato in precedenza, se *Git* è un software di controllo di versione per gestire la storia di un progetto, *GitHub* è una piattaforma per mantenere e condividere i file, permettendo all'utente di usare Git implicitamente tramite interfaccia grafica.
+
+\
+
+Di seguito vengono presentati alcuni passi pratici per l'utilizzo di Git e GitHub. Per eseguirli è necessario aver installato #link("https://git-scm.com/downloads")[Git] ed aver creato un account su #link("https://github.com/")[GitHub] (durante i passaggi sarà inoltre probabilmente richiesta l'autenticazione tramite email e password).
+
+\
+
+== Caricare un repository locale su GitHub
+Poniamoci nella situazione in cui abbiamo già creato un repository locale Git da linea di comando e vogliamo farne l'*upload su GitHub*, così da gestirlo più facilmente ed eventualmente condividerlo con altri collaboratori.
+
+\
+
+Un modo per farlo prevede i seguenti passi:
+1. creare un repository vuoto iniziale dal sito GitHub (@repo)
+2. copiare l'url del repository appena creato (@url)
+3. aprire un terminale e posizionarsi nella cartella di lavoro contenente il repository Git locale che si vuole esportare su GitHub
+4. salvare tramite Git il riferimento al repository remoto su GitHub come "_origin_" inserendo l'url copiato
+
+#(
+  image("assets/git-add-remote.png", width: 100%)
+)
+
+5. fare un push delle modifiche sul ramo locale principale (nell'esempio "_master_") sul repository remoto _origin_
+
+#(
+  image("assets/git-repo-push.png", width: 70%)
+)
+
+#figure(
+  image("assets/github-create-repository.png", width: 60%),
+  caption: [\
+ Schermata di creazione di un repository su GitHub])  <repo>
+
+ #figure(
+  image("assets/github-copia-url.png", width: 100%),
+  caption: [\
+ Bottone per copiare l'url di un repository GitHub appena creato]) <url>
+
+\
+
+Il repository contenente il progetto sarà ora visibile anche su GitHub (@nuovorepo).
+
+\
+
+== Scaricare un repository GitHub in locale
+
+Se si desidera lavorare in locale a partire da codice trovato su GitHub, è possibile creare una *copia del repository online* sul proprio computer. Si può decidere di:
+
+a) scaricare l'intera cartella zip del repository GitHub considerato (@download), per poi creare un repository Git locale nella cartella corretta (come visto nelle sezioni precedenti), in modo da ottenere un repository locale indipendente da quello remoto originale;
+
+b) fare un clone del repository GitHub tramite comando Git per avere una copia locale connessa a quella remota tramite il riferimento _origin_. 
+
+ #figure(
+  image("assets/github-imported-repo.png", width: 100%),
+  caption: [\
+ Schermata del repository GitHub con le modifiche importate dalla cartella di lavoro locale ]) <nuovorepo>
+
+\
+
+Se si sceglie l'opzione b) è bene sapere che:
+- se si clona un repository GitHub pubblico di cui non si è contributori il repository sarà _read-only_, cioè non si potranno realizzare modifiche applicabili sul repository remoto;
+- se si clona un repository privato personale verrà chiesto di inserire il proprio username e password (sarà possibile leggere e modificare il repository remoto).
+
+\
+
+
+
+ #figure(
+  image("assets/git-download-zip.png", width: 90%),
+  caption: [\
+ Bottone per scaricare lo zip contenente tutti i file di un repository GitHub]) <download>
+
+\
+
+Il comando #text(darkred)[`git clone`] `url`, come visto in precedenza, permette di clonare il repository all'indirizzo `url` in una cartella locale creata automaticamente con il nome del repository stesso. Il repository remoto originale sarà accessibile con il riferimento "_origin_" per eseguire operazioni di pull e push.
+
+== Collaborare
+
+=== Fork e pull requests
+
 //fork
 //pull requests
+//github flow
 == Usare Git e GitHub da #text(darkpurple)[Eclipse]
 = Link utili
