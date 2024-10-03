@@ -4,6 +4,7 @@
 #let background = rgb(251, 251, 251)
 
 #set text(10pt, font: "Cascadia Code")
+// #set text(10pt, font: "CaskaydiaCove NF")
 #set underline(offset: 3pt)
 #set page(margin: 1.5cm)
 #set figure(supplement: [Figura])
@@ -418,7 +419,7 @@ public class App {
 === Chiavi di ```java UIManager```
 
 #note[
-  Un elenco delle #link("https://github.com/CuriousCI/minesweeper/blob/main/keys.txt")[possibili chiavi]
+  Un elenco delle #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/blob/main/keys.txt")[possibili chiavi]
 ]
 
 Per stampare l'elenco di chiavi disponibili:
@@ -861,10 +862,12 @@ public class App extends JFrame implements Observer {
 
 - ```java Navigator``` è la classe che permette di cambiare schermata 
   - usa il pattern *Singleton* perché deve avere una sola istanza globale
-  - usa il pattern *Observer* per notificare i componenti quando cambia schermata 
+  - usa il pattern *Observer* per segnalare alla vista il cambiamento di schermata 
+  // - usa il pattern *Observer* per notificare i componenti quando cambia schermata 
   - per cambiare schermata, _da qualsiasi parte del codice_, basta usare ```java Navigator.getInstance().navigate(Screen.Schermata);```
 - ```java App``` 
-  - è un *Observer* perché deve essere notificato quando cambia la schermata 
+  // - è un *Observer* perché deve essere notificato quando cambia la schermata 
+  - è un *Observer* perché deve ricevere le segnalazioni da ```java Navigator``` 
   - usa ```java Navigator.getInstance().addObserver(this);``` per osservare l'unica istanza di ```java Navigator```
 	- nel metodo ```java update(Observable o, Object arg)``` cambia la schermata usando ```java CardLayout::show```
 
@@ -960,16 +963,16 @@ public class App extends JFrame {
 
 ==== Il layout #text(darkred)[più flessibile]
 
-Il ```java GridBagLayout``` permette di dividere il panel in una griglia (nell'esempio, le celle della griglia sono 3, e sono divise dalla linea gialla) in maniera molto flessibile:
+Il ```java GridBagLayout``` divide il panel in una griglia dinamica e permette di controllare la posizione dei componenti all'interno di ogni singola cella:
 - una cella può essere *posizionata* in qualunque ```java x``` e ```java y``` della griglia
-- la *dimensione* di una cella può essere definita in diversi modi
-  - numero di righe e numero di colonne
-  - può essere specificato che deve occupare "tutto lo *spazio rimanente*"
-    - in largheza
-    - in altezza 
-    - in entrambe le dimensioni
+- la *dimensione* di una cella può essere definita in due modi:
+  - specificando numero di *righe* e numero di *colonne* da occupare
+  - specificando *regole dinamiche* per ridimensionare larghezza e altezza
 
-La particolarità (rispetto agli altri layout) è che gli elementi *non vengono ridimensionati* per occupare tutto lo spazio di una cella, ma vengono posizionati all'interno della cella rispettando le loro dimensioni (nella cella a sinistra, si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```)
+La particolarità (rispetto agli altri layout) è che i componenti all'interno delle celle *non vengono ridimensionati* e si possono *posizionare liberamente*.
+
+// per occupare l'intera cella, ma vengono posizionati all'interno della cella rispettando le loro dimensioni (nella cella a sinistra, si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```)
+(nella cella a sinistra, si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```)
 
 #figure(
 	image("assets/wireframe-4.png"),
@@ -1076,7 +1079,8 @@ public class App extends JFrame {
 
 === In conclusione (sui Layout)
 
-Dato un *wireframe* ora dovreste avere gli strumenti per implementare il layout 
+// Dato un *wireframe* ora dovreste avere gli strumenti per implementare un layout 
+Con questi strumenti è possibile coprire la maggior parte delle necessità che riguardano l'implementazione di un *wireframe*, in modo semplice e pulito.
 
 #figure(
 	image("assets/wireframe-5.png"),
@@ -1084,7 +1088,7 @@ Dato un *wireframe* ora dovreste avere gli strumenti per implementare il layout
 ) <wireframe-5>
 \
 
-I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/visual.html")[non sono gli unici] (e non sono state coperte tutte le loro funzionalità), ma, capiti i concetti chiave, si può passare alla #link("https://docs.oracle.com/en/java/javase/21/docs/api/index.html")[documentazione].
+I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/visual.html")[non sono gli unici] (e non ne sono state coperte tutte le funzionalità), ma, capiti i concetti chiave, si può passare alla #link("https://docs.oracle.com/en/java/javase/21/docs/api/index.html")[documentazione].
 
 #pagebreak()
 
@@ -1092,11 +1096,23 @@ I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%
 
 == Immagini
 
-== Animazioni
-
 == Graphics
 
+=== Graphics2D
+
+=== Graphics3D
+
+=== Translate
+
+=== Scale
+
 == Timer
+
+=== Ritardare azioni
+
+=== Animazioni
+
+=== Framerate del gioco
 
 #pagebreak()
 
@@ -1107,13 +1123,11 @@ I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%
 	image("assets/mvc.png", width: 100%)
 )
 
-*MVC* è un *pattern architetturale* per sviluppare diversi tipi di applicazioni: servizi web, programmi GUI, programmi per terminale etc...
+*MVC* è un *pattern architetturale* per sviluppare diversi tipi di applicazioni: web app, interfacce grafiche, TUI (terminal user interface) etc...
 
-L'idea è quella di *separare la logica del programma dall'interfaccia*. In questo modo:
-- la logica e i dati sono *definiti in modo chiaro e pulito*
-- la logica è *riusabile* (più interfacce diverse possono condividere la logica)
+L'idea è quella di *separare la logica del programma dall'interfaccia*. In questo modo la logica è *definita in modo chiaro e pulito*, ed è *riusabile* (più interfacce diverse possono condividere la stessa logica)
 
-Ad esempio, posso definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (terminal user interface) etc... Il *Model* è condiviso da più *View*.
+Ad esempio, è possibile definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (terminal user interface) etc... Il *Model* è condiviso da più *View*.
 
 == TODO: definizioni 
 
@@ -1124,16 +1138,17 @@ Ad esempio, posso definire la logica del gioco *Solitario* una volta sola, e usa
 === Controller
 
 \
-Fin'ora abbiamo discusso solo della *View*, ora l'obiettivo è quello di *progettare una semplice applicazione* e mostrare un possibile modo di strutturare il codice. 
+Nella sezione su *Java Swing* si è visto solo come progettare e implementare una *View*, ora l'obiettivo è quello di progettare e implemenatre un'*applicazione completa*, mostrando un possibile modo di strutturare il codice secondo il pattern *MVC*. 
 
 #pagebreak()
 
 == Minesweeper _(prato fiorito)_
 
-Trovate il codice completo del progetto #link("https://github.com/CuriousCI/minesweeper")[su GitHub]
+Trovate il codice completo del progetto #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper")[su GitHub]
 
 === UML e modello
 
+la progettazione inizia con la raccolta dei requisiti e la progettazione di un modello del problema da affrontare
 Iniziamo definendo il modello
 
 #align(
@@ -1159,9 +1174,7 @@ Iniziamo definendo il modello
 			- sconfitta (Loss)
 			- vittoria (Victory)
 			- terminata dall'utente (Terminated)
-	- di ogni partita si devono poter calcolare
-		- il numero di mine
-		- il numero di bandiere
+	- di ogni partita si devono poter calcolare il numero di mine e il numero di bandiere
 
 - ogni casella (Tile)
 	- può essere di uno dei due tipi
@@ -1221,7 +1234,7 @@ Una partita è una sconfitta se e solo se c'è una mina scoperta
 
 \
 
-#note[ Vedremo che in Java questi vincoli sono comodi da scrivere con gli ```java Stream``` ]
+#note[ In Java questi vincoli sono spesso implementabili con gli ```java Stream``` ]
 
 #pagebreak()
 
@@ -1259,8 +1272,6 @@ Nel #link("https://github.com/CuriousCI/minesweeper/tree/main/src/main/java/mine
 === Model
 
 Di seguito una breve analisi dele classi del model.
-
-// Il ```java model``` ha solo due classi: ```java model.Tile``` e ```java model.Game```. Di seguito ```java model.Tile``` con alcune particolarità degne di nota.
 
 ```java
 package minesweeper.model;
@@ -1489,9 +1500,64 @@ Le versioni più recenti di Java hanno introdotto la sintassi ```java o instance
 
 === Controller
 
+```java
+public class Controller {
+    private Optional<ScheduledFuture<?>> timer;
+    private ScheduledExecutorService scheduler;
+    private Optional<Game> game;
+
+    public Controller(Minesweeper model, View view) {
+        scheduler = Executors.newScheduledThreadPool(1);
+        model.addObserver(view.menu());
+        model.load();
+
+        view.menu().play().addActionListener(e -> {
+            Game game = new Game();
+
+            game.addObserver(model);
+            game.addObserver(view.play());
+            game.addObserver(view.play().canvas());
+            game.start();
+
+            this.game = Optional.of(game);
+            timer = Optional.of(scheduler.scheduleAtFixedRate(() -> game.update(), 1, 1, TimeUnit.SECONDS));
+        });
+
+        view.play().end().addActionListener(e -> {
+            timer.ifPresent(t -> t.cancel(true));
+            game.ifPresent(Game::end);
+        });
+
+        view.play().canvas().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                game.ifPresent(game -> {
+                    Canvas canvas = view.play().canvas();
+
+                    int x = (e.getX() - canvas.getWidth() / 2 + 5 * Canvas.SCALE) / 30;
+                    int y = (e.getY() - canvas.getHeight() / 2 + 5 * Canvas.SCALE) / 30;
+
+                    switch (e.getButton()) {
+                        case MouseEvent.BUTTON1 -> game.tiles[y * 10 + x].reveal();
+                        case MouseEvent.BUTTON3 -> game.tiles[y * 10 + x].flag();
+                        default -> {
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+}
+```
+
+Il *Controller*, in questa scelta d'implementazione, ha il compito di *definire gli eventi* generati dalla *View*, specificando le interazioni con il *Model* e assegnando gli Observer. Esistono altre strategie per implementare il *Controller*, ma questo è una delle più semplici. 
+
+Una *strategia più comoda* potrebbe essere quella di definire un'*interfaccia* per elencare le possibili interazioni che il Controller deve definire, e fare in modo che la View implementi tale interfaccia.
+
+#pagebreak()
+
 === View
-
-
 
 #pagebreak()
 
@@ -1503,24 +1569,57 @@ Le versioni più recenti di Java hanno introdotto la sintassi ```java o instance
 
 = Funzionalità di #text(darkred)[GitHub] per il progetto
 
-GitHub ha tutta una serie di funzionalità molto utili a supporto dello sviluppo di software.
-
-== GitHub Action
-
-Le #link("https://github.com/features/actions")[GitHub Action] sono uno strumento che permette di *automatizzare* tutti i processi che legati alla produzione del software: testing, generazione di documentazione, generazione di eseguibili, deploy su server, pubblicazione di librerie etc... 
+GitHub ha una vasta serie di funzionalità per supportare gli sviluppatori.
 
 #note[Prima di procedere con questa parte è fondamentale aver capito la differenza fra git e GitHub e come vengono usati. Trovate una breve guida #link("https://github.com/sapienza-metodologie-di-programmazione/guide/releases/tag/latest")[qui]]
 
-=== Anatomia di una GitHub Action
-
-
 == GitHub Pages
 
-#link("https://pages.github.com/")[GitHub Pages] è uno strumento che permette di pubblicare (gratuitamente) siti web tramite GitHub...
+#link("https://pages.github.com/")[GitHub Pages] è uno strumento che permette di pubblicare (gratuitamente) siti web statici tramite GitHub... (come può essere il caso di javadoc)
 
 == Releases
 
 Le #link("https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases")[Releases] sono uno strumento che permette di pubblicare file scaricabili: eseguibili di programmi, documenti, asset etc...
+
+== GitHub Action
+
+Le #link("https://github.com/features/actions")[GitHub Action] sono uno strumento che permette di *automatizzare* tutti i processi legati alla produzione del software: testing, generazione di documentazione, generazione di eseguibili, deploy su server, pubblicazione di librerie etc... 
+
+=== Anatomia di una GitHub Action
+
+Per creare un'Action basta creare una cartella `.github/workflows/` all'interno del progetto e aggiungervi un file con estensione `.yml` in cui descrivere i compiti dell'Action (ad esempio `progetto/.github/workflows/javadoc.yml`).
+
+```yaml
+# Nome della GitHub Action
+name: Publish Docs
+
+# L'Action viene eseguita nell'evento di un push nel repository o manualmente
+on: [push, workflow_dispatch] 
+
+# I permessi di cui l'Action ha bisogno per interagire con altre funzionalità
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# I compiti che l'Action deve eseguire, in sequenza
+jobs:
+  build:
+    # Il Sistema Operativo della VM (Virtual Machine) su cui viene eseguito il compito 
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout è un'Action pre-fabbricata che carica il repository all'interno della VM
+      - uses: actions/checkout@v4
+
+      # Si possono eseguire i normali comandi disponibili del Sistema Operativo
+
+      # ... steps ...
+
+      - run: mvn install javadoc:javadoc
+
+      # ... steps ...
+```
+
 
 #pagebreak()
 
@@ -1528,7 +1627,11 @@ Le #link("https://docs.github.com/en/repositories/releasing-projects-on-github/a
 
 File `.github/workflows/javadoc.yml`
 
-// #align(image("assets/github-pages.png" ), center)
+#note[Nel progetto #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper")[Minesweeper] sono presenti entrambe le GitHub Action discusse in questa sezione]
+
+Oltre ai comandi del Sistema Operativo (che si possono invocare con ```yaml - run: comando```) è possibile usare delle ricette "già pronte" e configurabili, ad esempio: `actions/checkout`, `actions/setup-java`, `actions/configure-pages`, `actions-upload-pages-artifact`, `actions/deploy-pages` etc...
+
+Queste "ricette" semplificano il lavoro di configurare gli strumenti necessari e permettono di interagire con API (come quello di GitHub Pages, per pubblicare la documentazione generata).
 
 ```yaml
 name: Publish Docs
@@ -1603,18 +1706,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+#note[Un altro esempio di GitHub Action è quella usata per generare #link("https://github.com/sapienza-metodologie-di-programmazione/guide")[questo stesso .pdf :)]]
+
+
 #pagebreak()
 
 = #text(darkred)[Tips & tricks]
 
 == Compressione di immagini e audio
 
-== Formattazione automatica del codice
+In molti 
 
-// - formattazione automatica del codice
+== LSP + Formattazione automatica del codice
 
-È possibile
+Nel 2016 la Microsoft ha sviluppato il protocollo #link("https://microsoft.github.io/language-server-protocol/")[LSP] (Language Server Protocol), che ha permesso di sviluppare i Language Server: programmi che offrono funzionalità di *supporto per lo sviluppo di codice*: suggerimenti, autocompletamento, formattazione del codice, diagnostica, linting etc...
+
+La maggior parte degli *editor moderni* (fra cui anche Eclipse) non fanno altro che offrire un'interfaccia grafica per i Language Server (con shortcut, syntax highlighting, configurazione etc...).
+
+Uno dei Language Server più usati per Java è proprio quello di #link("https://github.com/eclipse-jdtls/eclipse.jdt.ls")[Eclipse]. Una delle funzionalità più importanti che offre è la *formattazione del codice*, che permette di mantenere il codice *consistente* e *pulito*, specialmente quando si lavora in un team. Eclipse (come tanti altri editor) permette di invocare questa funzionalità automaticamente ogni volta che il codice viene salvato:
 
 #align(image("assets/format-on-save.png" ), center)
 
-// == Shortcut per i commenti
+== Shortcut 
+
+Nella maggior parte degli editor è possibile commentare velocemente il codice (anche più righe alla volta) usando la shortcut `Ctrl + /` 
