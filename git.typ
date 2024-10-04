@@ -698,10 +698,73 @@ Il comando #text(darkred)[`git clone`] `url`, come visto in precedenza, permette
 
 == Collaborare
 
-=== Fork e pull requests
+Git e GitHub sono strumenti utili quando si vuole *condividere un progetto* con più collaboratori: si può sfruttare GitHub per mantenere online una versione comune dei file, di cui ognuno avrà una copia locale su cui sincronizzare le modifiche realizzate dagli altri, tramite _pull_, e applicare le proprie, da condividere tramite _push_.
+
+\
+
+Per poter lavorare sullo stesso repository GitHub, tutti i partecipanti al progetto dovranno avere l'accesso ad esso come collaboratori. E' possibile aggiungere collaboratori ad un repository personale invitando utenti GitHub tramite le impostazioni della pagina del repository stesso (@colab).
+
+\
+
+ #figure(
+  image("assets/github-collaborators.png", width: 100%),
+  caption: [\
+ Bottone per aggiungere un utente come collaboratore su un repository GitHub]) <colab>
+
+\
+
+\
+
+=== GitHub flow
+Il #link("https://docs.github.com/en/get-started/using-github/github-flow")[_GitHub flow_] è un procedimento di lavoro consigliato da GitHub per i team. Esso si basa sul _branching_: ogni collaboratore dovrebbe realizzare una nuova modifica su un ramo separato, in modo da tenere il ramo principale del progetto pulito e funzionante. 
+
+\
+
+Ad esempio, se un collaboratore volesse sviluppare una certa feature del progetto, potrebbe creare un ramo _R_ apposito e sperimentare liberamente su di esso. Una volta soddisfatto del risultato ottenuto, potrebbe fondere il ramo _R_ nel ramo principale di lavoro, dove tutti i collaboratori sincronizzano le proprie modifiche. Prima di farlo, però, è bene avere l'approvazione degli altri membri del team. Per questo esiste un meccanismo di #text(darkcyan)[_pull requests_].
+
+\
+
+=== Pull requests
+
+Una *pull request* è una richiesta di revisione dei cambiamenti apportati su un ramo del progetto, realizzata con l'obiettivo di approvarne la fusione nel ramo di lavoro principale. In un team, sarebbe bene avere un numero limitato di persone che si occupano di gestire le pull requests controllando i cambiamenti che richiedono di apportare e decidendo se autorizzare il _merge_ o attendere un ulteriore miglioramento del codice.
+
+
+#figure(
+  image("assets/github-pull-requests.png", width: 70%),
+  caption: [\
+ Illustrazione del meccanismo di #link("https://www.atlassian.com/blog/bitbucket/5-pull-request-must-haves")[pull request]]) <pullreq>
+
+\
+
+Quando, dunque, si è pronti ad unire i cambiamenti realizzati su un proprio ramo separato al ramo principale del progetto, si può creare una pull request da interfaccia grafica su GitHub (@pullreq2, @pullreq3) e attendere l'approvazione o eventualmente una richiesta di revisione del codice tramite commento testuale. 
+
+\
+
+#figure(
+  image("assets/github-pull-requests-2.png", width: 100%),
+  caption: [\
+ Bottone per aggiungere una nuova _pull request_]) <pullreq2>
+
+
+\
+
+A questo punto, i "_reviewers_" designati o in generale chi decide di occuparsi della pull request (nella pratica può essere chiunque) può analizzarla e lasciare dei commenti testuali, oltre che decidere di chiuderla e realizzare il merge (@pullreq4). Una volta effettuata la fusione, il ramo utilizzato per sviluppare la feature appena incorporata nel progetto può essere eliminato.
+
+#figure(
+  image("assets/github-pull-requests-3.png", width: 100%),
+  caption: [\
+ Schermata per configurare una nuova _pull request_ con un titolo e una descrizione]) <pullreq3>
+
+\
+
+#figure(
+  image("assets/github-pull-requests-4.png", width: 100%),
+  caption: [\
+ Schermata con la discussione riguardo una _pull request_ e il bottone per eseguire il merge (in questo esempio non ci sono _merge conflicts_ con il ramo principale, in caso contrario sarebbe necessario risolverli prima di eseguire la fusione automatica)]) <pullreq4>
+
+\
 
 //fork
-//pull requests
-//github flow
+
 == Usare Git e GitHub da #text(darkpurple)[Eclipse]
 = Link utili
