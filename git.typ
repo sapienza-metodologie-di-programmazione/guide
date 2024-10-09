@@ -726,7 +726,7 @@ Ad esempio, se un collaboratore volesse sviluppare una certa feature del progett
 
 === Pull requests
 
-Una *pull request* è una richiesta di revisione dei cambiamenti apportati su un ramo del progetto, realizzata con l'obiettivo di approvarne la fusione nel ramo di lavoro principale. In un team, sarebbe bene avere un numero limitato di persone che si occupano di gestire le pull requests controllando i cambiamenti che richiedono di apportare e decidendo se autorizzare il _merge_ o attendere un ulteriore miglioramento del codice.
+Una *pull request* è una richiesta di revisione dei cambiamenti apportati su un ramo del progetto e di conseguente approvazione per la fusione nel ramo di lavoro principale. In un team, sarebbe bene avere un numero limitato di persone che si occupano di gestire le pull requests controllando i cambiamenti che richiedono di apportare e decidendo se autorizzare il _merge_ o attendere un ulteriore miglioramento del codice.
 
 
 #figure(
@@ -763,8 +763,82 @@ A questo punto, i "_reviewers_" designati o in generale chi decide di occuparsi 
  Schermata con la discussione riguardo una _pull request_ e il bottone per eseguire il merge (in questo esempio non ci sono _merge conflicts_ con il ramo principale, in caso contrario sarebbe necessario risolverli prima di eseguire la fusione automatica)]) <pullreq4>
 
 \
+\
+\
+\
 
-//fork
 
-== Usare Git e GitHub da #text(darkpurple)[Eclipse]
+=== Forks
+Se si vuole collaborare ad un repository GitHub su cui non si hanno permessi di scrittura o utilizzare del codice _open source_ come punto di partenza per un proprio progetto, è possibile sfruttare il meccanismo del #text(darkcyan)[fork].
+
+
+Tale operazione consente, infatti, di creare sul proprio account una copia personale di un repository GitHub, che sarà indipendente da esso: i push/pull non influenzeranno in alcun modo il repository originale, detto *_upstream repository_*. 
+ 
+ Si può quindi procedere clonando il repository risultante dal fork (chiamato esso stesso *_fork_*) per ottenere i file del progetto in locale (il fork agisce solo su GitHub), per lavorarci autonomamente oppure proporre modifiche da applicare all'upstream repository tramite _pull requests_ (@fork).
+
+ \
+
+#figure(
+  image("assets/git-fork.png", width:60%),
+  caption: [\
+ Illustrazione dei repository coinvolti in un'operazione di #link("https://www.tomasbeuzen.com/post/git-fork-branch-pull/")[fork] e _clone_: l'_upstream_ repository è il repository originale di cui si ottiene una copia su GitHub tramite _fork_. Tale copia può essere clonata per ottenere un repository _locale_, per il quale essa sarà l'origine remota (_origin_). Si può aggiungere un riferimento remoto all'upstream repository nel repository locale per sincronizzare le modifiche provenienti da esso tramite _pull_. Le operazioni di _push_ potranno invece avere effetto solo sul repository origin personale, dato che non si hanno permessi di scrittura sull'upstream. Per provare a realizzare modifiche sull'upstream repository si possono creare pull requests che gli autori dovranno approvare]) <fork>
+
+\
+
+ 
+
+\
+
+Per realizzare un fork basta cliccare sull'apposito bottone nella pagina GitHub del repository che si vuole "forkare" (@fork2) e configurare alcuni parametri iniziali come titolo e descrizione del nuovo repository (@fork3).
+
+\
+
+Per creare una pull request al fine di incorporare i propri cambiamenti nel repository originale si può, invece, procedere in modo simile a quanto visto nella sezione precedente: aprire la pagina GitHub dell'upstream repository, cliccare sul bottone "Pull requests" e poi su "New pull request", scegliere i rami di cui si vuole proporre la fusione (un ramo dell'upstream repository e un ramo del repository forkato) e completare i campi richiesti per la creazione della richiesta, che sarà visibile agli autori dell'upstream repository e disponibile per eventuale approvazione.
+
+#figure(
+  image("assets/github-fork.png", width:100%),
+  caption: [\
+ Bottone per ottenere un fork del repository GitHub selezionato ]) <fork2>
+
+\
+\
+
+ #figure(
+  image("assets/github-fork-2.png", width:80%),
+  caption: [\
+ Schermata per configurare un fork da creare]) <fork3>
+
+
+\
+
+#pagebreak()
+
+//= Usare Git e GitHub da #text(darkpurple)[Eclipse]
 = Link utili
+
+Vengono qui riportate alcune risorse (utilizzate in parte come riferimento per questa guida) che, insieme a quelle linkate in alcune didascalie di immagini, sono utili per approfondire ulteriormente Git e GitHub o configurare il loro utilizzo pratico (nota: la maggior parte del materiale è in lingua inglese).
+
+\
+- *Documentazione ufficiale di Git*, utile per capire il funzionamento dei suoi comandi e scoprire le varie opzioni disponibili: #link("https://git-scm.com/docs").
+
+\
+
+- *Documentazione ufficiale di GitHub*, per comprendere i meccanismi che offre: #link("https://docs.github.com/en").
+
+\
+
+
+- *Lezione su Git* da _The Missing Semester of Your CS Education_ (video lezione con appunti testuali sul controllo di versione, la struttura dati e alcuni comandi di Git): #link("https://missing.csail.mit.edu/2020/version-control/").
+
+\
+
+
+- *Learn Git Branching*, un gioco su browser a livelli (anche in italiano) per imparare a gestire il modello a grafo di Git tramite operazioni di branching, merging, rebasing, ecc.: #link("https://learngitbranching.js.org/?locale=it_IT").
+
+\
+
+- *How to use Eclipse with GitHub*, una guida su come configurare l'IDE #link("https://eclipseide.org/")[Eclipse] per poter usare GitHub direttamente dalla sua interfaccia grafica: #link("https://github.com/maxkratz/How-to-Eclipse-with-Github").
+
+\
+
+- *Introduction to Git in VS Code*, una guida per collegare #link("https://code.visualstudio.com/")[Visual Studio Code] con Git e GitHub: #link("https://code.visualstudio.com/docs/sourcecontrol/intro-to-git").
