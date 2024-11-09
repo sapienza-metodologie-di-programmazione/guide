@@ -26,13 +26,26 @@
 
 ]
 
-#let constraint(name, constraint) = [
-  [*V.#name*]
+#let space(body) = block(inset: (x: 20pt), spacing: 0pt, [#body])
 
-  #block(inset: ("left": 10pt))[#constraint]
+#let constraint(class, title, description: "", body) = [
+  === [Constraint.*#class*._#title.replace(" ", "_")_]
 
-  #v(10pt)
+  #space[
+    #if description == "" [ #body ] else [
+      / description: #description
+      / constraint: #body
+    ]
+  ]
 ]
+
+// #let constraint(name, constraint) = [
+//   [*V.#name*]
+//
+//   #block(inset: ("left": 10pt))[#constraint]
+//
+//   #v(10pt)
+// ]
 
 #let extension(new-objects: [], removed-objects: [], new-ennuples: [], removed-ennuples: []) = [
   #text(weight: "bold")[changes to extensional level]

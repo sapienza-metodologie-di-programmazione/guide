@@ -1,94 +1,84 @@
 #import "logic.typ": *
 
-#let darkred = rgb(192, 0, 0)
-#let background = rgb(251, 251, 251)
+#show raw: r => {
+  let re = regex("x(\d)")
+  show re: it => { 
+    let tag = it.text.match(re).captures.at(0)
+    box(baseline: 0.2em)[
+      #circle(fill: black, inset: 0.1em)[
+        #align(center + horizon)[
+          #text(white, size: 0.8em)[*#tag*]
+        ]
+      ]
+    ]
+  }
 
-#set text(10pt, font: "Cascadia Code")
-// #set text(10pt, font: "CaskaydiaCove NF")
-#set underline(offset: 3pt)
-#set page(margin: 1.5cm)
-#set figure(supplement: [Figura])
-
-#show link: it => underline[#text(navy)[#it]]
-#show heading.where(level: 1): it => {
-  text(size: 17pt)[#it.body]
-  [ #v(10pt) ]
-}
-#show heading.where(level: 2): it => {
-  text(size: 15pt)[#it.body]
-  [ #v(10pt) ]
-}
-#show heading.where(level: 3): it => {
-  text(size: 12pt)[#it.body]
-  [ #v(10pt) ]
+  r
 }
 
-#show heading.where(level: 4): it => {
-  it.body
-  [ #v(10pt) ]
+#let tag(tag) = {
+    box(height: 1em, clip: true, baseline: 0.2em)[
+      #circle(fill: black, inset: 0.1em)[
+        #align(center + horizon)[
+          #text(white, size: 0.7em)[*#tag*]
+        ]
+      ]
+    ]
 }
 
-#let note(body) = [
-  #block(
-    fill: rgb(250, 250, 255),
+#let note(body) = {
+  block(
     width: 100%,
     inset: 10pt,
-    stroke: rgb(240, 240, 255),
+    stroke: (left: 2pt + rgb("#0969da")),
     [
-      #underline(text(blue)[ℹ Nota]) \
-      #v(2pt)
+      #text(rgb("#0969da"))[ Nota] \
+
       #body
     ]
   )
+}
+
+#let darkred = rgb(192, 0, 0)
+#let javadoc(url) = [#text(size: 0.7em)[#set underline(offset: 2pt);(#link(url)[Java API doc])]]
+// #set text(font: "CaskaydiaCove NF", weight: "light")
+#set text(font: "Cascadia Code", weight: "light")
+#set underline(offset: 3pt)
+#set page(margin: 1.5cm)
+#set figure(supplement: [Figura])
+#show link: it => underline[#text(navy)[#it]]
+#show raw.where(block: true): it => block(
+  fill: luma(250),
+  inset: 2em,
+  width: 100%,
+  stroke: (left: 2pt + luma(230))
+)[#it]
+
+#align(center)[
+  #text(size: 1.5em)[ 
+    *Un approccio pratico a #text(darkred)[Java Swing] e #text(darkred)[MVC]* 
+  ] \ 
+  by #link("https://github.com/CuriousCI")[Cicio Ionut]
 ]
 
-#let view(body) = [ 
-  #block(
-    fill: background,
-    width: 100%,
-    inset: 10pt,
-    stroke: silver,
-    body
-  )
-]
-
-#show raw.where(block: true): view
-
-#align(center, text(17pt)[ *Un approccio pratico a #text(darkred)[Java Swing] e #text(darkred)[MVC]* ])
-
-\
-
-#outline(title: [Sommario], indent: 1.5em)
+#outline(title: "Sommario", indent: 1.5em)
 
 #pagebreak()
 
 = #text(darkred)[Java Swing]
 
-L'obiettivo di questa sezione è fornire, tramite esempi pratici, gli *strumenti fondamentali* per lo *sviluppo agevole* di interfacce grafiche con #text(darkred)[Java Swing].
-
-// TODO: successivamente in MVC come progettare un'applicazione completa + come collaborare a automatizzare con git
-
-// L'obiettivo di questa guida è fornire, tramite esempi pratici, gli *strumenti fondamentali* per lo *sviluppo agevole* di interfacce grafiche con #text(darkred)[Java Swing]
-
-// Questa è una guida molto *breve* e *semplificata*.
-// sulle funzionalità principali serve solo come introduzione per semplificare il lavoro per eventuali progetti.
-
-// Il *wireframe* serve perché è difficile progettare un'interfaccia *intuitiva* e *funzionale*. Una volta progettata l'interfaccia *scrivere il codice è semplice*, perché abbiamo un'idea chiara di quello che vogliamo, e dobbiamo solo implementarlo.
-
-// Il *wireframe* permette di disegnare rapidamente un'interfaccia *intuitiva* e *funzionale*, riducendo il tempo passato a scrivere codice.
-// , perché abbiamo un'idea chiara e dobbiamo solo implementarla.
+L'obiettivo di questo capitolo è fornire, tramite esempi pratici, gli *strumenti fondamentali* per lo *sviluppo agevole* di interfacce grafiche con #text(darkred)[*Java Swing*].
 
 == Wireframe
 
-Per sviluppare l'interfaccia grafica di un sito web, un'applicazione, un gioco etc... è utile disegnare un *wireframe*. 
+Per sviluppare l'interfaccia grafica, che si tratti di un sito web, un'applicazione, un gioco etc... è utile disegnare un wireframe. 
 
-Un *wireframe* è un diagramma fatto di *rettangoli*, *testo*, *icone* e *frecce* (come in @wireframe-1) che permette di progettare *rapidamente* un'interfaccia *intuitiva* e *funzionale*, riducendo il tempo passato a scrivere codice.
-\
+Un wireframe è un *diagramma* fatto di *rettangoli*, *testo*, *icone* e *frecce* (come in @wireframe-1) che permette di *progettare rapidamente* un'interfaccia _intuitiva_ e _funzionale_, semplificando la fase d'implementazione.
+
 #figure(
   image("assets/wireframe-1.png"),
   caption: [esempio di wireframe disegnato con #link("https://excalidraw.com")[excalidraw]],
 )  <wireframe-1>
-\
 
 Proviamo ad implementare il *wireframe* in @wireframe-1
 
@@ -98,115 +88,71 @@ Proviamo ad implementare il *wireframe* in @wireframe-1
 
 == Implementazione passo passo di un wireframe 
 
-Il codice completo è *in fondo alla spiegazione*
-
-=== Creare una finestra (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JFrame.html")[JFrame])
+=== Creare una finestra con ```java JFrame``` #javadoc("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JFrame.html") 
 
 ```java
-JFrame frame = new JFrame("Questo \u00E8 un titolo");
-frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+JFrame frame = x1 new JFrame("Questo \u00E8 un titolo");
+x2 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 try {
-  frame.setIconImage(ImageIO.read(new File("icon.png"))); 
+  x3 frame.setIconImage(ImageIO.read(new File("icon.png"))); 
 } catch (IOException e) { }
 
-frame.setSize(600, 400);
-frame.setLocationRelativeTo(null);
-frame.setVisible(true); 
+x4 frame.setSize(600, 400);
+x5 frame.setLocationRelativeTo(null);
+x6 frame.setVisible(true); 
 ```
 
-#text(darkred)[Java Swing] ha alcuni *default particolari*:
-- ```java new JFrame(...)``` istanzia una finestra *invisibile*, per questo si usa ```java setVisible(true)```
-- la finestra, alla chiusura, viene *solo nascosta*, per questo si usa ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` per fare in modo che l'intera applicazione venga terminata
-- ```java setLocationRelativeTo(null)``` posiziona la finestra al centro dello schermo
+Swing ha alcune impostazioni di *default particolari*:
+- #tag(1) istanzia una finestra *invisibile*, per visualizzarla si usa #tag(6)
+- la finestra, alla chiusura, viene *solo nascosta*: per fare in modo che l'intera applicazione venga terminata si usa #tag(2) 
+- #tag(5) posiziona la finestra al centro dello schermo
 
-Oltre a ```java setSize(int width, int height)```, una finestra si può dimensionare anche con il metodo ```java pack()``` che imposta le *dimensioni minime* per disegnare il contenuto della finestra. 
+Per ridimensionare una finestra, oltre a #tag(4), si può usare anche con il metodo ```java pack()``` che imposta le *dimensioni minime* per disegnare il contenuto della finestra. 
 
 #note[```java pack()``` imposta le *dimensioni a 0* se la finestra non ha contenuto, per cui ricordatevi di invocare ```java pack()``` *dopo* aver aggiunto componenti al ```java JFrame```.]
 
-#note[Ricordatevi di *cambiare l'icona* di default :)]
+Il prossimo passo è quello di aggiungere il testo ```java "Questa è una finestra"```
 
-// Alcuni componenti di  hanno *comportamenti di default* particolari:
-// - alla chiusura della finestra il ```java JFrame``` viene *solo nascosto*, per questo si usa ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)```
-// -  ```java setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)``` serve a terminare il programma alla chiusura
-
-// ```java setSize(int width, int height)``` imposta la dimensione della finestra
-
-// #note[ ]
-
-// Se usando ```java pack()``` *larghezza e altezza sono impostati a 0* è perché state usando ```java pack()``` _prima_ di aggiungere il contenuto alla finestra. 
-
-// Se la finestra *non rispetta la dimensione impostata* con ```java setSize(int width, int height)``` probabilmente state usando anche ```java pack()``` nel codice (non vanno usati entrambi).
-
-
-// Oltre a ```java setSize(int w, int h)``` c'è un altro modo per ridimensionare la finestra:
-  // - ```java frame.pack()``` imposta larghezza e altezza al valore _minimo_ che rispetta il contenuto della finestra
-  // _Se la finestra non ha contenuto_, la larghezza e l'altezza vengono impostati a 0  
-// #note[// ]
-
-//  termina il programma quando la finestra viene chiusa (di default la finestra viene *solo nascosta*)
-
-// - ```java setIconImage(Image image)``` imposta l'icona in alto a sinistra della finestra
-
-  // Non lasciate l'icona di default! 
-	// Fate vedere un po' di attenzione ai dettagli :)
-
-
-
-// - ```java setVisible(true)``` rende la finestra *visibile*
-
-// ==== Errori comuni 
-
-
+#note[Ricordatevi di *cambiare _sempre_ l'icona* #tag(3) di default :)]
 
 #pagebreak()
 
-=== Aggiungere ```java Component``` a una finestra (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JPanel.html")[JPanel])
+=== Aggiungere ```java Component``` a una finestra con ```java JPanel``` #javadoc("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JPanel.html")
 
 ```java
-JPanel panel = new JPanel();
-JLabel label = new JLabel("Questa \u00E8 una finestra!");
+JPanel panel = x1 new JPanel();
+JLabel label = x2 new JLabel("Questa \u00E8 una finestra!");
 
 panel.add(label);
 frame.add(panel);
 ```
 
-Sia ```java JFrame``` sia ```java JPanel``` sono ```java java.awt.Container```, quindi dispongono del metodo ```java add(Component comp)```.  #text(darkred)[Java Swing] mette a disposizione vari ```java Component```
-- ```java JLabel``` per testo e immagini
-- ```java JButton``` per pulsanti
+Sia #tag(1) sia #tag(2) sono ```java java.awt.Container``` per cui dispongono del metodo ```java add(Component)```. 
+Swing mette a disposizione vari ```java Component``` già pronti:
+- ```java JLabel``` per *testo* e *immagini*
+- ```java JButton``` per *pulsanti*
 - ```java JPanel``` per interfacce più complesse 
-- ```java JTable```, ```java JSlider``` etc...
+- ```java JTable```, ```java JSlider``` etc... per utilizzi più specifici
 
-// per aggiungere compoenti (testo, immagini, pulsanti etc...)
+#note[```java java.awt.Container``` è un esempio di #link("https://refactoring.guru/design-patterns/composite")[Composite Pattern]]
 
-//  possiamo aggiungere contenuto (testo, immagini, pulsanti etc...) al loro interno tramite .
-
-#note[
-	```java java.awt.Container``` è un esempio di #link("https://refactoring.guru/design-patterns/composite")[Composite Pattern]
-]
-
-// - ```java JPanel``` occupa l'intero spazio a disposizione 
-// - ```java JLabel``` serve a visualizzare testo (```java "Questa è una finstra"``` @wireframe-1)
-
-// ==== Colori, font e personalizzare lo sfondo con ```java paintComponent(Graphics g)```
-=== Colori, font e sfondo (```java paintComponent(Graphics g)```)
+=== Come vengono disegnati i componenti: ```java paint(Graphics g)```
 
 Ora l'obiettivo è quello di colorare lo sfondo e il testo come in @wireframe-1
 
-// #note[
-//   Normalmente un *wireframe* _non prevede_ colori o scelte stilistiche, ma nel caso di un progetto piccolo possiamo permetterci di usarlo come se fosse un design 
-// ]
+// #note[Normalmente un *wireframe* _non prevede_ colori o scelte stilistiche, ma nel caso di un progetto piccolo possiamo permetterci di usarlo come se fosse un design]
 
 ```java
 JPanel panel = new JPanel() {
   @Override
-  protected void paintComponent(Graphics g) {
+  x1 protected void paintComponent(Graphics g x2) {
     super.paintComponent(g);
 
     int density = 5;
     g.setColor(Color.decode("#ffec99"));
     for (int x = 0; x <= getWidth() + getHeight(); x += density)
-      g.drawLine(x, 0, 0, x);
+      x3 g.drawLine(x, 0, 0, x);
   }
 };
 panel.setBackground(Color.WHITE);
@@ -220,43 +166,40 @@ frame.add(panel);
 ```
 
 Il ```java JFrame``` invoca il metodo ```java paint(Graphics g)``` del ```jframe JPanel```. A sua volta ```java paint(Graphics g)``` invoca in ordine:
-- ```java paintComponent(Graphics g)```
+- ```java paintComponent(Graphics g)``` #tag(1)
 - ```java paintBorder(Graphics g)```
 - ```java paintChildren(Graphics g)```
 
-Creando una *classe anonima* possiamo sovrascrivere il comportamento di uno di questi metodi. Nel nostro esempio, sovrascriviamo ```java paintComponent(Graphics g)``` per disegnare lo sfondo con le linee oblique in @wireframe-1.
+Creando una *classe anonima* possiamo sovrascrivere il comportamento di uno di questi metodi, in particolare quello di #tag(1) per disegnare lo sfondo con le linee oblique #tag(3) in @wireframe-1.
 
-Questo approccio è molto flessibile, perché con ```java Graphics g``` possiamo disegnare immagini, testo e figure programmaticamente (quindi eventualmente *animazioni*).
+Questo approccio è molto flessibile, perché con ```java Graphics g``` #tag(2)  possiamo disegnare immagini, testo e figure *programmaticamente* (quindi eventualmente *animazioni*).
 
-#note[Il font ```java "Cascadia Code"``` non è installato di default, provate anche con altri font]
+#note[Il font ```java "Cascadia Code"``` non è installato di default]
 
-#pagebreak()
+#align(image("assets/gui-1.png", width: 50%), center)
 
-Risultato
-
-\
-#align(image("assets/gui-1.png", width: 65%), center)
-\
-
-=== Centrare un componente (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")[GridBagLayout])
-
+=== Centrare un componente con ```java GridBagLayout``` #javadoc("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")
 
 ```java
-JPanel panel = new JPanel(new GridBagLayout());
+JPanel panel = x1 new JPanel(new GridBagLayout()x2);
 ```
 
-Il costruttore ```java JPanel(LayoutManager layout)``` permette di specificare una *strategia* per *posizionare* e *dimensionare* il contenuto di un ```java JPanel``` in #text(darkred)[*automatico*]: 
-- non bisogna calcolare a mano `x`, `y`, `width` e `height` dei componenti, lo fa il ```java LayoutManager```
-- funziona anche quando la *finestra viene ridimensionata*
+Il costruttore #tag(1) permette di specificare una *strategia* per *posizionare* e *dimensionare* il contenuto del ```java JPanel``` in #text(darkred)[*automatico*]: 
+- non bisogna calcolare a mano `x`, `y`, `width` e `height` dei componenti, lo fa il ```java LayoutManager``` #tag(2) specificato
+- il layout persiste anche quando la *finestra viene ridimensionata*
 
 #note([```java LayoutManager``` è un esempio di #link("https://refactoring.guru/design-patterns/strategy")[Strategy Pattern]])
 
-Per *centrare un elemento* in un panel si usa un ```java GridBagLayout```
+Per *centrare un elemento* in un panel si usa il ```java GridBagLayout``` (la spiegazione è in seguito nella sezione sui ```java LayoutManager```)
 
 \
-#align(image("assets/gui-2.png", width: 65%), center)
+#align(image("assets/gui-2.png", width: 50%), center)
 
-=== Implementazione 
+#pagebreak()
+
+=== Implementazione completa
+
+Di seguito l'implementazione completa dell'interfaccia in @wireframe-1.
 
 ```java
 import javax.imageio.ImageIO;
@@ -312,7 +255,7 @@ public class App {
 
 == Interfacce con Swing senza variabili d'appoggio
 
-#text(darkred)[*Java*] mette a disposizione uno strumento che si chiama *instance initialization block*, un blocco di codice che viene eseguito dopo aver invocato il costruttore. È specialmente comodo quando si istanziano *classi anonime*.
+Java mette a disposizione uno strumento che si chiama *instance initialization block*, un blocco di codice che viene eseguito dopo aver invocato il costruttore. È particolarmente comodo quando si istanziano *classi anonime*.
 
 ```java
 class Persona {
@@ -322,25 +265,22 @@ class Persona {
 class Main {
   public static void main(String[] args) {
     Persona rossi = new Persona() {
-			{
+			x1 {
 				nome = "Rossi";
 			}
 		};
-		System.out.println(rossi.nome); // Rossi
+		System.out.println(rossi.nome); /* Rossi */
   }
 }
 ```
 
-#v(0.5cm)
-
-Possiamo sfruttare questa strategia per riscrivere il codice di prima senza variabili. 
+Possiamo sfruttare questa tecnica #tag(1) per riscrivere il codice per la @wireframe-1. 
 
 ```java 
 public class App extends JFrame {
 	App() {
 		super("Questo \u00E8 un titolo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		try { setIconImage(ImageIO.read(new File("icon.png"))); } catch (IOException e) { }
 
 		add(new JPanel(new GridBagLayout()) {
@@ -357,9 +297,7 @@ public class App extends JFrame {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-
-				int density = 5;
-				g.setColor(Color.decode("#ffec99"));
+				int density = 5; g.setColor(Color.decode("#ffec99"));
 				for (int x = 0; x <= getWidth() + getHeight(); x += density)
 					g.drawLine(x, 0, 0, x);
 			}
@@ -370,31 +308,27 @@ public class App extends JFrame {
 		setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		new App();
-	}
+	public static void main(String[] args) { new App(); }
 }
 ```
 
 #pagebreak()
 
-== Modificare font e colori globalmente (#link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/UIManager.html")[UIManager])
+== Modificare font e colori globalmente con ```java UIManager``` #javadoc("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/UIManager.html")
 
 L'aspetto dei componenti e il loro comportamento in #text(darkred)[Java Swing] viene gestito con #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/LookAndFeel.html")[```java javax.swing.LookAndFeel```]. È possibile modificare *globalmente* l'aspetto del ```java LookAndFeel``` tramite ```java javax.swing.UIManager``` (sostanzialmente un'```java HashMap```). 
 
-Ad esempio, per impostare il ```java Font``` di default di tutti i ```java JLabel``` a ```java "Cascadia Code"```
-
 ```java
-UIManager.put("Label.font", new Font("Cascadia Code", Font.PLAIN, 14));
+UIManager.put("Label.font" x1, new Font("Cascadia Code", Font.PLAIN, 14));
 ```
 
+Ad esempio, con la chiave #tag(1) si può impostare il ```java Font``` per tutti i ```java JLabel``` 
 
-#note[ ```java UIManager``` è un esempio di #link("https://refactoring.guru/design-patterns/singleton")[Singleton Pattern]]
+#note[```java UIManager``` è un esempio di #link("https://refactoring.guru/design-patterns/singleton")[Singleton Pattern]]
 
 ```java
 import java.awt.Color;
 import java.awt.Font;
-
 import javax.swing.UIManager;
 
 public class App {
@@ -418,14 +352,14 @@ public class App {
 
 === Chiavi di ```java UIManager```
 
-#note[
-  Un elenco delle #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/blob/main/keys.txt")[possibili chiavi]
-]
-
-Per stampare l'elenco di chiavi disponibili:
+Potete generare l'elenco di chiavi disponibili, o provare #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/blob/main/keys.txt")[queste] (sono tante, ma non è detto che ci sia sempre quelle che servono).
 
 ```java
-javax.swing.UIManager.getDefaults().keys().asIterator().forEachRemaining(System.out::println);
+javax.swing.UIManager
+  .getDefaults()
+  .keys()
+  .asIterator()
+  .forEachRemaining(System.out::println);
 ```
 
 #pagebreak()
@@ -433,12 +367,12 @@ javax.swing.UIManager.getDefaults().keys().asIterator().forEachRemaining(System.
 == Layout Manager
 
 Il costruttore ```java JPanel(LayoutManager layout)``` permette di specificare una *strategia* per *posizionare* e *dimensionare* il contenuto di un ```java JPanel``` in #text(darkred)[*automatico*]: 
-- non bisogna calcolare a mano `x`, `y`, `width` e `height` dei componenti, lo fa il ```java LayoutManager```
-- funziona anche quando la *finestra viene ridimensionata*
+- non bisogna calcolare a mano `x`, `y`, `width` e `height` dei componenti, lo fa il ```java LayoutManager``` specificato
+- il layout persiste anche quando la *finestra viene ridimensionata*
 
 #note([```java LayoutManager``` è un esempio di #link("https://refactoring.guru/design-patterns/strategy")[Strategy Pattern]])
 
-=== #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/BorderLayout.html")[BorderLayout]
+=== ```java BorderLayout``` #javadoc("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/BorderLayout.html")
 
 Supponiamo di voler implementare questo wireframe
 
@@ -446,9 +380,8 @@ Supponiamo di voler implementare questo wireframe
   image("assets/wireframe-2.png"),
   caption: [caso d'uso di un ```java BorderLayout```],
 ) <wireframe-2>
-\
 
-Abbiamo un rettangolo con le statistiche in alto, e il restante spazio è occupato da un rettangolo centrale con un pulsante. 
+Abbiamo una barra con le statistiche in alto e lo spazio rimanente è occupato da un rettangolo centrale con un pulsante. 
 
 #pagebreak()
 
@@ -463,34 +396,34 @@ public class App extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try { setIconImage(ImageIO.read(new File("icon.png"))); } catch (IOException e) { }
 
-		add(new JPanel(new BorderLayout(10, 10)) { // Sfondo
+		add(new JPanel(new BorderLayout(10, 10) x1) { // Sfondo
 			{
-				setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Spazio dal bordo della finesta
+				x2 setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
 
 				add(new JPanel() { // Barra in altro
 					{
-						setBackground(new Color(255, 255, 255, 0)); // Trasparente
+						x3 setBackground(new Color(255, 255, 255, 0)); 
 						setBorder(BorderFactory.createCompoundBorder(
               BorderFactory.createLineBorder(Color.decode("#2f9e44")),
               BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 					}
-				}, BorderLayout.NORTH); // Posizionata a NORD
+				}, BorderLayout.NORTH x4);
 
 				add(new JPanel() { // Blocco centrale
 					{
-						setBackground(new Color(255, 255, 255, 0)); // Trasparente
+						x3 setBackground(new Color(255, 255, 255, 0)); 
 						setBorder(BorderFactory.createCompoundBorder(
               BorderFactory.createLineBorder(Color.decode("#2f9e44")),
               BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 					}
-				}, BorderLayout.CENTER); // Posizionato al CENTRO
+				}, BorderLayout.CENTER x5);
 			}
 
 			@Override
 			protected void paintComponent(Graphics g) { // Sfondo linee oblique verdi
 				super.paintComponent(g);
 				int density = 5;
-				g.setColor(Color.decode("#b2f2bb"));
+				g.setColor(Color.decode("#b2f2bb") x6);
 				for (int x = 0; x <= getWidth() + getHeight(); x += density)
 					g.drawLine(x, 0, 0, x);
 			}
@@ -505,27 +438,26 @@ public class App extends JFrame {
 }
 ```
 
-- ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" verticale e orizzontale fra due componenti.
+Analizziamo cosa sta succedendo:
+- #tag(1) crea un ```java BorderLayout``` specificando lo spazio da lasciare fra i componenti del ```java JPanel``` (```typst 10px``` in verticale e ```typst 10px``` in orizzontale).
+- #tag(2) aggiunge un bordo trasparente al ```java JPanel``` (in modo che i componenti non siano attaccati al bordo della finestra).
+- #tag(3) rende lo sfondo trasparente, perché il quarto parametro del costruttore di ```java Color``` indica il *canale alpha*, ovvero la trasparenza del colore.
+- #tag(4) e #tag(5) sono delle costanti che il ```java BorderLayout``` usa per capire dove posizionare il componente (sono spiegate nella sezione sul funzionamento del ```java BorderLayout```).
 
-- con ```java setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))``` impostiamo un bordo trasparente (per lasciare uno spazio dal bordo della finestra)
+#note[Uno dei modi per rappresentare i colori è il modello #link("https://en.wikipedia.org/wiki/RGBA_color_model")[RGBA], che include il *canale alpha*. Un altro modo è tramite la rappresentazione #link("https://en.wikipedia.org/wiki/Web_colors#Hex_triplet")[esadecimale] #tag(6).]
 
 Quando aggiungo un elemento ad un container, posso specificare come deve essere trattato tramite il metodo ```java add(Component comp, Object constraints)```: in base al layout del container, ```java Object constraints``` avrà un significato diverso.
 
-#note([```java BorderFactory``` è un esempio di #link("https://refactoring.guru/design-patterns/factory-method")[Factory Pattern]])
+#note([```java BorderFactory``` #tag(2) è un esempio di #link("https://refactoring.guru/design-patterns/factory-method")[Factory Pattern]])
 
 Risultato
 
-\
-#align(image("assets/borderlayout-1.png"), center)
-\
+#align(image("assets/borderlayout-1.png", width: 52%), center)
 
 ==== Implementazione
 
-#note[di default, lo sfondo di un ```java JLabel``` è trasparente, per renderlo visibile bisogna usare ```java setOpaque(true)```]
-
 ```java
 public class App extends JFrame {
-
 	static {
 		UIManager.put("Label.font", new Font("Cascadia Code", Font.PLAIN, 17));
 		UIManager.put("Label.foreground", Color.decode("#2f9e44"));
@@ -543,11 +475,7 @@ public class App extends JFrame {
 
 		UIManager.put("Panel.background", Color.WHITE);
 	}
-
-
 ```
-
-#pagebreak()
 
 ```java
 	App() {
@@ -586,40 +514,14 @@ public class App extends JFrame {
 }
 ```
 
+// #note[di default, lo sfondo di un ```java JLabel``` è trasparente, per renderlo visibile bisogna usare ```java setOpaque(true)```]
+
 \
-#align(image("assets/borderlayout-2.png"), center);
-\
+#align(image("assets/borderlayout-2.png", width: 75%), center);
 
 #pagebreak()
 
 ==== Implementazione pt.2 
-// import javax.imageio.ImageIO;
-// import javax.swing.BorderFactory;
-// import javax.swing.JButton;
-// import javax.swing.JFrame;
-// import javax.swing.JLabel;
-// import javax.swing.JPanel;
-// import javax.swing.UIManager;
-
-// import java.awt.BorderLayout;
-// import java.awt.Color;
-// import java.awt.Font;
-// import java.awt.Graphics;
-// import java.io.File;
-// import java.io.IOException;
-		// UIManager.put("Label.font", new Font("Cascadia Code", Font.PLAIN, 17));
-		// UIManager.put("Label.foreground", Color.decode("#2f9e44"));
-		// UIManager.put("Label.background", Color.WHITE);
-		// UIManager.put("Button.font", new Font("Cascadia Code", Font.PLAIN, 17));
-		// UIManager.put("Button.foreground", Color.decode("#2f9e44"));
-		// UIManager.put("Button.background", Color.WHITE);
-		// UIManager.put("Button.border", BorderFactory.createCompoundBorder(
-		// 		BorderFactory.createLineBorder(Color.decode("#2f9e44")),
-		// 		BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-		// UIManager.put("Button.highlight", Color.decode("#b2f2bb"));
-		// UIManager.put("Button.select", Color.decode("#b2f2bb"));
-		// UIManager.put("Button.focus", Color.WHITE);
-		// UIManager.put("Panel.background", Color.WHITE);
 
 ```java
 public class App extends JFrame {
@@ -642,7 +544,7 @@ public class App extends JFrame {
 				setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 				add(new JPanel() {
 					{
-						setBackground(new Color(255, 255, 255, 0)); // Il quarto valore indica l'opacità 
+						setBackground(new Color(255, 255, 255, 0));
 
 						setBorder(simpleBorder(10, 10));
 						Stream.of(new String[] { "Pincopallino", "partite: 10", "vittorie: 2" })
@@ -657,7 +559,7 @@ public class App extends JFrame {
 
 				add(new JPanel() {
 					{
-						setBackground(new Color(255, 255, 255, 0)); // Il quarto valore indica l'opacità 
+						setBackground(new Color(255, 255, 255, 0));
 						setBorder(simpleBorder(10, 10));
 						add(new JButton("Gioca"));
 					}
@@ -674,8 +576,7 @@ public class App extends JFrame {
 			}
 		});
 
-		setLocationRelativeTo(null);
-		setVisible(true);
+		setLocationRelativeTo(null); setVisible(true);
 	}
 
 	public static void main(String[] args) { new App(); }
@@ -686,33 +587,27 @@ public class App extends JFrame {
 
 ==== Funzionamento del ```java BorderLayout```
 
-Il ```java BorderLayout``` permette di specificare come posizionare gli elementi:
-- l'elemento ```java CENTER``` occuperà tutto lo spazio possibile 
-- gli elementi ```java NORTH``` e ```java SOUTH```  avranno larghezza massima (indipendentemente dalla larghezza impostata) e avranno altezza minima, o, se impostata, l'altezza impostata
-- gli elementi ```java WEST``` e ```java EAST```  avranno altezza massima (indipendentemente dall'altezza impostata) e avranno larghezza minima, o, se impostata, la larghezza impostata
-
-Il costruttore ```java BorderLayout(int vgap, int hgap)``` imposta uno "spazio" verticale e orizzontale fra due componenti.
+Il ```java BorderLayout``` permette di specificare la regione del ```java Container``` occupata da ciascun componente:
+- il componente posizionanto in ```java CENTER``` occupa tutto lo spazio disponibile.
+- i componenti a ```java NORTH``` e ```java SOUTH``` occupano la larghezza massima (indipendentemente dalla larghezza impostata) e occupano l'altezza minima, o, se impostata, l'altezza impostata.
+- i componenti ```java WEST``` e ```java EAST``` occupano l'altezza massima (indipendentemente dall'altezza impostata) e occupano la larghezza minima, o, se impostata, la larghezza impostata.
 
 #align(image("assets/borderlayout-3.png"), center)
 
 ```java
-class DecoratedPanel { ... }
+class DecoratedPanel { ... } // Divertitevi a definirla :)
 
 public class App extends JFrame {
 	App() {
-    //...
-
-		add(new JPanel(new BorderLayout()) {
-			{
-				add(new DecoratedPanel("Nord"), BorderLayout.NORTH);
-				add(new DecoratedPanel("Sud"), BorderLayout.SOUTH);
-				add(new DecoratedPanel("West") {
-					{ setPreferredSize(new Dimension(120, 0)); } // Larghezza custom
-				}, BorderLayout.WEST);
-				add(new DecoratedPanel("East"), BorderLayout.EAST);
-				add(new DecoratedPanel("Center"), BorderLayout.CENTER);
-			}
-		});
+		add(new JPanel(new BorderLayout()) { {
+			add(new DecoratedPanel("Nord"), BorderLayout.NORTH);
+			add(new DecoratedPanel("Sud"), BorderLayout.SOUTH);
+			add(new DecoratedPanel("West") {
+				{ setPreferredSize(new Dimension(120, 0)); } // Larghezza custom
+			}, BorderLayout.WEST);
+			add(new DecoratedPanel("East"), BorderLayout.EAST);
+			add(new DecoratedPanel("Center"), BorderLayout.CENTER);
+		} });
 	}
 
 	public static void main(String[] args) { new App(); }
@@ -721,15 +616,15 @@ public class App extends JFrame {
 
 #pagebreak()
 
-=== #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/CardLayout.html")[CardLayout]
+=== ```java CardLayout``` #javadoc("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/CardLayout.html")
 
 ==== Menu, impostazioni e partita _(cambiare schermata)_
 
-Il ```java CardLayout``` è molto utile quando abbiamo più schermate (menu principale, impostazioni, partita etc...)
+Il ```java CardLayout``` è molto utile quando abbiamo più schermate (menu principale, impostazioni, partita etc...) e vogliamo un modo *semplice* per passare da una schermata all'altra.
 
 #figure(
   image("assets/wireframe-3.png"),
-  caption: [caso d'uso di un ```java CardLayout``` e frecce nel *wireframe* per le transizioni],
+  caption: [caso d'uso di un ```java CardLayout``` e *frecce* nel *wireframe* per le transizioni],
 ) <wireframe-3>
 
 #pagebreak()
@@ -746,13 +641,13 @@ public class App extends JFrame {
 
 		add(panel = new JPanel(new CardLayout()) {
 			{
-				add(new MenuPanel(), "Menu");
-				add(new SettingsPanel(), "Settings");
-				add(new GamePanel(), "Game");
+				add(new MenuPanel() x1, "Menu" x2);
+				add(new SettingsPanel() x1, "Settings" x2);
+				add(new GamePanel() x1, "Game" x2);
 			}
 		});
 
-		((CardLayout) panel.getLayout()).show(panel, "Menu");
+		x3 ((CardLayout) panel.getLayout()).show(panel, "Menu");
     // ...
 	}
 
@@ -760,15 +655,10 @@ public class App extends JFrame {
 }
 ```
 
-Ad ogni schermata bisogna associare un *nome* quando viene aggiunta al ```java JPanel``` con il ```java CardLayout```. Per visualizzare la schermata che vogliamo basta usare il metodo 
-- ```java show(Container parent, String name)``` del ```java CardLayout```
-
-```java
-((CardLayout) panel.getLayout()).show(panel, "Menu");
-```
+Ad ogni schermata #tag(1) bisogna associare un *nome* #tag(2) quando viene aggiunta al ```java JPanel``` con il ```java CardLayout```. Per visualizzare la schermata che vogliamo basta usare il metodo ```java show(Container parent, String name)``` del ```java CardLayout``` #tag(3)
 
 Questo approccio ha 2 problemi:
-- è facile sbagliare il nome della schermata, essendo una stringa
+- è facile *sbagliare il nome* della schermata, essendo una stringa
 - non c'è un elenco esplicito delle schermate disponibili
 
 ==== Usando gli enum
@@ -780,27 +670,23 @@ enum Screen { Menu, Settings, Game }
 
 public class App extends JFrame {
 	App() {
-		super("JGioco"); // ...
+		super("JGioco"); 
 		JPanel panel;
-
 		add(panel = new JPanel(new CardLayout()) {
 			{
-				add(new MenuPanel(), Screen.Menu.name());
-				add(new SettingsPanel(), Screen.Settings.name());
-				add(new GamePanel(), Screen.Game.name());
+				add(new MenuPanel() x1, Screen.Menu.name());
+				add(new SettingsPanel() x1, Screen.Settings.name());
+				add(new GamePanel() x1, Screen.Game.name());
 			}
 		});
 
 		((CardLayout) panel.getLayout()).show(panel, Screen.Game.name());
 	}
-
-	public static void main(String[] args) { new App(); }
+	public static void main(String[] args) { new App(); x2 }
 }
 ```
 
-Il problema è che per poter *cambiare schermata*, bisogna passare ai vari componenti l'istanza di ```java App``` di cui vogliamo cambiare la schermata, creando un groviglio di *spaghetti code*. Ma c'è una soluzione per ovviare anche a questo problema.
-
-#pagebreak()
+Il problema è che, per poter *cambiare schermata*, bisogna passare ai vari componenti #tag(1) l'istanza di ```java App``` #tag(2) di cui vogliamo cambiare la schermata, creando un groviglio di *spaghetti code*. Ma c'è una soluzione per ovviare anche a questo problema.
 
 ==== Singleton + Observer
 
@@ -808,7 +694,7 @@ Il problema è che per poter *cambiare schermata*, bisogna passare ai vari compo
 enum Screen { Menu, Settings, Game }
 
 @SuppressWarnings("deprecation")
-class Navigator extends Observable {
+x1 class Navigator extends Observable {
 	private static Navigator instance;
 
 	private Navigator() { }
@@ -826,13 +712,12 @@ class Navigator extends Observable {
 }
 
 @SuppressWarnings("deprecation")
-public class App extends JFrame implements Observer {
+x2 public class App extends JFrame implements Observer {
 	JPanel panel;
 
-	App() {
-    // ...
-
-		Navigator.getInstance().addObserver(this);
+	App() { 
+    /* ... */
+		x3 Navigator.getInstance().addObserver(this);
 
 		add(panel = new JPanel(new CardLayout()) {
 			{
@@ -840,43 +725,43 @@ public class App extends JFrame implements Observer {
 			  add(new SettingsPanel(), Screen.Settings.name());
 			  add(new GamePanel(), Screen.Game.name());
 			}
-		});
-
-    // ...
+		}); 
+    /* ... */
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
+	x4 public void update(Observable o, Object arg) {
 		if (o instanceof Navigator && arg instanceof Screen)
-			((CardLayout) panel.getLayout()).show(panel, ((Screen) arg).name());
+			x5 ((CardLayout) panel.getLayout()).show(panel, ((Screen) arg).name());
 	}
 
 	public static void main(String[] args) {
 		new App();
-		Navigator.getInstance().navigate(Screen.Settings);
+		x6 Navigator.getInstance().navigate(Screen.Settings);
 	}
 }
 ```
 
-// - usa il pattern *Observer* per notificare gli ```java Observer``` dei cambiamenti di schermata 
-
-- ```java Navigator``` è la classe che permette di cambiare schermata 
+- ```java Navigator``` #tag(1) è la classe che permette di cambiare schermata 
   - usa il pattern *Singleton* perché deve avere una sola istanza globale
   - usa il pattern *Observer* per segnalare alla vista il cambiamento di schermata 
-  // - usa il pattern *Observer* per notificare i componenti quando cambia schermata 
-  - per cambiare schermata, _da qualsiasi parte del codice_, basta usare ```java Navigator.getInstance().navigate(Screen.Schermata);```
-- ```java App``` 
-  // - è un *Observer* perché deve essere notificato quando cambia la schermata 
-  - è un *Observer* perché deve ricevere le segnalazioni da ```java Navigator``` 
-  - usa ```java Navigator.getInstance().addObserver(this);``` per osservare l'unica istanza di ```java Navigator```
-	- nel metodo ```java update(Observable o, Object arg)``` cambia la schermata usando ```java CardLayout::show```
+  - per cambiare schermata, _da qualsiasi parte del codice_, basta usare #tag(6) 
+- ```java App``` #tag(2)
+  - è un *Observer* perché deve ricevere le segnalazioni da ```java Navigator``` #tag(1)
+  - usa #tag(3) per osservare l'unica istanza di ```java Navigator``` #tag(1)
+  - nel metodo #tag(4) cambia la schermata usando ```java CardLayout::show``` #tag(5)
+
+#note[
+  L'utilizzo del *Singleton Pattern* in questo caso è un po' esagerato. Si potrebbe benissimo crare un'istanza di ```java Navigator``` e passarla ai vari componenti, come nel progetto #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/blob/main/src/main/java/minesweeper/view/Navigator.java")[Minesweeper] (permettendo di avere più ```java Navigator``` diversi). 
+
+  Il lettore è incoraggiato a valutare l'opzione che ritenete più adatta al suo progetto, o di crearne un'altra :) 
+]
 
 #pagebreak()
 
-=== #link("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/GridLayout.html")[GridLayout]
+=== ```java GridLayout``` #javadoc("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/GridLayout.html")
 
 Non è un layout particolarmente complesso: permette di specificare il numero di righe, il numero di colonne, e lo spazio fra le righe e le colonne.  
-
 
 ```java
 frame.add(new JPanel(new GridLayout(4, 3, 10, 10)) {
@@ -898,23 +783,19 @@ frame.add(new JPanel(new GridLayout(4, 3, 10, 10)) {
 
 ```java
 public class App extends JFrame {
-
 	static {
 		Color YELLOW = Color.decode("#f08c00");
 
 		UIManager.put("Button.font", new Font("Cascadia Code", Font.PLAIN, 30));
-
 		UIManager.put("Button.foreground", YELLOW);
 		UIManager.put("Button.background", Color.WHITE);
 
 		UIManager.put("Button.border", BorderFactory.createCompoundBorder(
 				BorderFactory.createLineBorder(YELLOW),
 				BorderFactory.createEmptyBorder(10, 15, 10, 15)));
-
 		UIManager.put("Button.highlight", Color.decode("#ffec99"));
 		UIManager.put("Button.select", Color.decode("#ffec99"));
 		UIManager.put("Button.focus", YELLOW);
-
 		UIManager.put("Panel.background", Color.WHITE);
 	}
 
@@ -958,21 +839,19 @@ public class App extends JFrame {
 
 #pagebreak()
 
-=== #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")[GridBagLayout]
-
+=== ```java GridBagLayout``` #javadoc("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/GridBagLayout.html")
 
 ==== Il layout #text(darkred)[più flessibile]
 
-Il ```java GridBagLayout``` divide il panel in una griglia dinamica e permette di controllare la posizione dei componenti all'interno di ogni singola cella:
+Il ```java GridBagLayout``` divide il panel in una griglia dinamica e permette di controllare la *posizione* dei componenti *all'interno di ogni singola cella*:
 - una cella può essere *posizionata* in qualunque ```java x``` e ```java y``` della griglia
 - la *dimensione* di una cella può essere definita in due modi:
   - specificando numero di *righe* e numero di *colonne* da occupare
   - specificando *regole dinamiche* per ridimensionare larghezza e altezza
 
-La particolarità (rispetto agli altri layout) è che i componenti all'interno delle celle *non vengono ridimensionati* e si possono *posizionare liberamente*.
+La particolarità (rispetto agli altri layout) è che i componenti all'interno delle celle *non vengono ridimensionati* e si possono *posizionare liberamente* (non occupano tutto lo spazio della cella).
 
-// per occupare l'intera cella, ma vengono posizionati all'interno della cella rispettando le loro dimensioni (nella cella a sinistra, si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```)
-(nella cella a sinistra, si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```)
+Ad esempio, nella cella a sinistra si può vedere che il label ```java "testo"``` è posizionato a ```java NORTH_EAST```.
 
 #figure(
 	image("assets/wireframe-4.png"),
@@ -1069,9 +948,7 @@ public class App extends JFrame {
 }
 ```
 
-\
-#align(image("assets/gridbaglayout-1.png"), center)
-\
+#align(image("assets/gridbaglayout-1.png"), center) \
 
 ```java GridBagConstraints``` ha anche *altri attributi* estremamente utili come ```java ipdax```, ```java ipady``` e ```java insets``` che sono discussi nella #link("https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/gridbag.html#gridbagConstraints")[guida ufficiale]
 
@@ -1079,7 +956,6 @@ public class App extends JFrame {
 
 === In conclusione (sui Layout)
 
-// Dato un *wireframe* ora dovreste avere gli strumenti per implementare un layout 
 Con questi strumenti è possibile coprire la maggior parte delle necessità che riguardano l'implementazione di un *wireframe*, in modo semplice e pulito.
 
 #figure(
@@ -1092,21 +968,230 @@ I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%
 
 #pagebreak()
 
-== Pulsanti
+== Pulsanti e Functional Interfaces
 
-== Immagini
+Non c'è molto da dire sui pulsanti: sono dei componenti che invocano una funzione quando vengono premuti. Una delle funzionalità che molti non usano nel contesto dei pulsanti è quella delle *SAM* _(Single Abstract Method)_ *Functional Interfaces*. 
 
-== Graphics
+```java
+JButton button = new JButton("Pulsante");
+button.addActionListener(x1 new ActionListener() {
+  @Override
+  x2 public void actionPerformed(ActionEvent e) {
+    System.out.println("Pulsante premuto!");
+  }
+});
 
-=== Graphics2D
+panel.add(button);
+```
 
-=== Graphics3D
+Per eseguire del codice quando viene premuto il pulsante bisogna aggiungerli un ```java ActionListener``` #tag(1), in cui si sovrascrive il metodo ```java actionPerformed``` #tag(2).
 
-=== Translate
+```java
+package java.awt.event;
 
-=== Scale
+import java.util.EventListener;
+
+public interface ActionListener extends EventListener {
+   x1 void actionPerformed(ActionEvent var1);
+}
+```
+Se analizziamo l'implementazione di ```java ActionListener``` notiamo che si tratta di un'interfaccia con *un solo metodo astratto* #tag(1), quindi possiamo semplificare il codice sopra in questo modo:
+
+```java
+JButton button = new JButton("Pulsante");
+button.addActionListener(e -> System.out.println("Pulsante premuto!"));
+
+panel.add(button);
+```
+
+Se vogliamo usare gli *instance initialization block*, possiamo scrivere direttamente:
+
+```java
+panel.add(new JButton("Pulsante") {{
+  addActionListener(e -> System.out.println("Pulsante premuto!"));
+}});
+```
+
+#pagebreak()
+
+
+== Disegnare programmaticamente con le trasformazioni 
+
+=== Semplificare il codice con ```java .translate(int x, int y)```
+
+Supponiamo di voler disegnare dei quadrati posizionandoli in diagonale partendo da ```java (0, 0)```, il codice non è particolarmente complesso:
+
+```java
+class Panel extends JPanel {
+  Panel() {
+    super();
+    setPreferredSize(new Dimension(200, 300));
+  }
+
+  @Override
+  public void paint(Graphics g) {
+    super.paint(g);
+
+    g.setColor(Color.CYAN);
+    g.fillRect(0, 0, 200, 300);
+
+    // Disegna una diagonale in posizione (0, 0)
+    for (int position = 0; position < 10; position++) {
+      g.setColor(Color.YELLOW);
+      g.fillRect(position * 10, position * 10, 10, 10);
+
+      g.setColor(Color.RED);
+      g.drawRect(position * 10, position * 10, 10, 10);
+    }
+  }
+}
+```
+
+Supponiamo di voler disegnare questa diagonale in una posizione arbitraria, ad esempio ```java (60, 110)```, possiamo modificare il codice aggiungendo gli offset: #tag(1)
+
+```java
+class Panel extends JPanel {
+  Panel() { super(); setPreferredSize(new Dimension(200, 300)); }
+
+  @Override
+  public void paint(Graphics g) {
+    super.paint(g);
+
+    g.setColor(Color.CYAN);
+    g.fillRect(0, 0, 200, 300);
+
+    x1 int offsetX = 60, offsetY = 110;
+
+    // Disegna una diagonale in posizione (60, 110)
+    for (int position = 0; position < 10; position++) {
+      g.setColor(Color.YELLOW);
+      g.fillRect(offsetX x1 + position * 10, offsetY x1 + position * 10, 10, 10);
+
+      g.setColor(Color.RED);
+      g.drawRect(offsetX x1 + position * 10, offsetY x1 + position * 10, 10, 10);
+    }
+  }
+}
+```
+
+O, peggio ancora, si potrebbero inserire gli offset a mano. Ma c'è uno strumento molto più comodo per semplificare il lavoro: ```java Graphics::translate``` #tag(1).
+
+```java
+class Panel extends JPanel {
+  Panel() {
+    super();
+    setPreferredSize(new Dimension(200, 300));
+  }
+
+  @Override
+  public void paint(Graphics g) {
+    super.paint(g);
+
+    g.setColor(Color.CYAN);
+    g.fillRect(0, 0, 200, 300);
+
+    g.translate(60, 110); x1
+
+    // Disegna una diagonale in posizione (0, 0)
+    for (int position = 0; position < 10; position++) {
+      g.setColor(Color.YELLOW);
+      g.fillRect(position * 10, position * 10, 10, 10);
+
+      g.setColor(Color.RED);
+      g.drawRect(position * 10, position * 10, 10, 10);
+    }
+
+    g.translate(-60, -110); x2
+  }
+}
+```
+
+Con ```java translate``` #tag(1) possiamo spostare l'origine da cui disegnare. Quindi possiamo usare il codice relativo a ```java (0, 0)``` e traslarlo alla posizione ```java (60, 110)```. Questa tecnica è molto comoda quando bisogna disegnare degli oggetti più complessi. 
+
+Dopo aver disegnato la diagonale usiamo ```java g.translate(-60, -100)``` #tag(2) per riportare l'origine a ```java (0, 0)```, in modo da poter disegnare normalmente gli ogetti dopo.
+
+=== Transformazioni affini 
+
+Castando ```java Graphics g``` a ```java Graphics2D``` si hanno anche più opzioni a disposizione per controllare la grafica:
+- traslazione
+- scala #tag(2)
+- rotazione #tag(3)
+- taglio
+
+Con ```java AffineTransform``` abbiamo anche un modo più comodo per resettare la grafica #tag(1). 
+
+```java
+class Panel extends JPanel {
+  Panel() {
+    super();
+    setPreferredSize(new Dimension(200, 300));
+  }
+
+  @Override
+  public void paint(Graphics g) {
+    super.paint(g);
+
+    Graphics2D g2d = (Graphics2D) g;
+    AffineTransform defaultTransform = g2d.getTransform() x1;
+
+    g2d.setColor(Color.ORANGE);
+    g2d.fillRect(0, 0, 200, 300);
+
+    g2d.scale(2, 2) x2;
+    g2d.rotate(0.1) x3;
+
+    for (int position = 0; position < 10; position++) {
+      g2d.setColor(Color.YELLOW);
+      g2d.fillRect(position * 10, position * 10, 10, 10);
+
+      g2d.setColor(Color.RED);
+      g2d.drawRect(position * 10, position * 10, 10, 10);
+    }
+
+    g2d.setTransform(defaultTransform) x1;
+
+    for (int position = 0; position < 10; position++) {
+      g2d.setColor(Color.YELLOW);
+      g2d.fillRect(position * 10, position * 10, 10, 10);
+
+      g2d.setColor(Color.RED);
+      g2d.drawRect(position * 10, position * 10, 10, 10);
+    }
+  }
+}
+```
+
+Con questi strumenti si può scalare molto facilmente la parte grafica del progetto in base alla dimensione del ```java JFrame``` o in base alle impostazioni dell'utente. Inoltre, ```java scale()``` e ```java rotate()``` sono molto comodi per fare semplici animazioni.
+
+#pagebreak();
 
 == Timer
+
+// https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/Timer.html
+// https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Timer.html
+// https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/TimerTask.html
+
+#note[Questa sezione la devo ultimare 😅. Probabilmente, quando sarà completa, sarà molto semplice, con giusto un paio d'esempi e una piccola spiegazione teorica sulle differenze fra i vari ```java Timer```]
+
+Nello sviluppo di un gioco ci sono alcune cose che voremmo fare:
+- ritardare un'azione 
+- animazioni
+- impostare un timer globale (frameRate)
+  - per sincronizzare le animazioni
+  - per fare i calcoli  
+  - etc...
+
+// TODO: link a esempio Minesweeper con timer / gioco impiccato
+
+=== Diversi tipi di ```java Timer``` paragonati
+
+
+```java java.util.Timer``` vs 
+```java java.swing.Timer``` vs
+```java java.util.concurrent.ScheduledExecutorService```
+
+java.util.Timer solo un thread
+java.util.conc... etc... schedula le varie cose, da evitare quello che si chiama Head block *head of line block*
 
 === Ritardare azioni
 
@@ -1116,54 +1201,58 @@ I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%
 
 #pagebreak()
 
+== In conclusione su Java Swing
+
+Abbiamo visto solo *alcune* delle funzionalità di Swing (quelle che ho notato servano più spesso nei progetti). In questa guida non ho avuto modo di approfondire (in particolare dal punto di vista teorico) come si comporta Swing e cos'è in grado di fare.
+
+Suggerisco di consultare l'API docs di Java https://docs.oracle.com/en/java/javase/21/docs/api/index.html per altre informazioni.
+
+Tutto quello che abbiamo visto in questa prima parte del progetto riguarda *solamente* la *View* del progetto, ci sono altre due componenti importanti da vedere nel pattern architetturale *MVC* che discuterò nella sezione successiva.
+
+#note[Invito il lettore a reinterpretare il codice presentato e adattarlo al proprio progetto e *stile* :)]
+
+#pagebreak()
+
 = #text(darkred)[MVC]
 
-#align(
-	center, 
-	image("assets/mvc.png", width: 100%)
-)
+#align(center, image("assets/mvc.png", width: 100%))
 
-*MVC* è un *pattern architetturale* per sviluppare diversi tipi di applicazioni: web app, interfacce grafiche, TUI (terminal user interface) etc...
+*MVC* è un *pattern architetturale* per sviluppare diversi tipi di applicazioni: web app, interfacce grafiche, TUI (Terminal User Interface) etc...
 
 L'idea è quella di *separare la logica del programma dall'interfaccia*. In questo modo la logica è *definita in modo chiaro e pulito*, ed è *riusabile* (più interfacce diverse possono condividere la stessa logica)
 
-Ad esempio, è possibile definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (terminal user interface) etc... Il *Model* è condiviso da più *View*.
-
-== TODO: definizioni 
+Ad esempio, è possibile definire la logica del gioco *Solitario* una volta sola, e usarla per costruire un sito web, un'applicazione per Windows, un'API REST, una TUI (Terminal User Interface) etc... Il *Model* è condiviso da più *View*.
 
 === Model
 
+Il *Model* contiene *esclusivamente la logica* del programma: le *entità*, come queste *interagiscono* fra di loro e quali sono gli *stati validi* del programma.
+
 === View
+
+Nella sezione su *Java Swing* si è visto solo come progettare e implementare una *View*, ora l'obiettivo è quello di progettare e implemenatre un'applicazione completa, mostrando un possibile modo di strutturare il codice per far interagire il Model con l'interfaccia grafica. 
 
 === Controller
 
-\
-Nella sezione su *Java Swing* si è visto solo come progettare e implementare una *View*, ora l'obiettivo è quello di progettare e implemenatre un'*applicazione completa*, mostrando un possibile modo di strutturare il codice secondo il pattern *MVC*. 
+Il *Controller* è il collante fra l'interfaccia e il Model. Ci sono diverse strategie per implementarlo, in questa guida ne vedremo una particolarmente semplice.
 
 #pagebreak()
 
 == Minesweeper _(prato fiorito)_
 
-Trovate il codice completo del progetto #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper")[su GitHub]
+Per mostrare come progettare Model e Controller spiegherò l'analisi e l'implementazione di un semplice progetto: *Minesweeper* (ne trovate il codice completo #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper")[su GitHub])
 
 === UML e modello
 
-la progettazione inizia con la raccolta dei requisiti e la progettazione di un modello del problema da affrontare
-Iniziamo definendo il modello
+L'analisi inizia con la raccolta dei *requisiti* e la *realizzazione di un modello* del problema (in questo esempio i requisiti sono le regole e le funzionalità del gioco *Minesweeper*). Di seguito un possibile modello per il gioco: 
 
-#align(
-	center, 
-	image("assets/uml.png", width: 100%)
-)
+#align(center, image("assets/uml.png", width: 100%))
 
 #note[
-	#text(darkred)[*Attenzione!*] Questo *NON è il tipo di UML che avete visto a lezione*.
-	
-	È definito tramite la #link("https://en.wikipedia.org/wiki/First-order_logic")[logica di primo ordine]. Si vede in corsi come *Basi di dati 2* e *Ingegneria del software*. Lo uso per brevità e semplicità.
+  #text(darkred)[*ATTENZIONE!*] Questo *NON è il tipo di UML che avete visto a lezione*.
+  Questo è un modello più formale (legato all #link("https://en.wikipedia.org/wiki/First-order_logic")[logica di primo ordine]). Si vede in corsi come *Basi di Dati 2* e *Ingegneria del Software*. Lo uso perché è più semplice ed astrae i dettagli implementativi del progetto.
 ]
 
-==== In breve
-
+Questo modello rappresenta i seguenti requisiti:
 - vogliamo gestire le partite (Game)
 	- ogni partita ha 100 caselle (Tile) 
 		- sono disposte in una griglia 10x10
@@ -1175,7 +1264,6 @@ Iniziamo definendo il modello
 			- vittoria (Victory)
 			- terminata dall'utente (Terminated)
 	- di ogni partita si devono poter calcolare il numero di mine e il numero di bandiere
-
 - ogni casella (Tile)
 	- può essere di uno dei due tipi
 		- vuota (Empty)
@@ -1187,50 +1275,48 @@ Iniziamo definendo il modello
 	- di ogni casella si devono poter calcolare le caselle adiacenti
 	- di ogni casella vuota si deve conoscere il numero di mine vicine
 	
-#pagebreak()
-
 === Vincoli del modello
 
 Il modello che abbiamo definito è *incompleto*: permette *alcuni stati che non vogliamo*
 - una partita potrebbe essere una vittoria anche con una mina scoperta 
 - una partita potrebbe essere una vittoria con tutte le caselle nascoste 
 
-Servono dei vincoli (qui scritti in _logica di primo ordine_) per *limitare* i possibili stati del modello. 
+Servono dei vincoli (qui scritti in _logica di primo ordine_) per *limitare* i possibili stati del modello. Di seguito due esempi di vincolo.
 
 #note[
-Di seguito sono riportati alcuni vincoli, #link("https://github.com/CuriousCI/minesweeper/blob/main/docs/main.pdf")[qui trovate il documento completo]
+Di seguito sono riportati alcuni vincoli, #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/blob/main/docs/main.pdf")[qui trovate il documento completo]
+]
+
+
+#show sym.space.nobreak : h(20pt)
+#set terms(hanging-indent: 20pt, separator: [#linebreak()])
+
+#constraint(
+  "Game", "victory_condition",
+  description: [
+    Una partita è vinta in uno di due casi:
+    - tutte e sole le caselle con una mina hanno una bandiera
+    - tutte le caselle vuote sono scoperte
+  ]
+)[
+  $forall$ game\
+  ~ Victory(game) $<==>$ \
+  ~~ $forall$ tile _mine_game_(tile, game) $==>$ Flagged(tile) $and$ \
+  ~~ $not$ $exists$ tile _tile_game_(tile, game) $and$ Empty(tile) $and$ Flagged(tile) \
+  ~~ $or$ \
+  ~~ $forall$ tile (_tile_game_(tile, game) $and$ Empty(tile) $==>$ Revealed(tile)) \
 ]
 
 \
 
-Una partita è una vittoria in uno di due casi 
-	- tutte le mine hanno una bandiera e tutte le caselle vuote sono senza bandiera
-	- tutte le caselle vuote sono scoperte
-
 #constraint(
-  [*Game*._victory_condition_],
-  [
-    $forall$ game\
-    #t Victory(game) <=> \
-    #t#t $forall$ tile _mine_game_(tile, game) #[==>] Flagged(tile) $and$ \
-    #t#t $not$ $exists$ tile _tile_game_(tile, game) $and$ Empty(tile) $and$ Flagged(tile) \
-    #t#t $or$ \
-    #t#t $forall$ tile (_tile_game_(tile, game) $and$ Empty(tile) #[==>] Revealed(tile)) \
-  ]
-) 
-
-\
-
-Una partita è una sconfitta se e solo se c'è una mina scoperta
-
-#constraint(
-  [*Game*._loss_condition_],
-  [
-    $forall$ game \
-    #t Loss(game) <=> \
-		#t#t $exists$ mine _mine_game_(mine, game) $and$ Revealed(mine)
-  ]
-)
+  "Game", "loss condition",
+  description: "Una partita è una sconfitta se e solo se c'è una mina scoperta"
+)[
+  $forall$ game \
+  ~ Loss(game) <=> \
+  ~~ $exists$ mine _mine_game_(mine, game) $and$ Revealed(mine)
+]
 
 \
 
@@ -1240,26 +1326,22 @@ Una partita è una sconfitta se e solo se c'è una mina scoperta
 
 === Operazioni sul modello
 
-//  Sono le funzionalità che dobbiamo garantire nella progettazione del *wireframe* e che verranno tradotte in parte in operazioni del *Controller*.
-Bisogna definire un insieme di *operazioni* che un *utente* deve poter effettuare sul modello. Queste operazioni verranno tradotte in metodi del controller.
+Bisogna definire un insieme di *operazioni* che un *utente* (o un altro sistema!) deve poter effettuare sul modello. Queste operazioni sono l'interfaccia (l'API) che il Model dovrà fornire a chi lo vuole usare.
 
-\
-#operation([start_game], type: [*Game*])
-#operation([terminate_game], args: [game: *Game*], type: [*Terminated*]) 
-#operation([reveal], args: [tile: *Hidden*], type: [*Revealed*])
-#operation([flag], args: [tile: *Hidden*], type: [*Flagged*])
-#operation([remove_flag], args: [tile: *Flagged*], type: [*Hidden*])
-#operation([games_played], type: [*Integer* >= 0])
-#operation([games_won], type: [*Integer* >= 0])
-#operation([time], type: [*Duration*])
-#operation([mines], type: [(0..100)])
-#operation([flags], type: [(0..100)])
-
-\
+- #operation("start_game", type: [*Game*])
+- #operation("terminate_game", args: [game: *Game*], type: [*Terminated*]) 
+- #operation("reveal", args: [tile: *Hidden*], type: [*Revealed*])
+- #operation("flag", args: [tile: *Hidden*], type: [*Flagged*])
+- #operation("remove_flag", args: [tile: *Flagged*], type: [*Hidden*])
+- #operation("games_played", type: [*Integer* >= 0])
+- #operation("games_won", type: [*Integer* >= 0])
+- #operation("time", type: [*Duration*])
+- #operation("mines", type: [(0..100)])
+- #operation("flags", type: [(0..100)])
 
 === Wireframe
 
-Ora dobbiamo solo progettare l'interfaccia dell'applicazione con un *wireframe* (garantendo le operazioni definite prima)
+Ora dobbiamo solo progettare l'interfaccia dell'applicazione con un *wireframe* (garantendo le operazioni definite sopra)
 
 #align(center, image("assets/wireframe.png"))
 
@@ -1281,18 +1363,15 @@ import java.util.Observable;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")
-public class Tile extends Observable {
+public class Tile extends Observable x1 {
+	x2 public enum Visibility { Hidden, Flagged, Revealed }
 
-	public enum Visibility {
-		Hidden, Flagged, Revealed
-	}
-
-	public final int x, y;
+	public final int x, y x3;
 	public final boolean isMine;
 	private Visibility visibility = Hidden;
-	Optional<Integer> adjacentMines = Optional.empty();
+	x4 Optional<Integer> adjacentMines = Optional.empty();
 
-	Tile(int x, int y, boolean isMine) {
+	x5 Tile(int x, int y, boolean isMine) {
 		this.x = x;
 		this.y = y;
 		this.isMine = isMine;
@@ -1300,19 +1379,19 @@ public class Tile extends Observable {
 
 	public Visibility visibility() { return visibility; }
 
-	public Optional<Integer> adjacentMines() { return adjacentMines; }
+	x4 public Optional<Integer> adjacentMines() { return adjacentMines; }
 
 	public void reveal() {
 		if (visibility != Hidden)
 			return;
 
-		setChanged();
-		notifyObservers(visibility = Revealed);
+		x9 setChanged();
+		notifyObservers(x6 visibility = Revealed);
 	}
 
-	public void flag() {
-		setChanged();
-		notifyObservers(visibility = switch (visibility) {
+	x7 public void flag() {
+		x9 setChanged();
+		notifyObservers(x6 visibility = x8 switch (visibility) {
 			case Hidden -> Flagged;
 			case Flagged -> Hidden;
 			case Revealed -> {
@@ -1321,61 +1400,42 @@ public class Tile extends Observable {
 			}
 		});
 	}
-
 }
 ```
 
-#pagebreak()
-
 ==== Encapsulation con ```java public final```
 
-// La strategia di ridurre la visibilità di un attributo a ```java private``` e di definire *getter* e *setter* non è l'unico modo di fare encapsulation.
-
-// rendere il costruttore visibile solo all'interno del package* (visibilità di default)
-
-// In questo modo, le *Tile* possono essere istanziate con valori per ```java x```, ```java y``` e ```java kind``` all'interno del package (con valori ragionevoli), e questi valori possono essere letti (ma non modificati) all'esterno. 
-
-Un modo alternativo per ottenere *encapsulation* è quello di segnare un *attributo* come ```java public final```, e di lasciare al *costruttore* la *visibilità di default*. In questo modo:
+Un modo alternativo per ottenere *encapsulation* è quello di segnare un *attributo* come ```java public final``` #tag(3), e di lasciare al *costruttore* la *visibilità di default* #tag(5). In questo modo:
 - ```java model.Tile``` può essere istanziata solo con valori validi all'interno del package 
 - questi valori possono essere letti ma non modificati
 
 ==== Tipizzazione con ```java enum```
 
-// Ho deciso di codificare i tipi di caselle e i possibili stati con degli ```java enum```: usare l'ereditarietà in questo caso sarebbe stato inutilmente complesso e verboso. 
+I tipi di visibilità delle ```java Tile``` (```java Hidden```, ```java Flagged``` e ```java Revealed```)  sono definiti tramite ```java enum``` #tag(2). Il tipo ```java Visibility``` è definito *internamente* alla classe ```java Tile``` per poter usare la notazione ```java Tile.Visibility``` che trovo più leggibile. Inoltre non serve creare un altro file per questo ```java enum```, facilitando la *navigabilità del codice*.
 
-// Gli ```java enum``` sono interni alla classe per poter usare la notazione ```java Tile.Kind``` e ```java Tile.Visibility``` che trovo più leggibile (e rende il codice più semplice da navigare non dovendo creare altri due file).
-
-
-I tipi di visibilità delle ```java Tile``` (```java Hidden```, ```java Flagged``` e ```java Revealed```)  sono definiti tramite ```java enum```.  Il tipo ```java Visibility``` è definito *internamente* alla classe ```java Tile``` per poter usare la notazione ```java Tile.Visibility``` che trovo più leggibile. Inoltre non serve creare un altro file per questo ```java enum```, facilitando la *navigabilità del codice*.
-
-// (e rende il codice più semplice da navigare non dovendo creare altri due file).
-
-// ==== Tipi ```java null``` con ```java Optional<T>```
 ==== Valori indefiniti: ```java null``` vs ```java Optional<T>```
 
-In alcuni casi *ha senso ed è utile* avere attributi che opzionalmente sono *indefiniti* (```java adjacentMines``` non è definito se la ```java Tile``` è una mina).
+In alcuni casi *ha senso ed è utile* avere attributi che potrebbero essere *indefiniti* (```java adjacentMines``` #tag(4) non è definito se la ```java Tile``` è una mina).
 
 Usare ```java null``` è scomodo: chi usa la libreria *deve scoprire*, tramite la documentazione, che quell'attributo potrebbe non essere definito. 
 
 Con ```java Optional<T>``` si *dichiara esplicitamente nel codice* che l'attributo potrebbe essere indefinito (```java Optional.empty()```), e chi usa l'attributo *deve gestire* il caso in cui il valore non c'è.
 
-// Ad esempio, nell'UML che abbiamo progettato, solo le caselle ```java Empty``` hanno l'attributo ```java adjacentMines```. 
-
-// Per poterlo fare in Java possiamo aggiungere un attributo ```java Integer adjacentMines``` a tutte le caselle, e impostarlo a ```java null``` per le caselle *non Empty*.
-
-
-
 ==== Le ```java switch``` expression (```java switch``` con steroidi)
 
-In Java 14 sono state uficializzate le ```java switch``` expression che possono opzionalmente restituire un valore e non necessitano dell'utilizzo di ```java break;``` (vedere il metodo ```java flag()```). 
+In Java 14 sono state uficializzate le ```java switch``` expression #tag(8) che possono restituire un valore e non necessitano dell'utilizzo di ```java break;``` (vedere il metodo ```java flag()``` #tag(7)). 
 
-// Hanno anche altre funzionalità (permettono di determinare il tipo di un oggetto e castarlo senza usare ```java instanceof```, vedere ```java update(Observable o, Object arg)``` in ```java model.Game```)
+==== Gli assegnamenti come espressioni
+
+In Java gli assegnamenti alle variabili sono espressioni: ad esempio, ```java y = (x = 5)``` assegna ```java 5``` a ```java x```, e ritorna ```java 5``` per assegnarlo a ```java y``` #tag(6).
 
 ==== Observer Pattern
 
-Per la casella ho deciso di usare l'*Observer* per due motivi:
-- notificare la *View* (per ridisegnare la casella)
-- notificare le altre classi del model (la classe *Game* deve sapere quando una *Tile* cambia stato, per decidere se terminare la partita o rivelare le caselle adiacenti)
+Per la casella ho deciso di usare l'*Observer Pattern* #tag(1) per due motivi:
+- notificare la View (per ridisegnare la casella)
+- notificare le altre classi del Model (la classe ```java Game``` deve sapere quando una ```java Tile``` cambia stato, per decidere se terminare la partita o rivelare le caselle adiacenti)
+
+#note[Per notificare gli Observer, bisognare usare ```java setChanged``` #tag(9) prima di inviare la notifica.]
 
 #pagebreak()
 
@@ -1391,7 +1451,7 @@ public class Game extends Observable implements Observer {
 	Duration time = Duration.ofSeconds(0);
 
 	public Game() {
-		Random random = new Random();
+		Random random = new Random(); x1
 
 		for (int y = 0; y < 10; y++)
 			for (int x = 0; x < 10; x++)
@@ -1400,7 +1460,7 @@ public class Game extends Observable implements Observer {
 		for (Tile tile : tiles) {
 			tile.addObserver(this);
 
-			int adjacentMines = (int) adjacent(tile.x, tile.y)
+			int adjacentMines = (int) x2 adjacent(tile.x, tile.y)
 					.filter(t -> t.kind == Mine)
 					.count();
 
@@ -1408,7 +1468,7 @@ public class Game extends Observable implements Observer {
 				tile.adjacentMines = Optional.of(adjacentMines);
 		}
 
-		mines = (int) Stream.of(tiles)
+		mines = (int) x2 Stream.of(tiles)
 				.filter(t -> t.kind == Mine)
 				.count();
 	}
@@ -1423,18 +1483,17 @@ public class Game extends Observable implements Observer {
 
 ```
 
-Un errore che ho visto è quello di creare un attributo per ogni variabile. Ad esempio: alcuni hanno creato un attributo ```java Random random``` per la classe ```java Game```, nonostante questo venga usato solo nel costruttore. *NON* c'è bisogno di *creare un attributo per ogni variabile*.
+Un errore che ho visto in vari progetti è quello di creare un attributo per ogni variabile. Ad esempio: alcuni hanno creato un attributo ```java Random random``` #tag(1) per la classe ```java Game```, nonostante questo venga usato solo nel costruttore #tag(1). *NON* c'è bisogno di *creare un attributo per ogni variabile*.
 
-==== Gestire il timer
+==== Alcuni esempi di ```java Stream```
+
+Nella classe ```java model.Game``` ci sono alcuni esempi di ```java Stream``` #tag(2).
+
+==== Gestione del timer
 
 Il *Model* non dovrebbe gestire l'eventuale *timer*, quello è un compito del *Controller*. Mettendo il *timer* fuori dal *Model* diventa più facile mettere in *pausa* il gioco.
 
 Il *Model* dovrebbe semplicemente avere un metodo ```java update()``` (nel mio caso ```java updateTime()```) che deve essere invocato dal *Controller* quando scatta il *timer*.
-
-==== Alcuni esempi di ```java Stream```
-
-Nella classe ```java model.Game``` ci sono alcuni esempi di ```java Stream``` oltre a quelli sopra.
-
 
 #pagebreak()
 
@@ -1443,7 +1502,7 @@ Nella classe ```java model.Game``` ci sono alcuni esempi di ```java Stream``` ol
 ```java
 @Override
 public void update(Observable o, Object arg) {
-	if (!(o instanceof Tile tile && arg instanceof Visibility visibility))
+	if (!(o instanceof Tile tile x1 && arg instanceof Visibility visibility x1))
 		return;
 
 	setChanged();
@@ -1478,27 +1537,18 @@ public void update(Observable o, Object arg) {
 }
 ```
 
-// Il metodo ```java update(Observable o, Object arg)``` in ```java model.Game``` viene invocato quando cambia lo stato di una delle caselle della partita.
+Le versioni più recenti di Java hanno introdotto la sintassi ```java o instanceof Tile tile``` #tag(1) per il casting:
+- se ```java Object o``` non è un'istanza di ```java Tile``` ritorna ```java false```
+- se ```java Object o``` è un'istanza di ```java Tile``` ritorna ```java true``` e genera ```java Tile tile = (Tile)o```
 
-// Per assicurarci che ```java Observable o``` sia effettivamente un'istanza di ```java Tile``` e per castare l'istanza a ```java Tile``` usiamo la sintassi ```java case Tile tile -> { }``` di Java 21.
-
-Le versioni più recenti di Java hanno introdotto la sintassi ```java o instanceof Tile tile``` per il casting:
-- se ```java o``` non è un'istanza di ```java Tile``` ritorna ```java false```
-- se ```java o``` è un'istanza di ```java Tile``` ritorna ```java true``` e calcola ```java Tile tile = (Tile)o```
-
-// A questo punto, sappiano che il metodo è stato invocato da una ```java Tile```, e possiamo usare uno ```java switch``` per determinare il valore effettivo di ```java Object arg```. Preferisco questa strategia perché in questo modo posso distinguere diversi tipi di messaggi, e comportarmi adeguatamente in base al tipo di messaggio, ad esempio:
-
-// ```java mode.Game``` può inviare due tipi di messaggi:
-// - ```java model.Game.Result``` (con le varianti ```java Loss, Victory, Terminated```), caso in cui devo cambiare schermata nella view
-// - ```java model.Game.Messagge``` (con la variante ```java Timer```) caso in cui devo solo aggiornare il ```java JLabel``` con il tempo nella view
-
-// Questo approccio in cui "event driven" ha una serie di vantaggi:
-// - se aggiungo un ```java Observer``` alle ```java Tile``` non rompo il comportamento attuale
-// - se aggiungo una PowerUp che agisce sulle ```java Tile``` preservo il comportamento attuale 
+#note[La ```java switch``` expression permette anche di fare casting per #link("https://www.baeldung.com/java-switch-pattern-matching#1-type-pattern")[casi in cui si devono gestire più tipi].]
 
 #pagebreak()
 
 === Controller
+
+Il *Controller*, in questa scelta d'implementazione, ha il compito di *definire gli eventi* #tag(2) generati dalla View, specificando le interazioni #tag(3) con il Model e assegnando gli Observer #tag(1). Inoltre, è il Controller a gestire il ```java timer``` #tag(4). 
+
 
 ```java
 public class Controller {
@@ -1508,27 +1558,27 @@ public class Controller {
 
     public Controller(Minesweeper model, View view) {
         scheduler = Executors.newScheduledThreadPool(1);
-        model.addObserver(view.menu());
+        x1 model.addObserver(view.menu());
         model.load();
 
-        view.menu().play().addActionListener(e -> {
+        view.menu().play().addActionListener(x2 e -> {
             Game game = new Game();
 
-            game.addObserver(model);
-            game.addObserver(view.play());
-            game.addObserver(view.play().canvas());
-            game.start();
+            x1 game.addObserver(model);
+            x1 game.addObserver(view.play());
+            x1 game.addObserver(view.play().canvas());
+            x3 game.start();
 
             this.game = Optional.of(game);
-            timer = Optional.of(scheduler.scheduleAtFixedRate(() -> game.update(), 1, 1, TimeUnit.SECONDS));
+            x4 timer = Optional.of(scheduler.scheduleAtFixedRate(() -> x3 game.update(), 1, 1, TimeUnit.SECONDS));
         });
 
-        view.play().end().addActionListener(e -> {
-            timer.ifPresent(t -> t.cancel(true));
-            game.ifPresent(Game::end);
+        view.play().end().addActionListener(x2 e -> {
+            x4 timer.ifPresent(t -> t.cancel(true));
+            x3 game.ifPresent(Game::end);
         });
 
-        view.play().canvas().addMouseListener(new MouseAdapter() {
+        view.play().canvas().addMouseListener(x2 new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 game.ifPresent(game -> {
@@ -1538,8 +1588,8 @@ public class Controller {
                     int y = (e.getY() - canvas.getHeight() / 2 + 5 * Canvas.SCALE) / 30;
 
                     switch (e.getButton()) {
-                        case MouseEvent.BUTTON1 -> game.tiles[y * 10 + x].reveal();
-                        case MouseEvent.BUTTON3 -> game.tiles[y * 10 + x].flag();
+                        case MouseEvent.BUTTON1 -> x3 game.tiles[y * 10 + x].reveal();
+                        case MouseEvent.BUTTON3 -> x3 game.tiles[y * 10 + x].flag();
                         default -> {
                         }
                     }
@@ -1551,31 +1601,43 @@ public class Controller {
 }
 ```
 
-Il *Controller*, in questa scelta d'implementazione, ha il compito di *definire gli eventi* generati dalla *View*, specificando le interazioni con il *Model* e assegnando gli Observer. Esistono altre strategie per implementare il *Controller*, ma questo è una delle più semplici. 
-
-Una *strategia più comoda* potrebbe essere quella di definire un'*interfaccia* per elencare le possibili interazioni che il Controller deve definire, e fare in modo che la View implementi tale interfaccia.
-
-#pagebreak()
+#note[Esistono altre strategie per implementare il Controller, ma questo è una delle più semplici. Una *strategia più comoda* potrebbe essere quella di definire un'*interfaccia* per elencare le possibili interazioni che il Controller deve definire, e fare in modo che la View implementi tale interfaccia.]
 
 === View
 
-#pagebreak()
+La parte di *View* è stata largamente discussa nella prima parte di questa guida. Il lettore è invitato a #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/tree/main/src/main/java/minesweeper/view")[consultare il codice del progetto] per eventali dubbi.
 
-// = #text(darkred)[git]
+== In conclusione su MVC
+
+L'obiettivo di questa sezione è stato quello di fornire un semplice esempio di progetto realizzato con il pattern architetturale MVC, e alcuni consigli pratici e trucchi per scrivere il codice del Model. 
+
+Gli strumenti forniti fino a questo punto dovrebbero bastare per *lavorare serenamente al progetto*. Il capitolo successivo serve per chi vuole chiudere il progetto con la _"ciliegina sulla torta"_ (o anche solo per curiosità) usando gli strumenti che si usano tipicamente in *produzione* nei progetti reali.
+
+#pagebreak()
 
 // == Lavorare in gruppo
 
 // === Merge conflict
 
-= Funzionalità di #text(darkred)[GitHub] per il progetto
+= #text(darkred)[Integrare il progetto con GitHub]
 
-GitHub ha una vasta serie di funzionalità per supportare gli sviluppatori.
+Prima di procedere con l'utilizzo di *GitHub* è fondamentale aver compreso bene il funzionamento di #link("https://github.com/sapienza-metodologie-di-programmazione/guide/releases/tag/latest")[```bash git``` (guida scritta per il corso)]. GitHub è un forge per repository git che offre una vasta serie di funzionalità per supportare gli sviluppatori.
 
-#note[Prima di procedere con questa parte è fondamentale aver capito la differenza fra git e GitHub e come vengono usati. Trovate una breve guida #link("https://github.com/sapienza-metodologie-di-programmazione/guide/releases/tag/latest")[qui]]
+#note[Prima di procedere con questa parte è fondamentale aver capito la differenza fra git e GitHub e come vengono usati: trovate tutte le informazioni utili in #link("https://github.com/sapienza-metodologie-di-programmazione/guide/releases/tag/latest")[questa guida].]
+
+== Usare una package manager (ex. Maven)
+
+- cos'è un package manager (per Java e in generale)
+- è comodo quando più persone lavorano sullo stesso progetto, ognuno può usare l'editor che vuole, e il risultato sarà lo stesso
+- perché consiglio Maven: è un po' più semplice da usare rispetto a Gradle (nel contesto del progetto)
+  - es: non devo ricordare il comando per generare l'eseguibile, lo fa un plugin 
+- come scaricare Maven
+- come creare un progetto maven
+  - ora potete scrivere il codice
 
 == GitHub Pages
 
-#link("https://pages.github.com/")[GitHub Pages] è uno strumento che permette di pubblicare (gratuitamente) siti web statici tramite GitHub... (come può essere il caso di javadoc)
+#link("https://pages.github.com/")[GitHub Pages] è uno strumento che permette di pubblicare (gratuitamente) siti web *statici* tramite GitHub (come può essere il caso di *javadoc*).
 
 == Releases
 
@@ -1585,45 +1647,58 @@ Le #link("https://docs.github.com/en/repositories/releasing-projects-on-github/a
 
 Le #link("https://github.com/features/actions")[GitHub Action] sono uno strumento che permette di *automatizzare* tutti i processi legati alla produzione del software: testing, generazione di documentazione, generazione di eseguibili, deploy su server, pubblicazione di librerie etc... 
 
+Le GitHub Action si possono usare insiemea a GitHub Pages per generare la documentazione del progetto e pubblicarla online.
+
+Si possono usare anche insieme a GitHub Releases per generare l'eseguibile del progetto e pubblicarne la versione scaricabile.
+
+Di seguito si vedono due GitHub Action che automatizzano proprio queste due funzionalità.  
+
+#pagebreak()
+
 === Anatomia di una GitHub Action
 
-Per creare un'Action basta creare una cartella `.github/workflows/` all'interno del progetto e aggiungervi un file con estensione `.yml` in cui descrivere i compiti dell'Action (ad esempio `progetto/.github/workflows/javadoc.yml`).
+Per creare un'Action basta creare una cartella `.github/workflows/` all'interno del progetto e aggiungervi un file con estensione `.yml` (#link("https://yaml.org/")[YAML]) in cui descrivere i compiti dell'Action (ad esempio `progetto/.github/workflows/javadoc.yml`).
 
 ```yaml
-# Nome della GitHub Action
-name: Publish Docs
+name: Publish Docs x1
 
-# L'Action viene eseguita nell'evento di un push nel repository o manualmente
-on: [push, workflow_dispatch] 
+on: [push x2, workflow_dispatch x3] 
 
-# I permessi di cui l'Action ha bisogno per interagire con altre funzionalità
-permissions:
+permissions: x4
   contents: read
   pages: write
   id-token: write
 
-# I compiti che l'Action deve eseguire, in sequenza
-jobs:
+jobs: x5
   build:
-    # Il Sistema Operativo della VM (Virtual Machine) su cui viene eseguito il compito 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest x6
     steps:
-      # actions/checkout è un'Action pre-fabbricata che carica il repository all'interno della VM
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 x7
 
-      # Si possono eseguire i normali comandi disponibili del Sistema Operativo
+      # ... steps ... x8
 
-      # ... steps ...
+      - run: mvn install javadoc:javadoc x9
 
-      - run: mvn install javadoc:javadoc
-
-      # ... steps ...
+      # ... steps ...x8
 ```
 
+Analisi della GitHub Action:
+- #tag(1) imposta il nome dell'Action
+- ```yaml on:``` serve a specificare quando deve essere eseguita l'Action, in particolare:
+  - #tag(2) specifica che l'Action va eseguita quando c'è un ```bash push``` nel repository
+  - #tag(3) permette di invocare l'Action manualmente (dal sito di GitHub, nella sezione "Actions" del repository)
+- se l'Action deve eseguire alcune azioni particolari (ad esempio pubblicare su GitHub Pages) ha bisogo dei permessi #tag(4) per poterlo fare (permessi che bisogna specificare esplicitamente per motivi di sicurezza) 
+- #tag(5) l'Action deve eseguire uno o più compiti in sequenza
+- per poter essere eseguita, l'Action ha bisogno di una macchina virtuale su cui girare, e bisogna specificarne il Sistema Operativo #tag(6)
+- spesso si usano _"ricette"_ già pronte #tag(7), ad esempio, ```yaml actions/checkout``` carica il repository all'interno della VM per poterci lavorare sopra
+- #tag(8) naturalmente, nei vari step si possono usare anche i comandi messi a disposizione dal Sistema Operativo scelto per far girare l'Action:
+  - si possono anche scaricare pacchetti
+  - la macchina ha accesso a internet 
+- in particolare, per generare la documentazione del progetto, avendo usato Maven, basta eseguire il i comandi  ```bash mvn install``` e ```bash mvn javadoc:javadoc``` #tag(9)
 
 #pagebreak()
 
-== Generare e pubblicare la documentazione in automatico
+=== Generare e pubblicare la documentazione in automatico
 
 File `.github/workflows/javadoc.yml`
 
@@ -1635,6 +1710,7 @@ Queste "ricette" semplificano il lavoro di configurare gli strumenti necessari e
 
 ```yaml
 name: Publish Docs
+
 on: [push, workflow_dispatch]
 
 permissions:
@@ -1668,7 +1744,7 @@ jobs:
 
 #pagebreak()
 
-== Generare l'eseguibile in automatico
+=== Generare l'eseguibile in automatico
 
 File `.github/workflows/jar.yml`
 
@@ -1706,16 +1782,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-#note[Un altro esempio di GitHub Action è quella usata per generare #link("https://github.com/sapienza-metodologie-di-programmazione/guide")[questo stesso .pdf :)]]
+#note[Un altro esempio di GitHub Action è quella usata per generare #link("https://github.com/sapienza-metodologie-di-programmazione/guide/blob/main/.github/workflows/release.yml")[questo stesso .pdf] :)]
 
 
 #pagebreak()
 
 = #text(darkred)[Tips & tricks]
 
-== Compressione di immagini e audio
+== Compressione di immagini e audio 
 
-In molti 
+=== Cosa fare se lo ```bash .zip``` pesa troppo per la consegna 
+
+Per i progetti web (ma non solo) serve comprimere le immagini e gli audio per minimizzare la banda richiesta per caricare il sito (per assicurarsi che l'utente non se ne vada prima che il sito sia caricato etc...).
+
+Questo generalmente non avviene per i giochi (ci sono giochi che pesano anche 100GB+) in cui la maggior parte del peso è dato dagli asset. Però, nel costensto specifico del progetto di Metodologie, potrebbe essere utile non avere file troppo grossi (per poter consegnare).
+
+Esempio delle immagini:
+  - se non le comprimiamo, cosa succede
+
+Compressione loseless e lossy
+- png: loseless
+  - più pesante, ma non ha perdita d'informazione (l'immagine è fatta bene)
+- jpg
+  - si perde un po' di informazione, ma risparmia molto più spazio, tanto di più
+(sarebbe figo mettere pure dei numeri)
+
+- per gli audio non saprei...
+
+#pagebreak()
 
 == LSP + Formattazione automatica del codice
 
@@ -1727,6 +1821,6 @@ Uno dei Language Server più usati per Java è proprio quello di #link("https://
 
 #align(image("assets/format-on-save.png" ), center)
 
-== Shortcut 
+== Shortcut per gli editor
 
 Nella maggior parte degli editor è possibile commentare velocemente il codice (anche più righe alla volta) usando la shortcut `Ctrl + /` 
