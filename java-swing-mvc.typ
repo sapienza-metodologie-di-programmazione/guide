@@ -1,63 +1,45 @@
 #import "logic.typ": *
 
+#let tag(tag) = box(
+  height: 1em, clip: true, baseline: 0.2em,
+  circle(
+    fill: black, inset: 0.1em,
+    align(center + horizon, text(white, size: 0.7em)[*#tag*])
+  )
+)
+
+#let note(body) = block(
+  width: 100%, inset: 10pt, stroke: (left: 2pt + rgb("#0969da")),
+  [#text(rgb("#0969da"))[ Nota] \ #body]
+)
+
+#let darkred = rgb(192, 0, 0)
+#let javadoc(url) = text(size: 0.7em)[#set underline(offset: 2pt);(#link(url)[Java API doc])]
+// #set text(font: "CaskaydiaCove NF", weight: "light", lang: "it")
+#set text(font: "Cascadia Code", weight: "light", lang: "it")
+#set underline(offset: 3pt)
+#set page(margin: 1.5cm)
+#set figure(supplement: [Figura])
+#show link: it => underline[#text(navy)[#it]]
+#show raw.where(block: true): it => block(fill: luma(250), inset: 2em, width: 100%, stroke: (left: 2pt + luma(230)), it)
 #show raw: r => {
   let re = regex("x(\d)")
   show re: it => { 
     let tag = it.text.match(re).captures.at(0)
-    box(baseline: 0.2em)[
-      #circle(fill: black, inset: 0.1em)[
-        #align(center + horizon)[
-          #text(white, size: 0.8em)[*#tag*]
-        ]
-      ]
-    ]
+    box(
+      baseline: 0.2em, 
+      circle(
+        fill: black, inset: 0.1em, 
+        align(center + horizon, text(white, size: 0.8em)[*#tag*])
+      )
+    )
   }
 
   r
 }
 
-#let tag(tag) = {
-    box(height: 1em, clip: true, baseline: 0.2em)[
-      #circle(fill: black, inset: 0.1em)[
-        #align(center + horizon)[
-          #text(white, size: 0.7em)[*#tag*]
-        ]
-      ]
-    ]
-}
-
-#let note(body) = {
-  block(
-    width: 100%,
-    inset: 10pt,
-    stroke: (left: 2pt + rgb("#0969da")),
-    [
-      #text(rgb("#0969da"))[ Nota] \
-
-      #body
-    ]
-  )
-}
-
-#let darkred = rgb(192, 0, 0)
-#let javadoc(url) = [#text(size: 0.7em)[#set underline(offset: 2pt);(#link(url)[Java API doc])]]
-// #set text(font: "CaskaydiaCove NF", weight: "light")
-#set text(font: "Cascadia Code", weight: "light")
-#set underline(offset: 3pt)
-#set page(margin: 1.5cm)
-#set figure(supplement: [Figura])
-#show link: it => underline[#text(navy)[#it]]
-#show raw.where(block: true): it => block(
-  fill: luma(250),
-  inset: 2em,
-  width: 100%,
-  stroke: (left: 2pt + luma(230))
-)[#it]
-
 #align(center)[
-  #text(size: 1.5em)[ 
-    *Un approccio pratico a #text(darkred)[Java Swing] e #text(darkred)[MVC]* 
-  ] \ 
+  #text(size: 1.5em)[*Un approccio pratico a #text(darkred)[Java Swing] e #text(darkred)[MVC]*] \ 
   by #link("https://github.com/CuriousCI")[Cicio Ionut]
 ]
 
@@ -78,11 +60,9 @@ Un wireframe è un *diagramma* fatto di *rettangoli*, *testo*, *icone* e *frecce
 #figure(
   image("assets/wireframe-1.png"),
   caption: [esempio di wireframe disegnato con #link("https://excalidraw.com")[excalidraw]],
-)  <wireframe-1>
+) <wireframe-1>
 
 Proviamo ad implementare il *wireframe* in @wireframe-1
-
-#v(1cm)
 
 #pagebreak()
 
@@ -970,7 +950,7 @@ I layout visti in questa guida #link("https://docs.oracle.com/javase%2Ftutorial%
 
 == Pulsanti e Functional Interfaces
 
-Non c'è molto da dire sui pulsanti: sono dei componenti che invocano una funzione quando vengono premuti. Una delle funzionalità che molti non usano nel contesto dei pulsanti è quella delle *SAM* _(Single Abstract Method)_ *Functional Interfaces*. 
+Non c'è molto da dire sui pulsanti: sono dei componenti che invocano un metodo quando vengono premuti. Una delle funzionalità che molti non usano nel contesto dei pulsanti è quella delle *SAM* _(Single Abstract Method)_ *Functional Interfaces*. 
 
 ```java
 JButton button = new JButton("Pulsante");
@@ -1106,9 +1086,9 @@ class Panel extends JPanel {
 }
 ```
 
-Con ```java translate``` #tag(1) possiamo spostare l'origine da cui disegnare. Quindi possiamo usare il codice relativo a ```java (0, 0)``` e traslarlo alla posizione ```java (60, 110)```. Questa tecnica è molto comoda quando bisogna disegnare degli oggetti più complessi. 
+Con ```java translate``` #tag(1) possiamo spostare l'origine da cui disegnare. Quindi possiamo usare il codice relativo a ```java (0, 0)``` e traslarlo alla posizione ```java (60, 110)```. Questa tecnica è molto comoda quando bisogna disegnare oggetti più complessi. 
 
-Dopo aver disegnato la diagonale usiamo ```java g.translate(-60, -100)``` #tag(2) per riportare l'origine a ```java (0, 0)```, in modo da poter disegnare normalmente gli ogetti dopo.
+Dopo aver disegnato la diagonale usiamo ```java g.translate(-60, -100)``` #tag(2) per riportare l'origine a ```java (0, 0)``` per il resto del codice.
 
 === Transformazioni affini 
 
@@ -1192,6 +1172,8 @@ Nello sviluppo di un gioco ci sono alcune cose che voremmo fare:
 
 java.util.Timer solo un thread
 java.util.conc... etc... schedula le varie cose, da evitare quello che si chiama Head block *head of line block*
+
+#note[Trovate un esempio di ```java ScheduledExecutorService``` #link("https://github.com/sapienza-metodologie-di-programmazione/minesweeper/blob/806ff480243753eec70403f74abe555e4ff1114e/src/main/java/minesweeper/controller/Controller.java#L25")[qui]]
 
 === Ritardare azioni
 
@@ -1288,41 +1270,40 @@ Di seguito sono riportati alcuni vincoli, #link("https://github.com/sapienza-met
 ]
 
 
-#show sym.space.nobreak : h(20pt)
-#set terms(hanging-indent: 20pt, separator: [#linebreak()])
+#[
+  #show sym.space.nobreak : h(20pt)
+  #set terms(hanging-indent: 20pt, separator: [#linebreak()])
 
-#constraint(
-  "Game", "victory_condition",
-  description: [
-    Una partita è vinta in uno di due casi:
-    - tutte e sole le caselle con una mina hanno una bandiera
-    - tutte le caselle vuote sono scoperte
+  #constraint(
+    "Game", "victory_condition",
+    description: [
+      Una partita è vinta in uno di due casi:
+      - tutte e sole le caselle con una mina hanno una bandiera
+      - tutte le caselle vuote sono scoperte
+    ]
+  )[
+    $forall$ game *Victory*(game) $<==>$ \
+    ~ $forall$ tile _mine_game_(tile, game) $==>$ *Flagged*(tile) $and$ \
+    ~ $not$ $exists$ tile _tile_game_(tile, game) $and$ *Empty*(tile) $and$ *Flagged*(tile) \
+    ~ $or$ \
+    ~ $forall$ tile (_tile_game_(tile, game) $and$ *Empty*(tile) $==>$ *Revealed*(tile)) \
   ]
-)[
-  $forall$ game\
-  ~ Victory(game) $<==>$ \
-  ~~ $forall$ tile _mine_game_(tile, game) $==>$ Flagged(tile) $and$ \
-  ~~ $not$ $exists$ tile _tile_game_(tile, game) $and$ Empty(tile) $and$ Flagged(tile) \
-  ~~ $or$ \
-  ~~ $forall$ tile (_tile_game_(tile, game) $and$ Empty(tile) $==>$ Revealed(tile)) \
-]
 
-\
+  \
 
-#constraint(
-  "Game", "loss condition",
-  description: "Una partita è una sconfitta se e solo se c'è una mina scoperta"
-)[
-  $forall$ game \
-  ~ Loss(game) <=> \
-  ~~ $exists$ mine _mine_game_(mine, game) $and$ Revealed(mine)
+  #constraint(
+    "Game", "loss condition",
+    description: "Una partita è una sconfitta se e solo se c'è una mina scoperta"
+  )[
+    $forall$ game *Loss*(game) $<==>$ $exists$ mine _mine_game_(mine, game) $and$ *Revealed*(mine)
+  ]
 ]
 
 \
 
 #note[ In Java questi vincoli sono spesso implementabili con gli ```java Stream``` ]
 
-#pagebreak()
+// #pagebreak()
 
 === Operazioni sul modello
 
@@ -1511,7 +1492,7 @@ public void update(Observable o, Object arg) {
 		case Flagged -> flags++;
 		case Hidden -> flags--;
 		case Revealed -> {
-			if (tile.isMine) {
+			if (tile.isMine x2) {
 				notifyObservers(Loss);
 				deleteObservers();
 				return;
@@ -1520,10 +1501,10 @@ public void update(Observable o, Object arg) {
 			if (tile.adjacentMines().isEmpty())
 				adjacent(tile).forEach(Tile::reveal);
 
-			boolean allEmptyRevealed = Stream.of(tiles)
+			boolean allEmptyRevealed = x3 Stream.of(tiles)
 					.allMatch(t -> t.isMine || t.visibility() == Revealed);
 
-			boolean allMinesFlagged = Stream.of(tiles)
+			boolean allMinesFlagged =  x3 Stream.of(tiles)
 					.allMatch(t -> !(t.isMine ^ t.visibility() == Flagged));
 
 			if (allEmptyRevealed || allMinesFlagged) {
@@ -1540,6 +1521,8 @@ public void update(Observable o, Object arg) {
 Le versioni più recenti di Java hanno introdotto la sintassi ```java o instanceof Tile tile``` #tag(1) per il casting:
 - se ```java Object o``` non è un'istanza di ```java Tile``` ritorna ```java false```
 - se ```java Object o``` è un'istanza di ```java Tile``` ritorna ```java true``` e genera ```java Tile tile = (Tile)o```
+
+In questo esempio si può vedere anche l'implementazione dei vincoli [Constraint.*Game*.loss_condition] #tag(2) e [Constraint.*Game*.victory_condition] con gli ```java Stream``` #tag(3).
 
 #note[La ```java switch``` expression permette anche di fare casting per #link("https://www.baeldung.com/java-switch-pattern-matching#1-type-pattern")[casi in cui si devono gestire più tipi].]
 
@@ -1625,15 +1608,55 @@ Prima di procedere con l'utilizzo di *GitHub* è fondamentale aver compreso bene
 
 #note[Prima di procedere con questa parte è fondamentale aver capito la differenza fra git e GitHub e come vengono usati: trovate tutte le informazioni utili in #link("https://github.com/sapienza-metodologie-di-programmazione/guide/releases/tag/latest")[questa guida].]
 
-== Usare una package manager (ex. Maven)
+== Usare una project manager _(Maven)_
 
-- cos'è un package manager (per Java e in generale)
-- è comodo quando più persone lavorano sullo stesso progetto, ognuno può usare l'editor che vuole, e il risultato sarà lo stesso
-- perché consiglio Maven: è un po' più semplice da usare rispetto a Gradle (nel contesto del progetto)
+Gestire un progetto Java crudo è abbastanza complicato: si presentano tutta una serie di problemi:
+- se vogliamo aggiungere una libreria dobbiamo scaricarla e aggiungerla manualmente
+- la struttura dipende moltissimo dall'editor
+  - tanto che passare il progetto su un altro editor o su una versione vecchia dello stesso editor è estremamente difficile (e richiede molta configurazione manuale)
+  - non funziona bene per la 
+- se vogliamo eseguire il progetto su server (Ex. GitHub Action) ma siamo legati all'editor, potrebbe essere molto più difficile 
+- serve un risultato consistente
+- serve poter automatizzare certe cose / poter usare script etc...
+
+Uno dei package manager più famosi per Java (e dei più semplici da usare) è Maven (ce ne sono altri come Gradle etc... ad esempio, per progetti Android bisogna usare Gradle etc...)
+
+Maven può essere usato in tutti gli editor: VSCode, Eclipse, Intellij, anche da terminale (anzi direi pure che è molto comodo da terminale, io lo uso con Neovim)! E da sempre lo stesso risultato.
+
+#note[
+  per ogni linguaggio di programmazione "mainstream" (realmente usato) esiste un qualche tipo di project manager / package manager: 
+  - ```bash npm``` per JavaScript
+  - ```bash cargo``` per Rust
+  - ```bash pip``` per Python
+  - etc...
+]
+
+
+// - cos'è un package manager (per Java e in generale)
+// - è comodo quando più persone lavorano sullo stesso progetto, ognuno può usare l'editor che vuole, e il risultato sarà lo stesso
+// - perché consiglio Maven: è un po' più semplice da usare rispetto a Gradle (nel contesto del progetto)
   - es: non devo ricordare il comando per generare l'eseguibile, lo fa un plugin 
 - come scaricare Maven
+  - windows https://maven.apache.org/download.cgi
+  - linux ```bash sudo apt-get install maven``` (o qualcosa del simile, tipo ```bash apache-maven```
 - come creare un progetto maven
-  - ora potete scrivere il codice
+```bash
+mvn archetype:generate -DgroupId=<package-principale> -DartifactId=<nome-del-progetto> -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+```
+
+- sostituite al posto di ```bash <package-principale>``` il nome del package principale del progetto
+- sostituite al posto di ```bash <nome-del-progetto>``` il nome della cartella in cui generare il progetto
+- ```bash -DarchetypeArtifactId=maven-archetype-quickstart``` serve a specificare quale "template" usare per inizializzare il progetto
+- ```bash -DinteractiveMode=false``` disabilita il prompti interattivo per le altre impostazioni (mettetelo ```bash =true``` se volete vedere le altre impostaizoni)
+
+ora potete scrivere il codice
+
+Molto facile da usare dai vari editor, ci sono comandi come 
+- mvn install 
+- mvn exec:java 
+- mvn javadoc:javadoc 
+- mvn test
+- mvn clean
 
 == GitHub Pages
 
@@ -1643,7 +1666,7 @@ Prima di procedere con l'utilizzo di *GitHub* è fondamentale aver compreso bene
 
 Le #link("https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases")[Releases] sono uno strumento che permette di pubblicare file scaricabili: eseguibili di programmi, documenti, asset etc...
 
-== GitHub Action
+== GitHub Actions
 
 Le #link("https://github.com/features/actions")[GitHub Action] sono uno strumento che permette di *automatizzare* tutti i processi legati alla produzione del software: testing, generazione di documentazione, generazione di eseguibili, deploy su server, pubblicazione di librerie etc... 
 
@@ -1793,21 +1816,39 @@ jobs:
 
 === Cosa fare se lo ```bash .zip``` pesa troppo per la consegna 
 
-Per i progetti web (ma non solo) serve comprimere le immagini e gli audio per minimizzare la banda richiesta per caricare il sito (per assicurarsi che l'utente non se ne vada prima che il sito sia caricato etc...).
+Per i progetti web una delle metriche più importanti è quella della "velocità di caricamento" del sito, avendo tutta una serie di conseguenze sulla performance del sito. Per ottimizzare questa metrica quello che si fa è provare a minimizzare il peso degli asset (immagini, video, audio, etc...) e del codice. 
 
-Questo generalmente non avviene per i giochi (ci sono giochi che pesano anche 100GB+) in cui la maggior parte del peso è dato dagli asset. Però, nel costensto specifico del progetto di Metodologie, potrebbe essere utile non avere file troppo grossi (per poter consegnare).
+Questo generalmente non avviene per i giochi (ci sono giochi che pesano anche 100GB+). Però, nel costensto specifico del progetto, per poter consegnare, potrebbe essere utile risparmiare un po' di spazio.
 
-Esempio delle immagini:
-  - se non le comprimiamo, cosa succede
+=== Compressione lossy vs loseless
 
-Compressione loseless e lossy
-- png: loseless
-  - più pesante, ma non ha perdita d'informazione (l'immagine è fatta bene)
-- jpg
-  - si perde un po' di informazione, ma risparmia molto più spazio, tanto di più
-(sarebbe figo mettere pure dei numeri)
+Generalmente esistono due modi di comprimere gli asset: 
+- *loseless*: la qualità dell'asset non cambia, e si risparmia un po' di spazio 
+- *lossy*: la qualità dell'asset è inferiore, ma si risparmia molto più spazio
 
-- per gli audio non saprei...
+=== Esempio di compressione
+
+Quanto va ad impattare realmente la compressione? Consideriamo l'esempio di un'immagine 1920 #sym.times 1080. Per rappresentare ogni pixel sono necessari 4 byte (#link("https://en.wikipedia.org/wiki/RGBA_color_model")[RGBA]), quindi, un'immagine 1920 #sym.times 1080 dovrebbe pesare 
+- 1920 #sym.times 1080 #sym.times 4 byte #sym.tilde.eq 8100 KB. 
+
+#figure(
+  image("assets/example.png"),
+  caption: [immagine ```bash .png``` 1920 #sym.times 1080 pixel],
+) <compression>
+
+
+Consideriamo l'immagine in @compression: nonostante i nostri calcoli, il formato ```bash .png``` con compressione *loseless* la porta a circa 885 KB (un risparmio del 90%!), ma si può fare meglio? Su Windows è possibile ridimensionare l'immagine direttamente dal programma di preview di default (@windows-compression), e usando la compressione *lossy* ```bash .jpg```, con perdità di qualità del 50% si arriva a 417 KB, e spesso la perdita di qualità non si percepisce neanche. 
+
+#figure(
+  image("assets/resize.png"),
+  caption: [su Windows è possibile ridimensionare e comprimere le immagini]
+) <windows-compression>
+
+#note[Il peso finale dopo la compressione dipende molto anche dal contenuto dell'immagine: un'immagine 1920 #sym.times 1080 interamente nera si può comprimere in maniera molto più efficace rispetto ad un'immagine ricca di dettagli]
+
+=== Compressione audio
+
+Lo stesso discorso sulla compressione loseless e lossy si può applicare per gli audio (che ho notato essere più problematici): consiglio di usare un formato di compressoine lossy come ```bash .mp3```, e di provare a tagliare dove possibile (usando audio più brevi, o di qualità inferiore).
 
 #pagebreak()
 
