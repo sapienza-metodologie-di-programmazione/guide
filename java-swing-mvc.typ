@@ -9,7 +9,7 @@
 #show link: it => underline[#text(navy)[#it]]
 #show raw.where(block: true): block.with(inset: 1em, width: 100%, fill: luma(254), stroke: (left: 5pt + luma(245), rest: 1pt + luma(245)))
 #show sym.emptyset : sym.diameter 
-#show raw: set text(font:"CaskaydiaCove NFM", lang: "en", weight: "light", size: 9pt)
+#show raw: set text(font:"Cascadia Code", lang: "en", weight: "light", size: 9pt)
 
 #let reft(reft) = box(width: 8pt, place(dy: -8pt, 
   box(radius: 100%, width: 9pt, height: 9pt, inset: 1pt, stroke: .5pt, fill: black,
